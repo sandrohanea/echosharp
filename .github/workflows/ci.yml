@@ -1,0 +1,60 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: Dotnet Build and Test
+
+on:
+   push:
+      branches: ["main"]
+   pull_request:
+      branches: ["main"]
+   workflow_dispatch:
+  
+permissions:
+  contents: read
+  checks: write
+
+jobs:
+  dotnet-build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            
+      - name: Restore dependencies
+        run: dotnet restore ./EchoSharp.sln
+
+      - name: Download models
+        run: |
+          ./downloadModels.ps1
+        shell: pwsh
+
+      - name: Build
+        run: dotnet build ./EchoSharp.sln --no-restore
+
+      - name: Test
+        run: |
+          dotnet test ./EchoSharp.sln --no-build  --logger "trx"
+          
+      - name: Test Reporter
+        uses: dorny/test-reporter@v1.9.1
+        if: success() || failure()    # run this step even if previous step failed
+        with:
+          name: Whisper.net MacOs Test Results
+          path: ./**/*.trx
+          reporter: dotnet-trx
+          
+      - name: Upload trx files
+        uses: actions/upload-artifact@v4
+        if: success() || failure()    # run this step even if previous step failed
+        with:
+          name: test-results-macos
+          path: ./**/*.trx
+          retention-days: 7

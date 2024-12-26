@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  
+  <Import Project="..\..\CopyModels.targets" />
+  
+  <PropertyGroup>
+    <TargetFrameworks>
+      net8.0;net9.0;
+    </TargetFrameworks>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="Whisper.net.Runtime" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="WebRtcVadSharp" />
+    <PackageReference Include="coverlet.collector">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <TargetFrameworks>
+      net8.0;net9.0;net472;
+    </TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\components\EchoSharp.AzureAI.SpeechServices\EchoSharp.AzureAI.SpeechServices.csproj" />
+    <ProjectReference Include="..\..\components\EchoSharp.Onnx.Sherpa\EchoSharp.Onnx.Sherpa.csproj" />
+    <ProjectReference Include="..\..\components\EchoSharp.Onnx.SileroVad\EchoSharp.Onnx.SileroVad.csproj" />
+    <ProjectReference Include="..\..\components\EchoSharp.Onnx.Whisper\EchoSharp.Onnx.Whisper.csproj" />
+    <ProjectReference Include="..\..\components\EchoSharp.OpenAI.Whisper\EchoSharp.OpenAI.Whisper.csproj" />
+    <ProjectReference Include="..\..\components\EchoSharp.WebRtc.WebRtcVadSharp\EchoSharp.WebRtc.WebRtcVadSharp.csproj" />
+    <ProjectReference Include="..\..\components\EchoSharp.Whisper.net\EchoSharp.Whisper.net.csproj" />
+    <ProjectReference Include="..\..\src\EchoSharp\EchoSharp.csproj" />
+  </ItemGroup>
+  
+</Project>

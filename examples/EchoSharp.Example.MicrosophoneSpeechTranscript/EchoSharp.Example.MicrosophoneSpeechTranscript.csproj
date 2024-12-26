@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <!-- This target is used to copy the models downloaded by `downloadModels.ps1` script to destination folder if they exists -->
+  <Import Project="..\..\CopyModels.targets" />
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.13.1" />
+    <PackageReference Include="Whisper.net.AllRuntimes" Version="1.7.3" />
+    <PackageReference Include="WebRtcVadSharp" Version="1.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\components\EchoSharp.AzureAI.SpeechServices\EchoSharp.AzureAI.SpeechServices.csproj" />
+    <ProjectReference Include="..\..\components\EchoSharp.NAudio\EchoSharp.NAudio.csproj" />
+    <ProjectReference Include="..\..\components\EchoSharp.Onnx.Sherpa\EchoSharp.Onnx.Sherpa.csproj" />
+    <ProjectReference Include="..\..\components\EchoSharp.Onnx.SileroVad\EchoSharp.Onnx.SileroVad.csproj" />
+    <ProjectReference Include="..\..\components\EchoSharp.Onnx.Whisper\EchoSharp.Onnx.Whisper.csproj" />
+    <ProjectReference Include="..\..\components\EchoSharp.OpenAI.Whisper\EchoSharp.OpenAI.Whisper.csproj" />
+    <ProjectReference Include="..\..\components\EchoSharp.WebRtc.WebRtcVadSharp\EchoSharp.WebRtc.WebRtcVadSharp.csproj" />
+    <ProjectReference Include="..\..\components\EchoSharp.Whisper.net\EchoSharp.Whisper.net.csproj" />
+    <ProjectReference Include="..\..\src\EchoSharp.Abstractions\EchoSharp.Abstractions.csproj" />
+    <ProjectReference Include="..\..\src\EchoSharp\EchoSharp.csproj" />
+  </ItemGroup>
+
+
+</Project>

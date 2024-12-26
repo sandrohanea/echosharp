@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "EchoSharp.Example.FileSpeechTranscript": {
+      "commandName": "Project",
+      "commandLineArgs": "mp3"
+    }
+  }
+}
