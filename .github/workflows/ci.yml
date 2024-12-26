@@ -29,7 +29,7 @@ jobs:
             9.0.x
             
       - name: Restore dependencies
-        run: dotnet restore ./EchoSharp.slnx
+        run: dotnet restore ./EchoSharp.sln
 
       - name: Download models
         run: |
@@ -37,11 +37,11 @@ jobs:
         shell: pwsh
 
       - name: Build
-        run: dotnet build ./EchoSharp.slnx --no-restore -warnaserror
+        run: dotnet build ./EchoSharp.sln --no-restore -warnaserror
 
       - name: Test
         run: |
-          dotnet test ./EchoSharp.slnx --no-build  --logger "trx"
+          dotnet test ./EchoSharp.sln --no-build  --logger "trx"
           
       - name: Test Reporter
         uses: dorny/test-reporter@v1.9.1
