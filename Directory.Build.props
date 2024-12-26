@@ -15,6 +15,7 @@
 		<RepositoryUrl>https://github.com/sandrohanea/EchoSharp</RepositoryUrl>
 		<RepositoryType>GIT</RepositoryType>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<PackageLicenseFile>LICENSE</PackageLicenseFile>	
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
 	</PropertyGroup>
 </Project>

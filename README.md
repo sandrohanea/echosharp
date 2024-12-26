@@ -11,7 +11,7 @@ EchoSharp is an open-source library designed for near-real-time audio processing
 
 Get started with EchoSharp and explore how adaptable, near-real-time audio processing can transform your projects.
 
-You can find the latest EchoSharp version on nuget at: [EchoSharp](https://www.nuget.org/packages/Whisper.net)
+You can find the latest EchoSharp version on nuget at: [EchoSharp](https://www.nuget.org/packages/EchoSharp)
 
 ## First-Party components
 
