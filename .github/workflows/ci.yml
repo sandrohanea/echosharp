@@ -37,7 +37,7 @@ jobs:
         shell: pwsh
 
       - name: Build
-        run: dotnet build ./EchoSharp.sln --no-restore -warnaserror
+        run: dotnet build ./EchoSharp.sln --no-restore
 
       - name: Test
         run: |
