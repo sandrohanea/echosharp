@@ -20,9 +20,12 @@ public class EchoSharpRealtimeTranscriptorTests
 {
     [Theory]
     [InlineData("webrtc", "whisper")]
+#if NET8_0_OR_GREATER
+    // Onnx models are not supported on net472
     [InlineData("silero", "whisper")]
     [InlineData("webrtc", "sherpa")]
     [InlineData("silero", "sherpa")]
+#endif
     public async Task RealTime_Integration_Test(string vadDetector, string transcriptor)
     {
         var waveSource = new AwaitableWaveFileSource(aggregationStrategy: DefaultChannelAggregationStrategies.Average);
