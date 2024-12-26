@@ -2,6 +2,14 @@
 
 # Download whisper.onnx from https://huggingface.co/khmyznikov/whisper-int8-cpu-ort.onnx/resolve/main/whisper_tiny_int8_cpu_ort_1.18.0.onnx
 
+# Check if 7Zip4Powershell module is installed, install if not
+if (-not (Get-Module -ListAvailable -Name 7Zip4Powershell)) {
+    Install-Module -Name 7Zip4Powershell -Force -Scope CurrentUser
+}
+
+# Import the module to use Expand-7Zip
+Import-Module 7Zip4Powershell
+
 $whisperOnnxUrl = "https://huggingface.co/khmyznikov/whisper-int8-cpu-ort.onnx/resolve/main/whisper_tiny_int8_cpu_ort_1.18.0.onnx"
 $whisperOnnxPath = "models/whisper.onnx"
 
