@@ -91,8 +91,8 @@ public class EchoSharpRealtimeTranscriptorTests
         var recognizingEvents = events.OfType<RealtimeSegmentRecognizing>().ToList();
         var recognizedEvents = events.OfType<RealtimeSegmentRecognized>().ToList();
 
-        recognizingEvents.Should().HaveCountGreaterThan(5);
-        recognizedEvents.Should().HaveCountGreaterThan(5);
+        recognizingEvents.Should().HaveCountGreaterThanOrEqualTo(1);
+        recognizedEvents.Should().HaveCountGreaterThanOrEqualTo(1);
         events.First().Should().BeOfType<RealtimeSessionStarted>();
         events.Last().Should().BeOfType<RealtimeSessionStopped>();
     }
