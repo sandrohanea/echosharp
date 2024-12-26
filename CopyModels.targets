@@ -1,0 +1,49 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="CopyConditionalFiles" AfterTargets="Build">
+    <ItemGroup>
+
+      <ConditionalFiles Include="$(MSBuildThisFileDirectory)files\testFile.wav" Condition="Exists('$(MSBuildThisFileDirectory)files\testFile.wav')">
+        <Link>files\testFile.wav</Link>
+      </ConditionalFiles>
+      <ConditionalFiles Include="$(MSBuildThisFileDirectory)files\testFile.mp3" Condition="Exists('$(MSBuildThisFileDirectory)files\testFile.mp3')">
+        <Link>files\testFile.mp3</Link>
+      </ConditionalFiles>
+
+      <!-- Model for whisper.net -->
+      
+      <ConditionalFiles Include="$(MSBuildThisFileDirectory)models\ggml-base.bin" Condition="Exists('$(MSBuildThisFileDirectory)models\ggml-base.bin')">
+        <Link>models\ggml-base.bin</Link>
+      </ConditionalFiles>
+
+
+      <!-- Models for whisper onnx -->
+      <ConditionalFiles Include="$(MSBuildThisFileDirectory)models\whisper.onnx" Condition="Exists('$(MSBuildThisFileDirectory)models\whisper.onnx')">
+        <Link>models\whisper.onnx</Link>
+      </ConditionalFiles>
+
+
+      <!-- Models for silero onnx -->
+      <ConditionalFiles Include="$(MSBuildThisFileDirectory)models\silero_vad.onnx" Condition="Exists('$(MSBuildThisFileDirectory)models\silero_vad.onnx')">
+        <Link>models\silero_vad.onnx</Link>
+      </ConditionalFiles>
+
+      
+      <!-- Models for sherpa -->
+      <ConditionalFiles Include="$(MSBuildThisFileDirectory)models\sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18\tokens.txt" Condition="Exists('$(MSBuildThisFileDirectory)models\sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18\tokens.txt')">
+        <Link>models\sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18\tokens.txt</Link>
+      </ConditionalFiles>
+      <ConditionalFiles Include="$(MSBuildThisFileDirectory)models\sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18\HLG.fst" Condition="Exists('$(MSBuildThisFileDirectory)models\sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18\HLG.fst')">
+        <Link>models\sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18\HLG.fst</Link>
+      </ConditionalFiles>
+      <ConditionalFiles Include="$(MSBuildThisFileDirectory)models\sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18\ctc-epoch-30-avg-3-chunk-16-left-128.int8.onnx" Condition="Exists('$(MSBuildThisFileDirectory)models\sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18\ctc-epoch-30-avg-3-chunk-16-left-128.int8.onnx')">
+        <Link>models\sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18\ctc-epoch-30-avg-3-chunk-16-left-128.int8.onnx</Link>
+      </ConditionalFiles>
+    </ItemGroup>
+
+    <!-- Copy only existing files -->
+    <Copy 
+          SourceFiles="@(ConditionalFiles)" 
+          DestinationFiles="@(ConditionalFiles->'$(OutputPath)%(Link)')"
+          SkipUnchangedFiles="true" />
+  </Target>
+</Project>

@@ -1,0 +1,20 @@
+<Project>
+	<PropertyGroup>
+		<TargetFrameworks>
+			net8.0;net9.0;netstandard2.0
+		</TargetFrameworks>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+		<CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+		<LangVersion>13</LangVersion>
+		
+		
+		<Authors>Sandro Hanea</Authors>
+		<PackageProjectUrl>https://github.com/sandrohanea/EchoSharp</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/sandrohanea/EchoSharp</RepositoryUrl>
+		<RepositoryType>GIT</RepositoryType>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>	
+	</PropertyGroup>
+</Project>

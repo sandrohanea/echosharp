@@ -1,0 +1,32 @@
+<Solution>
+  <Folder Name="/components/" Id="02ea681e-c7d8-13c7-8484-4ac65e1b71e8">
+    <Project Path="components/EchoSharp.AzureAI.SpeechServices/EchoSharp.AzureAI.SpeechServices.csproj" Id="3af64ae0-cb7a-4b91-b7f2-ca665c687a19" />
+    <Project Path="components/EchoSharp.NAudio/EchoSharp.NAudio.csproj" Id="6565078d-8840-4fd1-90c6-b6be0fca6f83" />
+    <Project Path="components/EchoSharp.Onnx.Sherpa/EchoSharp.Onnx.Sherpa.csproj" />
+    <Project Path="components/EchoSharp.Onnx.SileroVad/EchoSharp.Onnx.SileroVad.csproj" Id="1e553964-4c78-fc97-3817-afe42c642cff" />
+    <Project Path="components/EchoSharp.Onnx.Whisper/EchoSharp.Onnx.Whisper.csproj" Id="9afe2765-1944-436e-99d5-bac54b37973a" />
+    <Project Path="components/EchoSharp.OpenAI.Whisper/EchoSharp.OpenAI.Whisper.csproj" Id="5bf71c35-9258-41ee-9896-843c5addeceb" />
+    <Project Path="components/EchoSharp.WebRtc.WebRtcVadSharp/EchoSharp.WebRtc.WebRtcVadSharp.csproj" Id="505428b5-18e4-41d1-95a3-bc63cab1fbe1" />
+    <Project Path="components/EchoSharp.Whisper.net/EchoSharp.Whisper.net.csproj" />
+  </Folder>
+  <Folder Name="/examples/" Id="fb050bb0-47f4-4cff-84ac-bee7776ca079">
+    <Project Path="examples/EchoSharp.Example.FileSpeechTranscript/EchoSharp.Example.FileSpeechTranscript.csproj" Id="1cf393df-db1d-4f43-95d1-93ee402b20b5" />
+    <Project Path="examples/EchoSharp.Example.MicrosophoneSpeechTranscript/EchoSharp.Example.MicrosophoneSpeechTranscript.csproj" />
+  </Folder>  
+  <Folder Name="/.github/">
+    <File Path=".github/workflows/ci.yml" />
+  </Folder>
+  <Folder Name="/_Solution Items/" Id="52a4157f-ab47-faa0-b5e9-7e5adbda8969">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="CopyModels.targets" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="downloadModels.ps1" />
+    <File Path="nuget.config" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="src/EchoSharp.Abstractions/EchoSharp.Abstractions.csproj" Id="bac1f206-c289-4a08-a294-9091d6872561" />
+  <Project Path="src/EchoSharp/EchoSharp.csproj" />
+  <Project Path="tests/EchoSharp.Tests/EchoSharp.Tests.csproj" />
+</Solution>
