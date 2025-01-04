@@ -1,11 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <ItemGroup>
-    <ProjectReference Include="..\EchoSharp.Abstractions\EchoSharp.Abstractions.csproj" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
     <None Include="..\..\readme.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
+    <PackageReference Include="System.Memory" />
+    <PackageReference Include="System.IO.Compression" />
   </ItemGroup>
 
   <ItemGroup>

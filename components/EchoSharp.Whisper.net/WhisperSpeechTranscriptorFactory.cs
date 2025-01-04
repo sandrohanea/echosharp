@@ -1,7 +1,7 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
 using System.Globalization;
-using EchoSharp.Abstractions.SpeechTranscription;
+using EchoSharp.SpeechTranscription;
 using Whisper.net;
 
 namespace EchoSharp.Whisper.net;

@@ -1,8 +1,8 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
-using EchoSharp.Abstractions.Audio;
+using EchoSharp.Audio;
 
-namespace EchoSharp.Abstractions.SpeechTranscription;
+namespace EchoSharp.SpeechTranscription;
 
 /// <summary>
 /// Represents a segment of transcribed text.

@@ -1,7 +1,7 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 using System.Buffers;
-using EchoSharp.Abstractions.Config;
 using EchoSharp.Audio;
+using EchoSharp.Config;
 
 namespace EchoSharp.Internals;
 

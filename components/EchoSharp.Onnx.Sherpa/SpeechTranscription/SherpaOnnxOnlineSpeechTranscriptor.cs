@@ -2,10 +2,9 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using EchoSharp.Abstractions.Audio;
-using EchoSharp.Abstractions.SpeechTranscription;
 using EchoSharp.Audio;
 using EchoSharp.Onnx.Sherpa.Internals;
+using EchoSharp.SpeechTranscription;
 using SherpaOnnx;
 
 namespace EchoSharp.Onnx.Sherpa.SpeechTranscription;

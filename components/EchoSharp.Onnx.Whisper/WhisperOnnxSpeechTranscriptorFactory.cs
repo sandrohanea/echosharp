@@ -1,6 +1,6 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
-using EchoSharp.Abstractions.SpeechTranscription;
+using EchoSharp.SpeechTranscription;
 
 namespace EchoSharp.Onnx.Whisper;
 

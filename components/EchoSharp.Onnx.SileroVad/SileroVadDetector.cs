@@ -2,9 +2,9 @@
 
 using System.Buffers;
 using System.Runtime.CompilerServices;
-using EchoSharp.Abstractions.Audio;
-using EchoSharp.Abstractions.Config;
-using EchoSharp.Abstractions.VoiceActivityDetection;
+using EchoSharp.Audio;
+using EchoSharp.Config;
+using EchoSharp.VoiceActivityDetection;
 
 namespace EchoSharp.Onnx.SileroVad;
 

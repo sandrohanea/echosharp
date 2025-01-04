@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Whisper.net.AllRuntimes" Version="1.7.3" />
+    <PackageReference Include="Whisper.net.AllRuntimes" Version="1.7.4" />
   </ItemGroup>
   
   <ItemGroup>
@@ -20,7 +20,6 @@
     <ProjectReference Include="..\..\components\EchoSharp.Onnx.Whisper\EchoSharp.Onnx.Whisper.csproj" />
     <ProjectReference Include="..\..\components\EchoSharp.OpenAI.Whisper\EchoSharp.OpenAI.Whisper.csproj" />
     <ProjectReference Include="..\..\components\EchoSharp.Whisper.net\EchoSharp.Whisper.net.csproj" />
-    <ProjectReference Include="..\..\src\EchoSharp.Abstractions\EchoSharp.Abstractions.csproj" />
     <ProjectReference Include="..\..\src\EchoSharp\EchoSharp.csproj" />
   </ItemGroup>
 

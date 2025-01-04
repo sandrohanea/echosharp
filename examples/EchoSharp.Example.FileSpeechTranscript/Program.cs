@@ -18,14 +18,13 @@
 // Note: EchoSharp.Whisper.net, EchoSharp.Onnx.Whisper can be run locally without any cloud dependencies.
 
 using System.Globalization;
-using EchoSharp.Abstractions.Audio;
-using EchoSharp.Abstractions.SpeechTranscription;
 using EchoSharp.Audio;
 using EchoSharp.AzureAI.SpeechServices.FastTranscription;
 using EchoSharp.NAudio;
 using EchoSharp.Onnx.Sherpa.SpeechTranscription;
 using EchoSharp.Onnx.Whisper;
 using EchoSharp.OpenAI.Whisper;
+using EchoSharp.SpeechTranscription;
 using EchoSharp.Whisper.net;
 using SherpaOnnx;
 
@@ -104,7 +103,7 @@ ISpeechTranscriptorFactory GetSherpaOnnxTranscriptor()
 
     // Replace with your own model path (download from here: https://github.com/k2-fsa/sherpa-onnx/releases/tag/asr-models)
     modelConfig.Zipformer2Ctc.Model = "models/sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18/ctc-epoch-30-avg-3-chunk-16-left-128.int8.onnx";
-
+    var offlineModelConfig = new OfflineModelConfig();
     modelConfig.Tokens = "models/sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18/tokens.txt";
     modelConfig.Provider = "cpu";
     modelConfig.NumThreads = 1;

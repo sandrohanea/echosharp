@@ -2,8 +2,8 @@
 
 using System.Buffers.Binary;
 using System.Runtime.CompilerServices;
-using EchoSharp.Abstractions.Audio;
-using EchoSharp.Abstractions.VoiceActivityDetection;
+using EchoSharp.Audio;
+using EchoSharp.VoiceActivityDetection;
 using WebRtcVadSharp;
 
 namespace EchoSharp.WebRtc.WebRtcVadSharp;

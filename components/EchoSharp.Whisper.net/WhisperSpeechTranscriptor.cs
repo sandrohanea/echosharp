@@ -2,8 +2,8 @@
 
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using EchoSharp.Abstractions.Audio;
-using EchoSharp.Abstractions.SpeechTranscription;
+using EchoSharp.Audio;
+using EchoSharp.SpeechTranscription;
 using Whisper.net;
 
 namespace EchoSharp.Whisper.net;

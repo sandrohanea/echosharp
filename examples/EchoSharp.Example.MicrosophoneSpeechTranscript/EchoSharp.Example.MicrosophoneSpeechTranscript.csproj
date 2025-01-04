@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.13.1" />
-    <PackageReference Include="Whisper.net.AllRuntimes" Version="1.7.3" />
+    <PackageReference Include="Whisper.net.AllRuntimes" Version="1.7.4" />
     <PackageReference Include="WebRtcVadSharp" Version="1.3.2" />
   </ItemGroup>
 
@@ -24,7 +24,6 @@
     <ProjectReference Include="..\..\components\EchoSharp.OpenAI.Whisper\EchoSharp.OpenAI.Whisper.csproj" />
     <ProjectReference Include="..\..\components\EchoSharp.WebRtc.WebRtcVadSharp\EchoSharp.WebRtc.WebRtcVadSharp.csproj" />
     <ProjectReference Include="..\..\components\EchoSharp.Whisper.net\EchoSharp.Whisper.net.csproj" />
-    <ProjectReference Include="..\..\src\EchoSharp.Abstractions\EchoSharp.Abstractions.csproj" />
     <ProjectReference Include="..\..\src\EchoSharp\EchoSharp.csproj" />
   </ItemGroup>
 

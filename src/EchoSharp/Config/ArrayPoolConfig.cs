@@ -1,6 +1,6 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
-namespace EchoSharp.Abstractions.Config;
+namespace EchoSharp.Config;
 
 /// <summary>
 /// Configuration for the ArrayPools used in the library.

@@ -1,6 +1,6 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
-namespace EchoSharp.Abstractions.Audio;
+namespace EchoSharp.Audio;
 
 /// <summary>
 /// Represents an audio source.

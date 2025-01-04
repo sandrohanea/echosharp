@@ -1,8 +1,8 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
 using Azure.Core;
-using EchoSharp.Abstractions.SpeechTranscription;
 using EchoSharp.AzureAI.SpeechServices.Internals;
+using EchoSharp.SpeechTranscription;
 
 namespace EchoSharp.AzureAI.SpeechServices.FastTranscription;
 

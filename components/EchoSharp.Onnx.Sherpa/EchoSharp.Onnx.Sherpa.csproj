@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\EchoSharp.Abstractions\EchoSharp.Abstractions.csproj" />
     <ProjectReference Include="..\..\src\EchoSharp\EchoSharp.csproj" />
   </ItemGroup>
 
@@ -13,6 +12,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.ML.OnnxRuntime" />
     <PackageReference Include="org.k2fsa.sherpa.onnx" />
+    <PackageReference Include="SharpCompress" />
   </ItemGroup>
 
 </Project>

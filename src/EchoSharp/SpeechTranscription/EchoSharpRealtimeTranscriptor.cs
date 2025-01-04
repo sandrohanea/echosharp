@@ -3,10 +3,8 @@
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
-using EchoSharp.Abstractions.Audio;
-using EchoSharp.Abstractions.SpeechTranscription;
-using EchoSharp.Abstractions.VoiceActivityDetection;
 using EchoSharp.Audio;
+using EchoSharp.VoiceActivityDetection;
 
 namespace EchoSharp.SpeechTranscription;
 

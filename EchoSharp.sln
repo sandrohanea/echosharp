@@ -2,8 +2,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35617.110
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EchoSharp.Abstractions", "src\EchoSharp.Abstractions\EchoSharp.Abstractions.csproj", "{BAC1F206-C289-4A08-A294-9091D6872561}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EchoSharp", "src\EchoSharp\EchoSharp.csproj", "{4BA3420D-1296-EACD-7584-A6CF77C8849E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EchoSharp.Tests", "tests\EchoSharp.Tests\EchoSharp.Tests.csproj", "{F6EE410F-BF33-7F90-A3A6-8BE304272C6D}"
@@ -55,10 +53,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BAC1F206-C289-4A08-A294-9091D6872561}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BAC1F206-C289-4A08-A294-9091D6872561}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BAC1F206-C289-4A08-A294-9091D6872561}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BAC1F206-C289-4A08-A294-9091D6872561}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4BA3420D-1296-EACD-7584-A6CF77C8849E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4BA3420D-1296-EACD-7584-A6CF77C8849E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4BA3420D-1296-EACD-7584-A6CF77C8849E}.Release|Any CPU.ActiveCfg = Release|Any CPU

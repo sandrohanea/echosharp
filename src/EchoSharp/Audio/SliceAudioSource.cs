@@ -1,7 +1,5 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
-using EchoSharp.Abstractions.Audio;
-
 namespace EchoSharp.Audio;
 
 public readonly struct SliceAudioSource : IAudioSource

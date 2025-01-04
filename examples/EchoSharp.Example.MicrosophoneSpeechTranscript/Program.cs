@@ -2,8 +2,6 @@
 
 using System.Globalization;
 using Azure.Identity;
-using EchoSharp.Abstractions.SpeechTranscription;
-using EchoSharp.Abstractions.VoiceActivityDetection;
 using EchoSharp.AzureAI.SpeechServices.FastTranscription;
 using EchoSharp.AzureAI.SpeechServices.RealTime;
 using EchoSharp.NAudio;
@@ -12,6 +10,7 @@ using EchoSharp.Onnx.SileroVad;
 using EchoSharp.Onnx.Whisper;
 using EchoSharp.OpenAI.Whisper;
 using EchoSharp.SpeechTranscription;
+using EchoSharp.VoiceActivityDetection;
 using EchoSharp.WebRtc.WebRtcVadSharp;
 using EchoSharp.Whisper.net;
 using SherpaOnnx;

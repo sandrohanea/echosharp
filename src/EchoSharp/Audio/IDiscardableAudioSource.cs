@@ -1,6 +1,6 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
-namespace EchoSharp.Abstractions.Audio;
+namespace EchoSharp.Audio;
 
 /// <summary>
 /// Represents a source that can discard frames from the beginning of the audio stream if they are no longer needed.

@@ -1,8 +1,11 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
-using EchoSharp.Abstractions.Audio;
 
-namespace EchoSharp.Abstractions.SpeechTranscription;
+// Licensed under the MIT license: https://opensource.org/licenses/MIT
+
+using EchoSharp.Audio;
+
+namespace EchoSharp.SpeechTranscription;
 
 public interface IRealtimeSpeechTranscriptor
 {

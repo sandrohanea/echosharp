@@ -1,8 +1,8 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
-using EchoSharp.Abstractions.SpeechTranscription;
 using EchoSharp.Audio;
 using EchoSharp.Onnx.Sherpa.Internals;
+using EchoSharp.SpeechTranscription;
 using SherpaOnnx;
 
 namespace EchoSharp.Onnx.Sherpa.SpeechTranscription;

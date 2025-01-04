@@ -1,6 +1,6 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
-namespace EchoSharp.Abstractions.SpeechTranscription;
+namespace EchoSharp.SpeechTranscription;
 
 public record RealtimeSpeechTranscriptorOptions : SpeechTranscriptorOptions
 {

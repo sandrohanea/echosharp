@@ -3,7 +3,6 @@
     <TargetFrameworks>net8;net9;net472</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\EchoSharp.Abstractions\EchoSharp.Abstractions.csproj" />
     <ProjectReference Include="..\..\src\EchoSharp\EchoSharp.csproj" />
   </ItemGroup>
 

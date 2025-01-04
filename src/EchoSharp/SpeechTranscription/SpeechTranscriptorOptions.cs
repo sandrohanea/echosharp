@@ -2,7 +2,7 @@
 
 using System.Globalization;
 
-namespace EchoSharp.Abstractions.SpeechTranscription;
+namespace EchoSharp.SpeechTranscription;
 
 public record SpeechTranscriptorOptions
 {

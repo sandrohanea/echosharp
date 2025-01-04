@@ -1,7 +1,7 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
-using EchoSharp.Abstractions.Audio;
+using EchoSharp.Audio;
 
-namespace EchoSharp.Abstractions.VoiceActivityDetection;
+namespace EchoSharp.VoiceActivityDetection;
 
 /// <summary>
 /// Represents a voice activity detection component that can detect voice activity segments in mono-channel audio samples at 16 kHz.
