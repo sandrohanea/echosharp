@@ -11,8 +11,8 @@ public class UnarchiverNone : IUnarchiver
 
     public static readonly UnarchiverNone Instance = new();
 
-    public IUnarchiverSession CreateSession(UnarchiverOptions options)
+    public IUnarchiverSession CreateSession(Stream stream, UnarchiverOptions options)
     {
-        return new UnarchiverNoneSession(options);
+        return new UnarchiverNoneSession(stream, options);
     }
 }

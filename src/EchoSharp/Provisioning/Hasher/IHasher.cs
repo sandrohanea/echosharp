@@ -4,5 +4,5 @@ namespace EchoSharp.Provisioning.Hasher;
 
 public interface IHasher
 {
-    public IHasherSession CreateSession();
+    public HasherStream CreateStream(Stream source);
 }

@@ -8,17 +8,16 @@ internal class UnarchiverDiscardSession : IUnarchiverSession
 {
     public Task AbortAsync(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 
     public Task FlushAsync(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public string GetIntegrityFile()

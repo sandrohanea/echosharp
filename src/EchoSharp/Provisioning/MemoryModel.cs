@@ -34,26 +34,18 @@ public sealed class MemoryModel : IDisposable
         return memoryFile.GetBuffer().AsMemory(0, (int)memoryFile.Length);
     }
 
+    public async Task CopyFromAsync(string modelPath, Stream source, CancellationToken cancellationToken)
+    {
+        if (!memoryFiles.TryGetValue(modelPath, out var memoryFile))
+        {
+            memoryFile = new MemoryStream();
+            memoryFiles[modelPath] = memoryFile;
+        }
 #if NET8_0_OR_GREATER
-    public async Task AppendAsync(string modelPath, Memory<byte> memory, CancellationToken cancellationToken)
-    {
-        if (!memoryFiles.TryGetValue(modelPath, out var memoryFile))
-        {
-            memoryFile = new MemoryStream();
-            memoryFiles[modelPath] = memoryFile;
-        }
-        await memoryFile.WriteAsync(memory, cancellationToken);
-    }
+        await source.CopyToAsync(memoryFile, cancellationToken);
 #else
-
-    public async Task AppendAsync(string modelPath, byte[] data, int offset, int count, CancellationToken cancellationToken)
-    {
-        if (!memoryFiles.TryGetValue(modelPath, out var memoryFile))
-        {
-            memoryFile = new MemoryStream();
-            memoryFiles[modelPath] = memoryFile;
-        }
-        await memoryFile.WriteAsync(data, offset, count, cancellationToken);
-    }
+        await source.CopyToAsync(memoryFile);
 #endif
+    }
+
 }

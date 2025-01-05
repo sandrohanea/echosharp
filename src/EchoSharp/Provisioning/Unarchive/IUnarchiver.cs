@@ -7,5 +7,5 @@ public interface IUnarchiver
     /// <summary>
     /// Creates an unarchiver session
     /// </summary>
-    IUnarchiverSession CreateSession(UnarchiverOptions unarchiverOptions);
+    IUnarchiverSession CreateSession(Stream stream, UnarchiverOptions options);
 }
