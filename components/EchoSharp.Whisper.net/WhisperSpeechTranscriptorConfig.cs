@@ -15,7 +15,7 @@ public class WhisperSpeechTranscriptorConfig
     /// If this is not set, the model will be downloaded in memory and used for transcription (not persisted to disk).
     /// Defaults to <see langword="null"/>.
     /// </remarks>
-    public string? ModelFileName { get; set; }
+    public string? ModelFilePath { get; set; }
 
     /// <summary>
     /// The model size to be used.
@@ -45,7 +45,7 @@ public class WhisperSpeechTranscriptorConfig
     /// A flag to check if the model file size is the same as the downloaded model file size.
     /// </summary>
     /// <remarks>
-    /// Only used if <see cref="ModelFileName"/> is set.
+    /// Only used if <see cref="ModelFilePath"/> is set.
     /// Defaults to <see langword="false"/>.
     /// </remarks>
     public bool CheckModelSize { get; set; }

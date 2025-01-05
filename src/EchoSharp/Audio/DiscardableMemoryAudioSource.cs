@@ -35,7 +35,7 @@ public class DiscardableMemoryAudioSource(bool storeSamples = true,
 
         if (count <= 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(count), "Count must be positive.");
+            throw new ArgumentOutOfRangeException(nameof(count), "readingBufferLength must be positive.");
         }
         if (count > FramesCount)
         {

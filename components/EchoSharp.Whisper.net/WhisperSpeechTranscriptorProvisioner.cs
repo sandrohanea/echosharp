@@ -25,7 +25,7 @@ public class WhisperSpeechTranscriptorProvisioner(WhisperSpeechTranscriptorConfi
                             .ExtractToPath(config.CoreMLEncoderModelPath);
         }
 
-        if (config.ModelFileName is null)
+        if (config.ModelFilePath is null)
         {
             using var ggmlModelStream = await WhisperGgmlDownloader.GetGgmlModelAsync(config.GgmlType, config.QuantizationType, cancellationToken);
             using var memoryStream = new MemoryStream();
@@ -34,24 +34,24 @@ public class WhisperSpeechTranscriptorProvisioner(WhisperSpeechTranscriptorConfi
             return await new WhisperSpeechTranscriptorFactory(WhisperFactory.FromBuffer(memoryStream.ToArray(), config.WhisperFactoryOptions)).WarmUpAsync(config.WarmUp, cancellationToken);
         }
 
-        if (!File.Exists(config.ModelFileName))
+        if (!File.Exists(config.ModelFilePath))
         {
             using var ggmlModelStream = await WhisperGgmlDownloader.GetGgmlModelAsync(config.GgmlType, config.QuantizationType, cancellationToken);
 
-            await ggmlModelStream.SaveToFileAsync(config.ModelFileName, cancellationToken);
+            await ggmlModelStream.SaveToFileAsync(config.ModelFilePath, cancellationToken);
         }
         else if (config.CheckModelSize)
         {
             using var ggmlModelStream = await WhisperGgmlDownloader.GetGgmlModelAsync(config.GgmlType, config.QuantizationType, cancellationToken);
             var modelSize = ggmlModelStream.Length;
-            var fileSize = new FileInfo(config.ModelFileName).Length;
+            var fileSize = new FileInfo(config.ModelFilePath).Length;
             if (modelSize != fileSize)
             {
-                await ggmlModelStream.SaveToFileAsync(config.ModelFileName, cancellationToken);
+                await ggmlModelStream.SaveToFileAsync(config.ModelFilePath, cancellationToken);
             }
         }
 
-        return await new WhisperSpeechTranscriptorFactory(config.ModelFileName).WarmUpAsync(config.WarmUp, cancellationToken);
+        return await new WhisperSpeechTranscriptorFactory(config.ModelFilePath).WarmUpAsync(config.WarmUp, cancellationToken);
     }
 
 }

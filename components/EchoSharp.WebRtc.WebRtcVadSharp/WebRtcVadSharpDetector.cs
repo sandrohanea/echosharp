@@ -8,7 +8,7 @@ using WebRtcVadSharp;
 
 namespace EchoSharp.WebRtc.WebRtcVadSharp;
 
-internal sealed class WebRtcVadSharpDetector : IVadDetector, IDisposable
+internal sealed class WebRtcVadSharpDetector : IVadDetector
 {
     private const int batchSize = 512;
     private readonly WebRtcVad vad;

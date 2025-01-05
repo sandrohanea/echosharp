@@ -27,7 +27,7 @@ public class SherpaOnnxSpeechTranscriptorProvisioner(SherpaOnnxSpeechTranscripto
         if (!File.Exists(modelArchivePath))
         {
             using var stream = await GetModelStreamAsync(cancellationToken);
-            await stream.SaveToFileAsync(modelArchivePath, cancellationToken);
+            await stream.SaveToFileAsync(modelArchivePath, config.Model.Hash, cancellationToken);
             downloaded = true;
         }
         else if (config.CheckModelSize)
@@ -38,7 +38,7 @@ public class SherpaOnnxSpeechTranscriptorProvisioner(SherpaOnnxSpeechTranscripto
             if (modelSize != fileSize)
             {
                 using var newStream = await GetModelStreamAsync(cancellationToken);
-                await newStream.SaveToFileAsync(modelArchivePath, cancellationToken);
+                await newStream.SaveToFileAsync(modelArchivePath, config.Model.Hash, cancellationToken);
                 downloaded = true;
             }
         }

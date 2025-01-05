@@ -8,10 +8,8 @@ using EchoSharp.VoiceActivityDetection;
 
 namespace EchoSharp.Onnx.SileroVad;
 
-internal class SileroVadDetector : IVadDetector
+internal sealed class SileroVadDetector : IVadDetector
 {
-    private const float threshHoldGap = 0.15f;
-
     private readonly SileroVadOnnxModel model;
     private readonly float threshold;
     private readonly float negThreshold;
@@ -20,9 +18,12 @@ internal class SileroVadDetector : IVadDetector
 
     public SileroVadDetector(VadDetectorOptions vadDetectorOptions, SileroVadOptions sileroVadOptions)
     {
-        model = new(sileroVadOptions.ModelPath);
-        threshold = sileroVadOptions?.Threshold ?? 0.5f;
-        negThreshold = threshold - threshHoldGap;
+        model = sileroVadOptions.ModelPath != null
+            ? new(sileroVadOptions.ModelPath)
+            : new(sileroVadOptions.ModelBytes);
+
+        threshold = sileroVadOptions.Threshold;
+        negThreshold = threshold - sileroVadOptions.ThresholdGap;
         minSpeechSamples = (int)(SileroConstants.SampleRate / 1000 * vadDetectorOptions.MinSpeechDuration.TotalMilliseconds);
         minSilenceSamples = (int)(SileroConstants.SampleRate / 1000 * vadDetectorOptions.MinSilenceDuration.TotalMilliseconds);
     }
@@ -154,5 +155,10 @@ internal class SileroVadDetector : IVadDetector
         {
             throw new NotSupportedException("Only 16 kHz audio is supported. Consider resampling before calling this transcriptor.");
         }
+    }
+
+    public void Dispose()
+    {
+        model.Dispose();
     }
 }
