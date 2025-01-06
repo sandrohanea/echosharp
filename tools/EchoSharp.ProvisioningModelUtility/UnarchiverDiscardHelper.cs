@@ -1,5 +1,6 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
+using System.IO.Compression;
 using EchoSharp.Provisioning;
 using EchoSharp.Provisioning.Hasher;
 using EchoSharp.Provisioning.Unarchive;
@@ -37,37 +38,33 @@ internal class UnarchiverDiscardHelper(IHasher hasher, Stream source)
         {
             // Use SharpCompress to open the archive
 
-            using var archive = ArchiveFactory.Open(new SeekableStreamWrapper(source));
+            using var zipArchive = new ZipArchive(source, ZipArchiveMode.Read, leaveOpen: false);
 
-            archiveType = archive.Type;
+            archiveType = ArchiveType.Zip;
 
-            foreach (var entry in archive.Entries)
+            foreach (var entry in zipArchive.Entries)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
                 // Skip directories
-                if (entry.IsDirectory)
+                if (string.IsNullOrEmpty(entry.Name))
                 {
                     continue;
                 }
 
-                if (entry.Key == null)
-                {
-                    continue;
-                }
 
                 // Open the entry stream
-                using var entryStream = entry.OpenEntryStream();
+                using var entryStream = entry.Open();
 
                 // Create a hash stream for computing the file's hash
-                using var hasherStream = hasher.CreateStream(source, null);
+                using var hasherStream = hasher.CreateStream(entryStream, null);
 
                 await ConsumeStreamAsync(hasherStream, cancellationToken);
 
                 // Store the hash in the integrity file
                 if (hasherStream.ComputedHash != null)
                 {
-                    integrityFile.AddFile(entry.Key, hasherStream.ComputedHash);
+                    integrityFile.AddFile(entry.FullName, hasherStream.ComputedHash);
                 }
             }
         }
