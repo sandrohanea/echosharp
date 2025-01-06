@@ -8,6 +8,5 @@ public interface IUnarchiverSession : IDisposable
 
     Task FlushAsync(CancellationToken cancellationToken);
     Task AbortAsync(CancellationToken cancellationToken);
-
-    string GetIntegrityFile();
+    IntegrityFile GetIntegrityFile();
 }

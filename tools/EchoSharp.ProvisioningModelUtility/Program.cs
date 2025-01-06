@@ -3,6 +3,7 @@
 // This utility console application is used to generate provisioning models for the EchoSharp library (based on URLs in the arguments).
 
 using System.Security.Cryptography;
+using EchoSharp.Provisioning.Hasher;
 using EchoSharp.Provisioning.Unarchive;
 using EchoSharp.ProvisioningModelUtility;
 using SharpCompress.Archives;
@@ -17,37 +18,31 @@ static string[] GetUrls()
     Console.WriteLine("Enter URLs to archives download:");
     var urls = new List<string>();
     string? url;
-    while ((url = Console.ReadLine()) != null)
+    while (!string.IsNullOrEmpty(url = Console.ReadLine()))
     {
         urls.Add(url);
     }
     return [.. urls];
 }
 
-var unarchiver = new UnarchiverDiscard();
-
 foreach (var url in urls)
 {
     tasks.Add(Task.Run(async () =>
     {
         var uri = new Uri(url);
-        var session = unarchiver.CreateSession(new UnarchiverOptions());
+
         var name = Path.GetFileNameWithoutExtension(uri.LocalPath);
         var stream = await httpClient.GetStreamAsync(uri);
-        var sha512 = SHA512.Create();
-        sha512.Initialize();
-        var buffer = new byte[81920];
-        int bytesRead;
-        var archiver = ArchiveFactory.Open(stream);
-        while ((bytesRead = await stream.ReadAsync(buffer)) > 0)
-        {
-            sha512.TransformBlock(buffer, 0, bytesRead, buffer, 0);
-            await session.PushAsync(buffer.AsMemory(0, bytesRead), CancellationToken.None);
-        }
-        sha512.TransformFinalBlock(buffer, 0, 0);
-        var archiveHash = Convert.ToBase64String(sha512.Hash!);
+        var archiverHasher = Sha512Hasher.Instance.CreateStream(stream, null);
+        var unarchiver = new UnarchiverDiscardHelper(Sha512Hasher.Instance, stream);
+        await unarchiver.RunAsync(CancellationToken.None);
+
+        var maxFileSize = unarchiver.GetLargestFileSize();
+        var archiveHash = archiverHasher.ComputedHash;
         var archiveSize = stream.Length;
-        await session.FlushAsync(CancellationToken.None);
+        var integrityHash = unarchiver.GetIntegrityFile().GetIntegrityHash(Sha512Hasher.Instance);
+
+        Console.WriteLine($"new ProvisioningModel(\"{name}\", \"{uri}\", \"{archiveHash}\", \"{integrityHash}\", {archiveSize}, {maxFileSize}),");
 
     }));
 
