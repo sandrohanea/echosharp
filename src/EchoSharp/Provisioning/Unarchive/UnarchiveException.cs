@@ -3,7 +3,7 @@
 namespace EchoSharp.Provisioning.Unarchive;
 
 [Serializable]
-internal class UnarchiveException : Exception
+public class UnarchiveException : Exception
 {
     public UnarchiveException()
     {

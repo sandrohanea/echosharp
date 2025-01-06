@@ -5,8 +5,10 @@ using System.Security.Cryptography;
 
 namespace EchoSharp.Provisioning.Hasher;
 
-public class HasherStream(Stream source, HashAlgorithm hashAlgorithm, ConcurrentBag<HashAlgorithm> poolHash) : Stream
+public class HasherStream(Stream source, HashAlgorithm hashAlgorithm, ConcurrentBag<HashAlgorithm> poolHash, string? expectedHash = null) : Stream
 {
+    private string? computedHash;
+
     private readonly CryptoStream cryptoStream = new(Null, hashAlgorithm, CryptoStreamMode.Write);
 
     public override bool CanRead => true;
@@ -26,7 +28,13 @@ public class HasherStream(Stream source, HashAlgorithm hashAlgorithm, Concurrent
 
     public override int Read(byte[] buffer, int offset, int count)
     {
-        throw new NotImplementedException();
+        var result = cryptoStream.Read(buffer, offset, count);
+        cryptoStream.Write(buffer, offset, count);
+        if (result != count)
+        {
+            ComputeAndVerifyHash();
+        }
+        return result;
     }
 
 #if NET8_0_OR_GREATER
@@ -34,6 +42,10 @@ public class HasherStream(Stream source, HashAlgorithm hashAlgorithm, Concurrent
     {
         var result = await source.ReadAsync(buffer, cancellationToken);
         await cryptoStream.WriteAsync(buffer.Slice(0, result), cancellationToken);
+        if (result != buffer.Length)
+        {
+            ComputeAndVerifyHash();
+        }
         return result;
     }
 
@@ -42,6 +54,10 @@ public class HasherStream(Stream source, HashAlgorithm hashAlgorithm, Concurrent
     {
         var result = await source.ReadAsync(buffer, offset, count, cancellationToken);
         await cryptoStream.WriteAsync(buffer, offset, result);
+        if (result != count)
+        {
+            ComputeAndVerifyHash();
+        }
         return result;
     }
 #endif
@@ -71,9 +87,19 @@ public class HasherStream(Stream source, HashAlgorithm hashAlgorithm, Concurrent
         base.Dispose(disposing);
     }
 
-    public string GetBase64Hash()
-    {
-        return Convert.ToBase64String(hashAlgorithm.Hash!);
-    }
+    public string? ComputedHash => computedHash;
 
+    private void ComputeAndVerifyHash()
+    {
+        if (hashAlgorithm.Hash == null)
+        {
+            throw new HasherException("Cannot compute the hash of the given stream");
+        }
+
+        computedHash = Convert.ToBase64String(hashAlgorithm.Hash);
+        if (expectedHash is not null && expectedHash != computedHash)
+        {
+            throw new HasherException($"The source stream is not the expected one given the expected hash: {expectedHash}");
+        }
+    }
 }
