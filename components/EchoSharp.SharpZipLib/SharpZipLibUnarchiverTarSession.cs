@@ -2,7 +2,6 @@
 
 using System.Runtime.CompilerServices;
 using System.Text;
-using EchoSharp.Provisioning;
 using EchoSharp.Provisioning.Hasher;
 using EchoSharp.Provisioning.Unarchive;
 using ICSharpCode.SharpZipLib.Tar;
@@ -14,7 +13,7 @@ internal partial class SharpZipLibUnarchiverTarSession(IHasher hasher, Stream so
     protected override async IAsyncEnumerable<UnarchiveFileEntry> EnumerateEntriesAsync(Stream stream, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         var decompress = decompressProvider != null ? decompressProvider(stream) : stream;
-        using var tarArchive = new TarInputStream(stream, Encoding.UTF8);
+        using var tarArchive = new TarInputStream(decompress, Encoding.UTF8);
         do
         {
             var entry = await tarArchive.GetNextEntryAsync(cancellationToken);

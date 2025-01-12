@@ -7,16 +7,17 @@ using EchoSharp.VoiceActivityDetection;
 
 namespace EchoSharp.Onnx.SileroVad;
 
-public class SileroVadProvisioner(SileroVadConfig config) : IVadDetectorProvisioner
+public class SileroVadProvisioner(SileroVadConfig config, ModelDownloader? modelDownloader = null) : IVadDetectorProvisioner
 {
     private const int maxModelSize = 2327524;
 
     public async Task<IVadDetectorFactory> ProvisionAsync(CancellationToken cancellationToken = default)
     {
+        var currentModelDownloader = modelDownloader ?? ModelDownloader.Default;
         if (config.ModelPath is not null)
         {
             var options = new UnarchiverOptions(config.ModelPath, maxModelSize);
-            await ModelDownloader.DownloadModelAsync(config.Model, options, Sha512Hasher.Instance, UnarchiverCopy.Instance, cancellationToken);
+            await currentModelDownloader.DownloadModelAsync(config.Model, options, Sha512Hasher.Instance, UnarchiverCopy.Instance, cancellationToken);
             var modelOnnxPath = Path.Combine(config.ModelPath, UnarchiverCopy.ModelName);
 
             return await new SileroVadDetectorFactory(new SileroVadOptions(modelOnnxPath)
@@ -28,7 +29,7 @@ public class SileroVadProvisioner(SileroVadConfig config) : IVadDetectorProvisio
         }
         using var memoryModel = new MemoryModel();
 
-        await ModelDownloader.DownloadModelAsync(
+        await currentModelDownloader.DownloadModelAsync(
             config.Model,
             new UnarchiverOptions(memoryModel, maxModelSize),
             Sha512Hasher.Instance,

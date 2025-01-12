@@ -7,7 +7,7 @@ using EchoSharp.SpeechTranscription;
 
 namespace EchoSharp.Onnx.Whisper;
 
-public class WhisperOnnxSpeechTranscriptorProvisioner(WhisperOnnxSpeechTranscriptorConfig config) : ISpeechTranscriptorProvisioner
+public class WhisperOnnxSpeechTranscriptorProvisioner(WhisperOnnxSpeechTranscriptorConfig config, ModelDownloader? modelDownloader = null) : ISpeechTranscriptorProvisioner
 {
     private const int maxModelSize = 1366071277;
 
@@ -35,6 +35,7 @@ public class WhisperOnnxSpeechTranscriptorProvisioner(WhisperOnnxSpeechTranscrip
 
     public async Task<ISpeechTranscriptorFactory> ProvisionAsync(CancellationToken cancellationToken = default)
     {
+        var currentModelDownloader = modelDownloader ?? ModelDownloader.Default;
         var provisioningModel = config.ModelType switch
         {
             WhisperOnnxModelType.Tiny => tinyModel,
@@ -45,7 +46,7 @@ public class WhisperOnnxSpeechTranscriptorProvisioner(WhisperOnnxSpeechTranscrip
 
         if (config.ModelPath != null)
         {
-            await ModelDownloader.DownloadModelAsync(provisioningModel,
+            await currentModelDownloader.DownloadModelAsync(provisioningModel,
                 new UnarchiverOptions(config.ModelPath, maxModelSize),
                 Sha512Hasher.Instance,
                 UnarchiverCopy.Instance,
@@ -57,7 +58,7 @@ public class WhisperOnnxSpeechTranscriptorProvisioner(WhisperOnnxSpeechTranscrip
 
         using var memoryModel = new MemoryModel();
 
-        await ModelDownloader.DownloadModelAsync(provisioningModel,
+        await currentModelDownloader.DownloadModelAsync(provisioningModel,
             new UnarchiverOptions(memoryModel, maxModelSize),
             Sha512Hasher.Instance,
             UnarchiverCopy.Instance,

@@ -5,9 +5,20 @@ using EchoSharp.Provisioning.Unarchive;
 
 namespace EchoSharp.Provisioning;
 
-public static class ModelDownloader
+/// <summary>
+/// Represents a model downloader that downloads models from the internet and verifies their integrity hash.
+/// </summary>
+/// <param name="httpClient"></param>
+public class ModelDownloader(HttpClient httpClient)
 {
-    private static readonly HttpClient httpClient = new();
+    /// <summary>
+    /// The default model downloader that uses 1 hour timeout for downloading models, and no authentication (models are downloaded anonymously).
+    /// </summary>
+    /// <remarks>
+    /// If you are downloading the models from a private server or you are rate-limited by the public APIs,
+    /// you should create a new instance of the ModelDownloader and set the appropriate timeout and authentication.
+    /// </remarks>
+    public static readonly ModelDownloader Default = new(new() { Timeout = TimeSpan.FromHours(1) });
 
     /// <summary>
     /// Downloads a model to a specific path and verifies the integrity hash.
@@ -24,7 +35,7 @@ public static class ModelDownloader
     /// <param name="hasher"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public static async Task DownloadModelAsync(ProvisioningModel model,
+    public async Task DownloadModelAsync(ProvisioningModel model,
                                                 UnarchiverOptions unarchiverOptions,
                                                 IHasher hasher,
                                                 IUnarchiver? unarchiver = null,

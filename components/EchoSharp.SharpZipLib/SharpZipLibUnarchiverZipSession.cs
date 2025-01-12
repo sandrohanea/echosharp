@@ -1,11 +1,9 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
 using System.Runtime.CompilerServices;
-using System.Text;
 using EchoSharp.Provisioning.Hasher;
 using EchoSharp.Provisioning.Streams;
 using EchoSharp.Provisioning.Unarchive;
-using ICSharpCode.SharpZipLib.Tar;
 using ICSharpCode.SharpZipLib.Zip;
 
 namespace EchoSharp.SharpZipLib;
@@ -15,7 +13,7 @@ internal class SharpZipLibUnarchiverZipSession(IHasher hasher, Stream source, Un
     protected override async IAsyncEnumerable<UnarchiveFileEntry> EnumerateEntriesAsync(Stream stream, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         var decompress = decompressProvider != null ? decompressProvider(stream) : stream;
-        using var zipInputStream = new ZipInputStream(stream, StringCodec.Default);
+        using var zipInputStream = new ZipInputStream(decompress, StringCodec.Default);
         do
         {
             var entry = zipInputStream.GetNextEntry();

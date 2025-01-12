@@ -28,7 +28,7 @@ using EchoSharp.Provisioning;
 using EchoSharp.SpeechTranscription;
 using EchoSharp.Whisper.net;
 
-var transcritorFactory = await GetSpeechTranscriptorAsync(args.Length > 1 ? args[1] : "whisper.net"); // OR "azure fast api" OR "openai whisper"
+var transcritorFactory = await GetSpeechTranscriptorAsync(args.Length > 1 ? args[1] : "sherpa onnx"); // OR "azure fast api" OR "openai whisper"
 
 // Replace with the path to the audio file (the other example is files/testFile.wav)
 
