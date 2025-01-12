@@ -25,9 +25,9 @@ public static class ModelDownloader
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static async Task DownloadModelAsync(ProvisioningModel model,
-                                                IUnarchiver unarchiver,
                                                 UnarchiverOptions unarchiverOptions,
                                                 IHasher hasher,
+                                                IUnarchiver? unarchiver = null,
                                                 CancellationToken cancellationToken = default)
     {
         var integrityFile = await IntegrityFile.TryReadFromFileAsync(unarchiverOptions.ModelPath, cancellationToken);
@@ -52,6 +52,14 @@ public static class ModelDownloader
 #else
         using var archiveStream = await httpClient.GetStreamAsync(model.Uri);
 #endif
+
+        unarchiver ??= model.ArchiveType switch
+        {
+            ProvisioningModel.ArchiveTypes.Zip => UnarchiverZip.Instance,
+            ProvisioningModel.ArchiveTypes.None => UnarchiverCopy.Instance,
+            _ => throw new ArgumentException($"The unarchiver must be provided for {model.ArchiveType} archive type.", nameof(unarchiver))
+        };
+
         using var hasherStream = hasher.CreateStream(archiveStream, model.ArchiveHash);
         using var unarchiveSession = unarchiver.CreateSession(hasher, hasherStream, unarchiverOptions);
 

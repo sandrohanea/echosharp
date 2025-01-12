@@ -1,57 +1,61 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
 using EchoSharp.Provisioning;
+using EchoSharp.Provisioning.Hasher;
+using EchoSharp.Provisioning.Unarchive;
 using EchoSharp.SpeechTranscription;
 using Whisper.net;
-using Whisper.net.Ggml;
 
 namespace EchoSharp.Whisper.net;
 
-public class WhisperSpeechTranscriptorProvisioner(WhisperSpeechTranscriptorConfig config) : ISpeechTranscriptorProvisioner
+public class WhisperSpeechTranscriptorProvisioner(WhisperSpeechTranscriptorConfig config, Func<WhisperProcessorBuilder, WhisperProcessorBuilder>? builderConfig = null) : ISpeechTranscriptorProvisioner
 {
-    private const int defaultBufferCopyLength = 81920;
+    // All whisper.net models are less than 4GB
+    private const long maxFileSize = 4L * 1024 * 1024 * 1024; // 4 GB
 
     public async Task<ISpeechTranscriptorFactory> ProvisionAsync(CancellationToken cancellationToken = default)
     {
         if (config.OpenVinoEncoderModelPath is not null)
         {
-            await WhisperGgmlDownloader.GetEncoderOpenVinoModelAsync(config.GgmlType, cancellationToken)
-                                       .ExtractToPath(config.OpenVinoEncoderModelPath);
+            var openVinoModel = WhisperNetModels.GetOpenVinoModel(config.GgmlType);
+            await ModelDownloader.DownloadModelAsync(
+                openVinoModel,
+                new UnarchiverOptions(config.OpenVinoEncoderModelPath, maxFileSize),
+                Sha512Hasher.Instance,
+                UnarchiverZip.Instance,
+                cancellationToken);
         }
 
         if (config.CoreMLEncoderModelPath is not null)
         {
-            await WhisperGgmlDownloader.GetEncoderCoreMLModelAsync(config.GgmlType, cancellationToken)
-                            .ExtractToPath(config.CoreMLEncoderModelPath);
+            var openVinoModel = WhisperNetModels.GetCoreMlModel(config.GgmlType);
+            await ModelDownloader.DownloadModelAsync(
+                openVinoModel,
+                new UnarchiverOptions(config.CoreMLEncoderModelPath, maxFileSize),
+                Sha512Hasher.Instance,
+                UnarchiverZip.Instance,
+                cancellationToken);
         }
 
-        if (config.ModelFilePath is null)
+        if (config.ModelPath is not null)
         {
-            using var ggmlModelStream = await WhisperGgmlDownloader.GetGgmlModelAsync(config.GgmlType, config.QuantizationType, cancellationToken);
-            using var memoryStream = new MemoryStream();
-            await ggmlModelStream.CopyToAsync(memoryStream, defaultBufferCopyLength, cancellationToken);
-            // TODO: Use Memory directly instead of copying to a new buffer (once #316 will be released)
-            return await new WhisperSpeechTranscriptorFactory(WhisperFactory.FromBuffer(memoryStream.ToArray(), config.WhisperFactoryOptions)).WarmUpAsync(config.WarmUp, cancellationToken);
-        }
+            var options = new UnarchiverOptions(config.ModelPath, maxFileSize);
+            await ModelDownloader.DownloadModelAsync(WhisperNetModels.GetGgmlModel(config.QuantizationType, config.GgmlType), options, Sha512Hasher.Instance, UnarchiverCopy.Instance, cancellationToken);
+            var modelGgmlPath = Path.Combine(config.ModelPath, UnarchiverCopy.ModelName);
+            return await new WhisperSpeechTranscriptorFactory(modelGgmlPath, config.WhisperFactoryOptions, builderConfig)
+                .WarmUpAsync(config.WarmUp, cancellationToken);
 
-        if (!File.Exists(config.ModelFilePath))
-        {
-            using var ggmlModelStream = await WhisperGgmlDownloader.GetGgmlModelAsync(config.GgmlType, config.QuantizationType, cancellationToken);
-
-            await ggmlModelStream.SaveToFileAsync(config.ModelFilePath, cancellationToken);
         }
-        else if (config.CheckModelSize)
-        {
-            using var ggmlModelStream = await WhisperGgmlDownloader.GetGgmlModelAsync(config.GgmlType, config.QuantizationType, cancellationToken);
-            var modelSize = ggmlModelStream.Length;
-            var fileSize = new FileInfo(config.ModelFilePath).Length;
-            if (modelSize != fileSize)
-            {
-                await ggmlModelStream.SaveToFileAsync(config.ModelFilePath, cancellationToken);
-            }
-        }
+        using var memoryModel = new MemoryModel();
 
-        return await new WhisperSpeechTranscriptorFactory(config.ModelFilePath).WarmUpAsync(config.WarmUp, cancellationToken);
+        await ModelDownloader.DownloadModelAsync(
+            WhisperNetModels.GetGgmlModel(config.QuantizationType, config.GgmlType),
+            new UnarchiverOptions(memoryModel, maxFileSize),
+            Sha512Hasher.Instance,
+            UnarchiverCopy.Instance,
+            cancellationToken);
+
+        return await new WhisperSpeechTranscriptorFactory(memoryModel.GetModelMemory(UnarchiverCopy.ModelName), config.WhisperFactoryOptions, builderConfig)
+            .WarmUpAsync(config.WarmUp, cancellationToken);
     }
-
 }

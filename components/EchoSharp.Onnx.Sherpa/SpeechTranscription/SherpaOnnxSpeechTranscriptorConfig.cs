@@ -15,21 +15,9 @@ public class SherpaOnnxSpeechTranscriptorConfig
     public int Features { get; set; } = 80;
 
     /// <summary>
-    /// The path to download the model to.
+    /// The path to download the model.
     /// </summary>
-    /// <remarks>
-    /// If not set, the model will be downloaded to a temporary directory.
-    /// </remarks>
-    public string? BaseModelPath { get; set; }
-
-    /// <summary>
-    /// A flag to check if the model file size is the same as the downloaded model file size.
-    /// </summary>
-    /// <remarks>
-    /// Only used if <see cref="ModelFileName"/> is set.
-    /// Defaults to <see langword="false"/>.
-    /// </remarks>
-    public bool CheckModelSize { get; set; }
+    public string ModelPath { get; set; } = ".";
 
     /// <summary>
     /// A flag to run an initial warmup of the model.

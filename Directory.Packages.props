@@ -23,7 +23,9 @@
     <PackageVersion Include="Whisper.net.Runtime" Version="1.7.4" />
     <!-- Dependencies for Sherpa -->
     <PackageVersion Include="org.k2fsa.sherpa.onnx" Version="1.10.37" />
-    <PackageVersion Include="SharpCompress" Version="0.38.0" />
+
+    <!-- Depdendencies for SharpZipLib -->
+    <PackageVersion Include="SharpZipLib " Version="1.4.2" />
     
     <!-- Dependencies for AzureAI -->
     <PackageVersion Include="Microsoft.CognitiveServices.Speech" Version="1.42.0" />

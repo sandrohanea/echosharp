@@ -1,6 +1,6 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
-namespace EchoSharp.Provisioning;
+namespace EchoSharp.Provisioning.Streams;
 
 /// <summary>
 /// A stream that enforces a maximum size.
@@ -11,16 +11,20 @@ namespace EchoSharp.Provisioning;
 /// </remarks>
 public class MaxSizedStream(Stream source, long maxSize) : Stream
 {
+    private long currentReadPosition;
+
     public override bool CanRead => source.CanRead;
     public override bool CanSeek => source.CanSeek;
     public override bool CanWrite => source.CanWrite;
 
     public override long Length => source.Length;
 
+    public long CurrentReadSize => currentReadPosition;
+
     public override long Position
     {
         get => source.Position;
-        set => source.Position = value;
+        set => Seek(value, SeekOrigin.Begin);
     }
 
     public override void Flush()
@@ -31,8 +35,7 @@ public class MaxSizedStream(Stream source, long maxSize) : Stream
     public override int Read(byte[] buffer, int offset, int count)
     {
         // Check if this read would cross our maxSize boundary.
-        var currentPos = source.Position;
-        var requestedEndPos = currentPos + count;
+        var requestedEndPos = currentReadPosition + count;
 
         if (requestedEndPos > maxSize)
         {
@@ -42,15 +45,16 @@ public class MaxSizedStream(Stream source, long maxSize) : Stream
                 $"Cannot read beyond offset {maxSize} (requested to read until {requestedEndPos}).");
         }
 
-        return source.Read(buffer, offset, count);
+        var readBytes = source.Read(buffer, offset, count);
+        currentReadPosition += readBytes;
+        return readBytes;
     }
 
 #if NET8_0_OR_GREATER
     public override async ValueTask<int> ReadAsync(
         Memory<byte> buffer, CancellationToken cancellationToken = default)
     {
-        var currentPos = source.Position;
-        var requestedEndPos = currentPos + buffer.Length;
+        var requestedEndPos = currentReadPosition + buffer.Length;
 
         if (requestedEndPos > maxSize)
         {
@@ -58,14 +62,15 @@ public class MaxSizedStream(Stream source, long maxSize) : Stream
                 $"Cannot read beyond offset {maxSize} (requested to read until {requestedEndPos}).");
         }
 
-        return await source.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
+        var readBytes = await source.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
+        currentReadPosition += readBytes;
+        return readBytes;
     }
 #else
     public override async Task<int> ReadAsync(
         byte[] buffer, int offset, int count, CancellationToken cancellationToken)
     {
-        var currentPos = source.Position;
-        var requestedEndPos = currentPos + count;
+        var requestedEndPos = currentReadPosition + count;
 
         if (requestedEndPos > maxSize)
         {
@@ -73,16 +78,16 @@ public class MaxSizedStream(Stream source, long maxSize) : Stream
                 $"Cannot read beyond offset {maxSize} (requested to read until {requestedEndPos}).");
         }
 
-        return await source.ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
+        var readBytes = await source.ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
+        currentReadPosition += readBytes;
+        return readBytes;
     }
 #endif
 
     public override long Seek(long offset, SeekOrigin origin)
     {
-        // For a minimal solution, simply pass through.
-        // If you want to disallow seeking beyond maxSize, 
-        // you could check here too and throw if the new position would exceed maxSize.
-        return source.Seek(offset, origin);
+        currentReadPosition = source.Seek(offset, origin);
+        return currentReadPosition;
     }
 
     public override void SetLength(long value)

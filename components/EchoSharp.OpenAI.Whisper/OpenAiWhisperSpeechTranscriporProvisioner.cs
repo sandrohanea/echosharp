@@ -5,7 +5,7 @@ using EchoSharp.SpeechTranscription;
 
 namespace EchoSharp.OpenAI.Whisper;
 
-public class OpenAiWhisperSpeechTranscriporProvisioner(OpenAiWhisperSpeechTranscriptorConfig config) : ISpeechTranscriptorProvisioner
+public class OpenAIWhisperSpeechTranscriporProvisioner(OpenAiWhisperSpeechTranscriptorConfig config) : ISpeechTranscriptorProvisioner
 {
     private const string openApiKeyEnvVarName = "OPENAI_API_KEY";
 

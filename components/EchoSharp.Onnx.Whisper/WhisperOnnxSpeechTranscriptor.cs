@@ -135,6 +135,15 @@ internal class WhisperOnnxSpeechTranscriptor : ISpeechTranscriptor
         this.options = options;
     }
 
+    public WhisperOnnxSpeechTranscriptor(byte[] modelBytes,  SpeechTranscriptorOptions options)
+    {
+        var sessionOptions = new SessionOptions();
+        sessionOptions.RegisterOrtExtensions();
+        sessionOptions.AppendExecutionProvider_CPU();
+        inferenceSession = new InferenceSession(modelBytes, sessionOptions);
+        this.options = options;
+    }
+
     public void Dispose()
     {
         inferenceSession.Dispose();

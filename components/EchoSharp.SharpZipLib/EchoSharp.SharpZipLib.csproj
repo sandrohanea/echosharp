@@ -2,7 +2,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\EchoSharp\EchoSharp.csproj" />
-    <ProjectReference Include="..\EchoSharp.SharpZipLib\EchoSharp.SharpZipLib.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -10,9 +9,10 @@
     <None Include="..\..\readme.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
+
   <ItemGroup>
-    <PackageReference Include="Microsoft.ML.OnnxRuntime" />
-    <PackageReference Include="org.k2fsa.sherpa.onnx" />
+    <PackageReference Include="SharpZipLib" />
   </ItemGroup>
+
 
 </Project>

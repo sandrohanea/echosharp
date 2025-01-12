@@ -1,11 +1,15 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
-
 namespace EchoSharp.ProvisioningModelUtility;
 
-public class SeekableStreamWrapper(Stream source) : Stream
+/// <summary>
+/// Represents a stream that wraps a non-seekable stream and transform it into a seekable stream, using a cache stream.
+/// </summary>
+/// <remarks>
+/// The cache stream needs to support: reading, writing and seeking. It can be a MemoryStream or a FileStream.
+/// </remarks>
+public class SeekableStreamWrapper(Stream source, Stream cacheStream) : Stream
 {
-    private readonly MemoryStream cacheStream = new();
     private long position;
 
     public override bool CanRead => true;
@@ -52,6 +56,7 @@ public class SeekableStreamWrapper(Stream source) : Stream
         return bytesRead;
     }
 
+#if NET8_0_OR_GREATER
     public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
     {
         if (position < cacheStream.Length)
@@ -77,6 +82,7 @@ public class SeekableStreamWrapper(Stream source) : Stream
 
         return bytesRead;
     }
+#endif
 
     public override long Seek(long offset, SeekOrigin origin)
     {

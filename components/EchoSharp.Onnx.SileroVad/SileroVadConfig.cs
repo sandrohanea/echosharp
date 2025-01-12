@@ -5,14 +5,15 @@ namespace EchoSharp.Onnx.SileroVad;
 public class SileroVadConfig
 {
     /// <summary>
-    /// The path to the model file to be downloaded and used for transcription.
+    /// The path where the model file will be downloaded and used for transcription.
     /// </summary>
     /// <remarks>
     /// If this is set, the model file will be downloaded and used for transcription.
     /// If this is not set, the model will be downloaded in memory and used for transcription (not persisted to disk).
     /// Defaults to <see langword="null"/>.
+    /// This should be either an existing directory or a directory that can be created.
     /// </remarks>
-    public string? ModelFilePath { get; set; }
+    public string? ModelPath { get; set; }
 
     /// <summary>
     /// The model type to be used.
@@ -20,7 +21,7 @@ public class SileroVadConfig
     /// <remarks>
     /// Defaults to <see cref="SileroVadModelType.Full"/>.
     /// </remarks>
-    public SileroVadModelType ModelType { get; set; } = SileroVadModelType.Full;
+    public SileroVadModel Model { get; set; } = SileroVadModels.Full;
 
     /// <summary>
     /// The gap threshold to be used when detecting voice activity.

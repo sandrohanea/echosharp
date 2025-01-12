@@ -8,11 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\components\EchoSharp.SharpZipLib\EchoSharp.SharpZipLib.csproj" />
     <ProjectReference Include="..\..\src\EchoSharp\EchoSharp.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="SharpCompress" />
   </ItemGroup>
   
 </Project>

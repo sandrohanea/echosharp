@@ -1,46 +1,45 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
 using EchoSharp.Provisioning;
+using EchoSharp.Provisioning.Hasher;
+using EchoSharp.Provisioning.Unarchive;
 using EchoSharp.VoiceActivityDetection;
 
 namespace EchoSharp.Onnx.SileroVad;
 
 public class SileroVadProvisioner(SileroVadConfig config) : IVadDetectorProvisioner
 {
-    private readonly HttpClient httpClient = new();
+    private const int maxModelSize = 2327524;
+
     public async Task<IVadDetectorFactory> ProvisionAsync(CancellationToken cancellationToken = default)
     {
-        var modelPath = config.ModelFilePath ??
-            Path.Combine(Path.GetTempPath(), "silero-vad-models", $"{config.ModelType}.onnx");
-
-        if (!File.Exists(modelPath))
+        if (config.ModelPath is not null)
         {
-            var modelStream = await GetModelStreamAsync(cancellationToken);
-        }
+            var options = new UnarchiverOptions(config.ModelPath, maxModelSize);
+            await ModelDownloader.DownloadModelAsync(config.Model, options, Sha512Hasher.Instance, UnarchiverCopy.Instance, cancellationToken);
+            var modelOnnxPath = Path.Combine(config.ModelPath, UnarchiverCopy.ModelName);
 
-        var options = new SileroVadOptions(modelPath)
+            return await new SileroVadDetectorFactory(new SileroVadOptions(modelOnnxPath)
+            {
+                Threshold = config.Threshold,
+                ThresholdGap = config.ThresholdGap
+            }).WarmUpAsync(config.WarmUp, cancellationToken);
+
+        }
+        using var memoryModel = new MemoryModel();
+
+        await ModelDownloader.DownloadModelAsync(
+            config.Model,
+            new UnarchiverOptions(memoryModel, maxModelSize),
+            Sha512Hasher.Instance,
+            UnarchiverCopy.Instance,
+            cancellationToken);
+
+        return await new SileroVadDetectorFactory(new SileroVadOptions(memoryModel.GetModelMemory(UnarchiverCopy.ModelName).ToArray())
         {
             Threshold = config.Threshold,
             ThresholdGap = config.ThresholdGap
-        };
-
-        return new SileroVadDetectorFactory(options);
+        }).WarmUpAsync(config.WarmUp, cancellationToken);
     }
 
-    private Task<Stream> GetModelStreamAsync(CancellationToken cancellationToken)
-    {
-        var url = config.ModelType switch
-        {
-            SileroVadModelType.Op15_16k => "https://github.com/sandrohanea/silero-vad/raw/refs/heads/master/src/silero_vad/data/silero_vad_16k_op15.onnx",
-            SileroVadModelType.Half => "https://github.com/sandrohanea/silero-vad/raw/refs/heads/master/src/silero_vad/data/silero_vad_half.onnx",
-            SileroVadModelType.Full => "https://github.com/sandrohanea/silero-vad/raw/refs/heads/master/src/silero_vad/data/silero_vad.onnx",
-            _ => throw new ArgumentException("Invalid model type.")
-        };
-
-#if NET8_0_OR_GREATER
-        return httpClient.GetStreamAsync(url, cancellationToken);
-#else
-        return httpClient.GetStreamAsync(url);
-#endif
-    }
 }

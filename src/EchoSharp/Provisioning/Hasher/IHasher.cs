@@ -1,5 +1,7 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
+using EchoSharp.Provisioning.Streams;
+
 namespace EchoSharp.Provisioning.Hasher;
 
 public interface IHasher

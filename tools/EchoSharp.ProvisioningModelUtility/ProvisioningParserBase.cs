@@ -1,20 +1,16 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
-using System.IO.Compression;
 using EchoSharp.Provisioning;
 using EchoSharp.Provisioning.Hasher;
 using EchoSharp.Provisioning.Unarchive;
-using SharpCompress.Archives;
-using SharpCompress.Common;
 
 namespace EchoSharp.ProvisioningModelUtility;
 
-internal class UnarchiverDiscardHelper(IHasher hasher, Stream source)
+public abstract class ProvisioningParserBase(IHasher hasher, Stream source) : IProvisioningParser
 {
     private readonly IntegrityFile integrityFile = new();
 
     private long largestFileSize;
-    private ArchiveType? archiveType;
 
     public IntegrityFile GetIntegrityFile()
     {
@@ -22,39 +18,29 @@ internal class UnarchiverDiscardHelper(IHasher hasher, Stream source)
         return integrityFile;
     }
 
-    public long GetLargestFileSize()
+    public virtual long GetLargestFileSize()
     {
         return largestFileSize;
     }
 
-    public ArchiveType? GetArchiveType()
-    {
-        return archiveType;
-    }
+    public abstract ProvisioningModel.ArchiveTypes GetArchiveType();
 
-    public async Task RunAsync(CancellationToken cancellationToken)
+    public virtual async Task RunAsync(CancellationToken cancellationToken)
     {
         try
         {
-            // Use SharpCompress to open the archive
-
-            using var zipArchive = new ZipArchive(source, ZipArchiveMode.Read, leaveOpen: false);
-
-            archiveType = ArchiveType.Zip;
-
-            foreach (var entry in zipArchive.Entries)
+            await foreach (var entry in EnumerateEntriesAsync(source, cancellationToken))
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
                 // Skip directories
-                if (string.IsNullOrEmpty(entry.Name))
+                if (entry.IsDirectory)
                 {
                     continue;
                 }
 
-
                 // Open the entry stream
-                using var entryStream = entry.Open();
+                using var entryStream = await entry.OpenReadAsync(cancellationToken);
 
                 // Create a hash stream for computing the file's hash
                 using var hasherStream = hasher.CreateStream(entryStream, null);
@@ -62,10 +48,7 @@ internal class UnarchiverDiscardHelper(IHasher hasher, Stream source)
                 await ConsumeStreamAsync(hasherStream, cancellationToken);
 
                 // Store the hash in the integrity file
-                if (hasherStream.ComputedHash != null)
-                {
-                    integrityFile.AddFile(entry.FullName, hasherStream.ComputedHash);
-                }
+                integrityFile.AddFile(entry.FullName, hasherStream.ComputedHash);
             }
         }
         catch (InvalidOperationException ex)
@@ -83,12 +66,11 @@ internal class UnarchiverDiscardHelper(IHasher hasher, Stream source)
             await ConsumeStreamAsync(hasherStream, cancellationToken);
 
             // Store the hash in the integrity file
-            if (hasherStream.ComputedHash != null)
-            {
-                integrityFile.AddFile(UnarchiverCopy.ModelName, hasherStream.ComputedHash);
-            }
+            integrityFile.AddFile(UnarchiverCopy.ModelName, hasherStream.ComputedHash);
         }
     }
+
+    protected abstract IAsyncEnumerable<UnarchiveFileEntry> EnumerateEntriesAsync(Stream stream, CancellationToken cancellationToken);
 
     private async Task ConsumeStreamAsync(Stream stream, CancellationToken cancellationToken)
     {
@@ -107,3 +89,4 @@ internal class UnarchiverDiscardHelper(IHasher hasher, Stream source)
         }
     }
 }
+

@@ -112,12 +112,17 @@ public class IntegrityFile
         {
             var currentLine = spanText[line];
             var data = currentLine.Split(separator);
+            if (!data.MoveNext())
+            {
+                return null;
+            }
             var parsedFileName = currentLine[data.Current];
             if (!data.MoveNext())
             {
                 return null;
             }
             var parsedHash = currentLine[data.Current];
+            integrityFile.AddFile(parsedFileName.ToString(), parsedHash.ToString());
         }
 #elif NET8_0_OR_GREATER
         var text = await reader.ReadToEndAsync(cancellationToken);

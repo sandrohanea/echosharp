@@ -1,5 +1,6 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 using EchoSharp.Provisioning.Hasher;
+using EchoSharp.Provisioning.Streams;
 
 namespace EchoSharp.Provisioning.Unarchive;
 
@@ -52,17 +53,13 @@ internal class UnarchiverCopySession(IHasher hasher, Stream source, UnarchiverOp
 #else
             await hasherStream.CopyToAsync(fileStream);
 #endif
-            return;
         }
         else
         {
             await options.MemoryModel!.CopyFromAsync(UnarchiverCopy.ModelName, maxSizedSource, cancellationToken);
         }
 
-        if (hasherStream.ComputedHash is not null)
-        {
-            integrityFile.AddFile(UnarchiverCopy.ModelName, hasherStream.ComputedHash);
-        }
+        integrityFile.AddFile(UnarchiverCopy.ModelName, hasherStream.ComputedHash);
 
         if (options.ModelPath != null)
         {

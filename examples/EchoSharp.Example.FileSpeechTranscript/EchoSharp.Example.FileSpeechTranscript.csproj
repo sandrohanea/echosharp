@@ -1,6 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <!-- This target is used to copy the models downloaded by `downloadModels.ps1` script to destination folder if they exists -->
-  <Import Project="..\..\CopyModels.targets" />
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -10,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Whisper.net.AllRuntimes" Version="1.7.4" />
+    <PackageReference Include="Whisper.net.Runtime" Version="1.7.4" />
   </ItemGroup>
   
   <ItemGroup>

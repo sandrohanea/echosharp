@@ -15,6 +15,10 @@ public class UnarchiverCopy : IUnarchiver
 
     public IUnarchiverSession CreateSession(IHasher hasher, Stream stream, UnarchiverOptions options)
     {
+        if (options.ModelPath != null && !Directory.Exists(options.ModelPath))
+        {
+            Directory.CreateDirectory(options.ModelPath);
+        }
         return new UnarchiverCopySession(hasher, stream, options);
     }
 }

@@ -3,6 +3,7 @@
 using System.Globalization;
 using EchoSharp.SpeechTranscription;
 using Whisper.net;
+using Whisper.net.LibraryLoader;
 
 namespace EchoSharp.Whisper.net;
 
@@ -10,6 +11,7 @@ public sealed class WhisperSpeechTranscriptorFactory : ISpeechTranscriptorFactor
 {
     private readonly WhisperFactory? whisperFactory;
     private readonly WhisperProcessorBuilder builder;
+    private readonly Func<WhisperProcessorBuilder, WhisperProcessorBuilder>? builderConfig;
 
     public WhisperSpeechTranscriptorFactory(WhisperFactory factory, bool dispose = true)
     {
@@ -25,9 +27,33 @@ public sealed class WhisperSpeechTranscriptorFactory : ISpeechTranscriptorFactor
         this.builder = builder;
     }
 
-    public WhisperSpeechTranscriptorFactory(string modelFileName)
+    public WhisperSpeechTranscriptorFactory(string modelFileName, WhisperFactoryOptions whisperFactoryOptions, Func<WhisperProcessorBuilder, WhisperProcessorBuilder>? builderConfig = null)
     {
+        this.builderConfig = builderConfig;
         whisperFactory = WhisperFactory.FromPath(modelFileName);
+        builder = whisperFactory.CreateBuilder();
+    }
+
+    public WhisperSpeechTranscriptorFactory(Memory<byte> bufferMemory, WhisperFactoryOptions whisperFactoryOptions, Func<WhisperProcessorBuilder, WhisperProcessorBuilder>? builderConfig = null)
+    {
+        this.builderConfig = builderConfig;
+        // TODO: Remove the array allocation once Whisper.net supports Memory<byte>
+        whisperFactory = WhisperFactory.FromBuffer(bufferMemory.ToArray(), whisperFactoryOptions);
+        builder = whisperFactory.CreateBuilder();
+    }
+
+    public WhisperSpeechTranscriptorFactory(string modelFileName, Func<WhisperProcessorBuilder, WhisperProcessorBuilder>? builderConfig = null)
+    {
+        this.builderConfig = builderConfig;
+        whisperFactory = WhisperFactory.FromPath(modelFileName);
+        builder = whisperFactory.CreateBuilder();
+    }
+
+    public WhisperSpeechTranscriptorFactory(Memory<byte> bufferMemory, Func<WhisperProcessorBuilder, WhisperProcessorBuilder>? builderConfig = null)
+    {
+        this.builderConfig = builderConfig;
+        // TODO: Remove the array allocation once Whisper.net supports Memory<byte>
+        whisperFactory = WhisperFactory.FromBuffer(bufferMemory.ToArray());
         builder = whisperFactory.CreateBuilder();
     }
 
@@ -50,6 +76,11 @@ public sealed class WhisperSpeechTranscriptorFactory : ISpeechTranscriptorFactor
         if (options.RetrieveTokenDetails)
         {
             currentBuilder = currentBuilder.WithTokenTimestamps();
+        }
+
+        if (builderConfig != null)
+        {
+            currentBuilder = builderConfig(currentBuilder);
         }
 
         var processor = currentBuilder.Build();

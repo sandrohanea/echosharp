@@ -8,14 +8,15 @@ namespace EchoSharp.Whisper.net;
 public class WhisperSpeechTranscriptorConfig
 {
     /// <summary>
-    /// The path to the model file to be downloaded and used for transcription.
+    /// The path where the model file will be downloaded and used for transcription.
     /// </summary>
     /// <remarks>
     /// If this is set, the model file will be downloaded and used for transcription.
     /// If this is not set, the model will be downloaded in memory and used for transcription (not persisted to disk).
     /// Defaults to <see langword="null"/>.
+    /// This should be either an existing directory or a directory that can be created.
     /// </remarks>
-    public string? ModelFilePath { get; set; }
+    public string? ModelPath { get; set; }
 
     /// <summary>
     /// The model size to be used.
@@ -40,15 +41,6 @@ public class WhisperSpeechTranscriptorConfig
     /// Defaults to a new instance of <see cref="WhisperFactoryOptions"/>, which has default values as per the Whisper.net library.
     /// </remarks>
     public WhisperFactoryOptions WhisperFactoryOptions { get; set; } = new WhisperFactoryOptions();
-
-    /// <summary>
-    /// A flag to check if the model file size is the same as the downloaded model file size.
-    /// </summary>
-    /// <remarks>
-    /// Only used if <see cref="ModelFilePath"/> is set.
-    /// Defaults to <see langword="false"/>.
-    /// </remarks>
-    public bool CheckModelSize { get; set; }
 
     /// <summary>
     /// The path to the CoreML encoder model to be downloaded and used for transcription.

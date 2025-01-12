@@ -5,13 +5,14 @@ namespace EchoSharp.Onnx.Whisper;
 public class WhisperOnnxSpeechTranscriptorConfig
 {
     /// <summary>
-    /// The path to the model file to be downloaded and used for transcription.
+    /// The path where the model file will be downloaded and used for transcription.
     /// </summary>
     /// <remarks>
-    /// If this is empty, the model file will be downloaded to a temporary location and used for transcription.
+    /// If this is set, the model file will be downloaded and used for transcription.
+    /// If this is not set, the model will be downloaded in memory and used for transcription (not persisted to disk).
     /// Defaults to <see langword="null"/>.
     /// </remarks>
-    public string? ModelFileName { get; set; }
+    public string? ModelPath { get; set; }
 
     /// <summary>
     /// The model type to be downloaded.
@@ -20,15 +21,6 @@ public class WhisperOnnxSpeechTranscriptorConfig
     /// Defaults to <see cref="WhisperOnnxModelType.Small"/>.
     /// </remarks>
     public WhisperOnnxModelType ModelType { get; set; } = WhisperOnnxModelType.Small;
-
-    /// <summary>
-    /// A flag to check if the model file size is the same as the downloaded model file size.
-    /// </summary>
-    /// <remarks>
-    /// Only used if <see cref="ModelFileName"/> is set.
-    /// Defaults to <see langword="false"/>.
-    /// </remarks>
-    public bool CheckModelSize { get; set; }
 
     /// <summary>
     /// A flag to run an initial warmup of the model.

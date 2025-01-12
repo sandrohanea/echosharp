@@ -10,11 +10,26 @@ namespace EchoSharp.Onnx.Whisper;
 /// <remarks>
 /// For now, it has limited support with ONNX Models available here: https://huggingface.co/khmyznikov/whisper-int8-cpu-ort.onnx
 /// </remarks>
-public sealed class WhisperOnnxSpeechTranscriptorFactory(string modelPath) : ISpeechTranscriptorFactory
+public sealed class WhisperOnnxSpeechTranscriptorFactory : ISpeechTranscriptorFactory
 {
+    private readonly string? modelPath;
+    private readonly byte[]? modelBytes;
+
+    public WhisperOnnxSpeechTranscriptorFactory(string modelPath)
+    {
+        this.modelPath = modelPath;
+    }
+
+    public WhisperOnnxSpeechTranscriptorFactory(byte[] modelBytes)
+    {
+        this.modelBytes = modelBytes;
+    }
+
     public ISpeechTranscriptor Create(SpeechTranscriptorOptions options)
     {
-        return new WhisperOnnxSpeechTranscriptor(modelPath, options);
+        return modelPath != null
+            ? new WhisperOnnxSpeechTranscriptor(modelPath, options)
+            : new WhisperOnnxSpeechTranscriptor(modelBytes!, options);
     }
 
     public void Dispose()

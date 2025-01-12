@@ -3,8 +3,9 @@
 using System.Buffers;
 using System.Collections.Concurrent;
 using System.Security.Cryptography;
+using EchoSharp.Provisioning.Hasher;
 
-namespace EchoSharp.Provisioning.Hasher;
+namespace EchoSharp.Provisioning.Streams;
 
 public class HasherStream(Stream source, HashAlgorithm hashAlgorithm, ConcurrentBag<HashAlgorithm> poolHash, string? expectedHash) : Stream
 {
@@ -54,12 +55,6 @@ public class HasherStream(Stream source, HashAlgorithm hashAlgorithm, Concurrent
         // 2) Handle which part should be hashed vs. skipped
         HandleReadData(buffer, offset, bytesRead);
 
-        // 3) If we didn't fill the user buffer, it's likely end-of-stream -> finalize hash
-        if (bytesRead < count)
-        {
-            ComputeAndVerifyHash();
-        }
-
         return bytesRead;
     }
 
@@ -76,11 +71,6 @@ public class HasherStream(Stream source, HashAlgorithm hashAlgorithm, Concurrent
 
         // We can process the span version directly
         HandleReadData(buffer.Span, bytesRead);
-
-        if (bytesRead < buffer.Length)
-        {
-            ComputeAndVerifyHash();
-        }
         return bytesRead;
     }
 #else
@@ -95,10 +85,6 @@ public class HasherStream(Stream source, HashAlgorithm hashAlgorithm, Concurrent
 
         HandleReadData(buffer, offset, bytesRead);
 
-        if (bytesRead < count)
-        {
-            ComputeAndVerifyHash();
-        }
         return bytesRead;
     }
 #endif
@@ -113,6 +99,14 @@ public class HasherStream(Stream source, HashAlgorithm hashAlgorithm, Concurrent
     /// </remarks>
     private void HandleReadData(byte[] buffer, int offset, int bytesRead)
     {
+        if (!source.CanSeek)
+        {
+            // If the source stream is not seekable, we should hash everything.
+            cryptoStream.Write(buffer, offset, bytesRead);
+            hashPosition += bytesRead;
+            return;
+        }
+
         var readStartPos = Position - bytesRead; // after reading from source, Position advanced
         var readEndPos = Position;
 
@@ -145,6 +139,14 @@ public class HasherStream(Stream source, HashAlgorithm hashAlgorithm, Concurrent
     /// </summary>
     private void HandleReadData(Span<byte> buffer, int bytesRead)
     {
+        if (!source.CanSeek)
+        {
+            // If the source stream is not seekable, we should hash everything.
+            cryptoStream.Write(buffer[..bytesRead]);
+            hashPosition += bytesRead;
+            return;
+        }
+
         var readStartPos = Position - bytesRead;
         var readEndPos = Position;
 
@@ -187,7 +189,7 @@ public class HasherStream(Stream source, HashAlgorithm hashAlgorithm, Concurrent
             throw new IOException("Cannot seek before beginning of stream.");
         }
 
-        var oldPos = source.Position; // Where we are *before* this Seek
+        var oldPos = Position; // Where we are *before* this Seek
         if (newAbsolutePos == oldPos)
         {
             // No move => no hashing or skipping needed
@@ -210,8 +212,8 @@ public class HasherStream(Stream source, HashAlgorithm hashAlgorithm, Concurrent
 
         // We only do one Seek total. If we're *not* already at oldPos, 
         // we must Seek there. Then we read forward in one pass. 
-        // However, if the source.Position is already `oldPos`, we can skip this.
-        if (source.Position != oldPos)
+        // However, if the Position is already `oldPos`, we can skip this.
+        if (Position != oldPos)
         {
             source.Seek(oldPos, SeekOrigin.Begin);
         }
@@ -272,13 +274,13 @@ public class HasherStream(Stream source, HashAlgorithm hashAlgorithm, Concurrent
                 hashPosition += newBytesCount;
             }
 
-            // By now, the underlying `source.Position` should be at oldPos + totalReadSoFar. 
+            // By now, the underlying `Position` should be at oldPos + totalReadSoFar. 
             // We want it to be exactly newAbsolutePos. 
             // If we read short (EOF?), we might not get that far. 
             // But if the stream has enough data, we are effectively at newAbsolutePos 
             // with no extra Seek call.
 
-            return source.Position;
+            return Position;
         }
         finally
         {
@@ -296,6 +298,21 @@ public class HasherStream(Stream source, HashAlgorithm hashAlgorithm, Concurrent
         throw new NotImplementedException();
     }
 
+    public string ComputedHash
+    {
+        get
+        {
+            if (computedHash != null)
+            {
+                return computedHash;
+            }
+
+            ComputeAndVerifyHash();
+
+            return computedHash!;
+        }
+    }
+
     protected override void Dispose(bool disposing)
     {
         if (disposing)
@@ -306,10 +323,13 @@ public class HasherStream(Stream source, HashAlgorithm hashAlgorithm, Concurrent
         base.Dispose(disposing);
     }
 
-    public string? ComputedHash => computedHash;
-
     private void ComputeAndVerifyHash()
     {
+        if (cryptoStream.HasFlushedFinalBlock)
+        {
+            return;
+        }
+        cryptoStream.FlushFinalBlock();
         if (hashAlgorithm.Hash == null)
         {
             throw new HasherException("Cannot compute the hash of the given stream");

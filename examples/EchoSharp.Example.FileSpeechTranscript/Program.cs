@@ -24,11 +24,11 @@ using EchoSharp.NAudio;
 using EchoSharp.Onnx.Sherpa.SpeechTranscription;
 using EchoSharp.Onnx.Whisper;
 using EchoSharp.OpenAI.Whisper;
+using EchoSharp.Provisioning;
 using EchoSharp.SpeechTranscription;
 using EchoSharp.Whisper.net;
-using SherpaOnnx;
 
-var transcritorFactory = GetSpeechTranscriptor(args.Length > 1 ? args[1] : "whisper.net"); // OR "azure fast api" OR "openai whisper"
+var transcritorFactory = await GetSpeechTranscriptorAsync(args.Length > 1 ? args[1] : "whisper.net"); // OR "azure fast api" OR "openai whisper"
 
 // Replace with the path to the audio file (the other example is files/testFile.wav)
 
@@ -52,67 +52,68 @@ await foreach (var segment in transcriptor.TranscribeAsync(audioSource, Cancella
     Console.WriteLine($"{segment.StartTime}-{segment.StartTime + segment.Duration}:{segment.Text}");
 }
 
-ISpeechTranscriptorFactory GetSpeechTranscriptor(string type)
+Task<ISpeechTranscriptorFactory> GetSpeechTranscriptorAsync(string type)
 {
-    // Uncomment to use other speech transcriptor component
-    return type switch
+    // Getting the provisioner (that is downloading the model)
+    var provisioner = type switch
     {
-        "whisper.net" => GetWhisperTranscriptor(),
-        "azure fast api" => GetAzureAIFastTranscriptor(),
-        "openai whisper" => GetOpenAITranscriptor(),
-        "whisper onnx" => GetWhisperOnnxTranscriptor(),
-        "sherpa onnx" => GetSherpaOnnxTranscriptor(),
+        "whisper.net" => GetWhisperTranscriptorProvisioner(),
+        "azure fast api" => GetAzureAIFastTranscriptorProvisioner(),
+        "openai whisper" => GetOpenAITranscriptorProvisioner(),
+        "whisper onnx" => GetWhisperOnnxTranscriptorProvisioner(),
+        "sherpa onnx" => GetSherpaOnnxTranscriptorProvisioner(),
         _ => throw new NotSupportedException()
     };
+
+    return provisioner.ProvisionAsync();
 }
 
-ISpeechTranscriptorFactory GetWhisperTranscriptor()
+ISpeechTranscriptorProvisioner GetWhisperTranscriptorProvisioner()
 {
-    // Replace with the path to the Whisper.net GGML model (Download from here): https://huggingface.co/sandrohanea/whisper.net/tree/main
-    // Or execute `downloadModels.ps1` script in the root of this repository
-    var ggmlModelPath = "models/ggml-base.bin";
-    return new WhisperSpeechTranscriptorFactory(ggmlModelPath);
+    return new WhisperSpeechTranscriptorProvisioner(new WhisperSpeechTranscriptorConfig()
+    {
+        GgmlType = Whisper.net.Ggml.GgmlType.Tiny,
+        OpenVinoEncoderModelPath = Path.Combine("models", "whisper.net", "openvino"),
+        QuantizationType = Whisper.net.Ggml.QuantizationType.NoQuantization,
+        ModelPath = Path.Combine("models", "whisper.net")
+    });
 }
 
-ISpeechTranscriptorFactory GetWhisperOnnxTranscriptor()
+ISpeechTranscriptorProvisioner GetWhisperOnnxTranscriptorProvisioner()
 {
-    // Replace with the path to the Whisper ONNX model (Download from here): https://huggingface.co/khmyznikov/whisper-int8-cpu-ort.onnx/tree/main
-    // Or execute `downloadModels.ps1` script in the root of this repository
-    var onnxPath = "models/whisper.onnx";
-    return new WhisperOnnxSpeechTranscriptorFactory(onnxPath);
+    return new WhisperOnnxSpeechTranscriptorProvisioner(new WhisperOnnxSpeechTranscriptorConfig()
+    {
+        ModelPath = Path.Combine("models", "whisper.onnx"),
+        ModelType = WhisperOnnxModelType.Tiny,
+    });
 }
 
-ISpeechTranscriptorFactory GetAzureAIFastTranscriptor()
+ISpeechTranscriptorProvisioner GetAzureAIFastTranscriptorProvisioner()
 {
     // Replace with your Azure Cognitive Services Speech Service endpoint and key (Get from here): https://azure.microsoft.com/en-us/products/ai-services/ai-speech
     var endpoint = new Uri("https://your-azure-cognitive-service.cognitiveservices.azure.com/");
     var key = "your-azure-speech-service-api-key";
-    return new AzureAIFastTranscriptorFactory(endpoint, key);
+    return new AzureAIFastTranscriptorProvisioner(new AzureAIFastTranscriptorConfig()
+    {
+        Endpoint = endpoint,
+        SubscriptionKey = key,
+    });
 }
 
-ISpeechTranscriptorFactory GetOpenAITranscriptor()
+ISpeechTranscriptorProvisioner GetOpenAITranscriptorProvisioner()
 {
     var openAiApiKey = "your-openai-api-key";
-    return new OpenAIWhisperSpeechTranscriptorFactory(openAiApiKey);
+    return new OpenAIWhisperSpeechTranscriporProvisioner(new OpenAiWhisperSpeechTranscriptorConfig()
+    {
+        ApiKey = openAiApiKey
+    });
 }
 
-ISpeechTranscriptorFactory GetSherpaOnnxTranscriptor()
+ISpeechTranscriptorProvisioner GetSherpaOnnxTranscriptorProvisioner()
 {
-    var modelConfig = new OnlineModelConfig();
-    var ctcFstDecoderConfig = new OnlineCtcFstDecoderConfig();
-
-    // Replace with your own model path (download from here: https://github.com/k2-fsa/sherpa-onnx/releases/tag/asr-models)
-    modelConfig.Zipformer2Ctc.Model = "models/sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18/ctc-epoch-30-avg-3-chunk-16-left-128.int8.onnx";
-    var offlineModelConfig = new OfflineModelConfig();
-    modelConfig.Tokens = "models/sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18/tokens.txt";
-    modelConfig.Provider = "cpu";
-    modelConfig.NumThreads = 1;
-    modelConfig.Debug = 0;
-    ctcFstDecoderConfig.Graph = "models/sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18/HLG.fst";
-
-    return new SherpaOnnxSpeechTranscriptorFactory(new SherpaOnnxOnlineTranscriptorOptions()
+    return new SherpaOnnxSpeechTranscriptorProvisioner(new SherpaOnnxSpeechTranscriptorConfig()
     {
-        OnlineModelConfig = modelConfig,
-        OnlineCtcFstDecoderConfig = ctcFstDecoderConfig
+        ModelPath = Path.Combine("models", "sherpa"),
+        Model = SherpaOnnxModels.ZipFormerGigaSpeechInt8
     });
 }

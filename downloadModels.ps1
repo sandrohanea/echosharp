@@ -21,7 +21,7 @@ if (!(Test-Path $whisperOnnxPath)) {
     Invoke-WebRequest -Uri $whisperOnnxUrl -OutFile $whisperOnnxPath
 }
 
-$whisperGgmlUrl = "https://huggingface.co/sandrohanea/whisper.net/resolve/main/q5_0/ggml-base.bin"
+$whisperGgmlUrl = "https://huggingface.co/sandrohanea/whisper.net/resolve/v3/q5_0/ggml-base.bin"
 $whisperGgmlPath = "models/ggml-base.bin"
 
 if (!(Test-Path $whisperGgmlPath)) {

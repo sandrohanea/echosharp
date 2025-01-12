@@ -2,6 +2,7 @@
 
 using System.Collections.Concurrent;
 using System.Security.Cryptography;
+using EchoSharp.Provisioning.Streams;
 
 namespace EchoSharp.Provisioning.Hasher;
 
