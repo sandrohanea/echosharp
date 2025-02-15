@@ -11,7 +11,7 @@ public static class SherpaOnnxModels
         "sherpa-onnx-zipformer-gigaspeech-2023-12-12",
         new("https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-zipformer-gigaspeech-2023-12-12.tar.bz2"),
         ProvisioningModel.ArchiveTypes.TarGz,
-        "G3nYkxNWEGRbNsyoeh/5coPspVE0S4Ted3da+xgmc4w1rW6gH3sxGO/YHCSZ8mZi3WOHjF9RgrgJD0regyZPvA==",
+        "rfO+bvOvWxNz+uzkrrp8MKbA6/UaqCFa0RYNTmpRTHW80CXK/YMupE6iu1sB/c523qlD1pYw2yUKy4voL4L54Q==",
         "4Y9U5HTgtUgx3IaPFSycEB+biwokWPAAeaYikqffZTQ92k8Bvma2ux9ddWXT7H6GtHrdrZGOGKzMd/c51IY6Iw==",
         307011274L,
         260990607L,
@@ -27,7 +27,7 @@ public static class SherpaOnnxModels
         "sherpa-onnx-zipformer-gigaspeech-2023-12-12",
         new("https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-zipformer-gigaspeech-2023-12-12.tar.bz2"),
         ProvisioningModel.ArchiveTypes.TarGz,
-        "G3nYkxNWEGRbNsyoeh/5coPspVE0S4Ted3da+xgmc4w1rW6gH3sxGO/YHCSZ8mZi3WOHjF9RgrgJD0regyZPvA==",
+        "rfO+bvOvWxNz+uzkrrp8MKbA6/UaqCFa0RYNTmpRTHW80CXK/YMupE6iu1sB/c523qlD1pYw2yUKy4voL4L54Q==",
         "4Y9U5HTgtUgx3IaPFSycEB+biwokWPAAeaYikqffZTQ92k8Bvma2ux9ddWXT7H6GtHrdrZGOGKzMd/c51IY6Iw==",
         307011274L,
         260990607L,
@@ -39,5 +39,5 @@ public static class SherpaOnnxModels
         config.Tokens = Path.Combine(path, "tokens.txt");
     });
 
-    // TODO: Add more Sherpa Models
+    // TODO: Add more Sherpa Models (blocked because the models archive is always changing and breaking the ArchiveHash)
 }
