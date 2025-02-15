@@ -1,6 +1,6 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
-using EchoSharp.Abstractions.VoiceActivityDetection;
+using EchoSharp.VoiceActivityDetection;
 
 namespace EchoSharp.Onnx.SileroVad;
 

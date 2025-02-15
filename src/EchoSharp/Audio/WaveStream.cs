@@ -2,8 +2,7 @@
 
 using System.Buffers;
 using System.Buffers.Binary;
-using EchoSharp.Abstractions.Audio;
-using EchoSharp.Abstractions.Config;
+using EchoSharp.Config;
 
 namespace EchoSharp.Audio;
 

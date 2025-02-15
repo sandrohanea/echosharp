@@ -1,18 +1,16 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
 using System.Globalization;
-using EchoSharp.Abstractions.Audio;
-using EchoSharp.Abstractions.SpeechTranscription;
 using EchoSharp.Audio;
 using EchoSharp.SpeechTranscription;
 using Xunit;
 using EchoSharp.Whisper.net;
 using EchoSharp.WebRtc.WebRtcVadSharp;
 using EchoSharp.Onnx.SileroVad;
-using EchoSharp.Abstractions.VoiceActivityDetection;
 using SherpaOnnx;
 using EchoSharp.Onnx.Sherpa.SpeechTranscription;
 using FluentAssertions;
+using EchoSharp.VoiceActivityDetection;
 
 namespace EchoSharp.Tests.SpeechTranscription;
 

@@ -11,6 +11,17 @@ internal class SileroVadOnnxModel : IDisposable
     private readonly long[] runningInputShape = [1, SileroConstants.BatchSize + SileroConstants.ContextSize];
     private readonly RunOptions runOptions;
 
+    public SileroVadOnnxModel(byte[] model)
+    {
+        var sessionOptions = new SessionOptions
+        {
+            InterOpNumThreads = 1,
+            IntraOpNumThreads = 1
+        };
+        session = new InferenceSession(model, sessionOptions);
+        runOptions = new RunOptions();
+    }
+
     public SileroVadOnnxModel(string modelPath)
     {
         var sessionOptions = new SessionOptions

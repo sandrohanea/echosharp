@@ -6,10 +6,10 @@ using System.Runtime.CompilerServices;
 using System.Threading.Channels;
 using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
-using EchoSharp.Abstractions.Audio;
-using EchoSharp.Abstractions.Config;
-using EchoSharp.Abstractions.SpeechTranscription;
 using EchoSharp.AzureAI.SpeechServices.Internals;
+using EchoSharp.Audio;
+using EchoSharp.SpeechTranscription;
+using EchoSharp.Config;
 
 namespace EchoSharp.AzureAI.SpeechServices.RealTime;
 
@@ -194,7 +194,7 @@ internal class AzureAIRealtimeTranscriptor(SpeechConfig speechConfig, RealtimeSp
     private async Task<RecognizerTokenLoader> GetRecognizerTokenLoaderAsync(AudioConfig audioConfig, CancellationToken cancellationToken)
     {
         var recognizer = options.LanguageAutoDetect
-            ? new SpeechRecognizer(speechConfig, AutoDetectSourceLanguageConfig.FromLanguages(azureOptions.CandidateLanguages.Select(c => c.ToString()).ToArray()), audioConfig)
+            ? new SpeechRecognizer(speechConfig, AutoDetectSourceLanguageConfig.FromLanguages([.. azureOptions.CandidateLanguages.Select(c => c.ToString())]), audioConfig)
             : new SpeechRecognizer(speechConfig, language: options.Language.ToString(), audioConfig);
 
         if (recognizerAuthTokenHandler != null)

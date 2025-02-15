@@ -2,7 +2,7 @@
 
 using OpenAI;
 using OpenAI.Audio;
-using EchoSharp.Abstractions.SpeechTranscription;
+using EchoSharp.SpeechTranscription;
 
 namespace EchoSharp.OpenAI.Whisper;
 

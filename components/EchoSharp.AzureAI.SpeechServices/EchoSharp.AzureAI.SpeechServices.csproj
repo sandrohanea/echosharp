@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\EchoSharp.Abstractions\EchoSharp.Abstractions.csproj" />
     <ProjectReference Include="..\..\src\EchoSharp\EchoSharp.csproj" />
   </ItemGroup>
 

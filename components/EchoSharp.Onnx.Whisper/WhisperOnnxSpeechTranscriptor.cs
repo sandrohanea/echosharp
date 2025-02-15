@@ -3,8 +3,8 @@
 using System.Runtime.CompilerServices;
 using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
-using EchoSharp.Abstractions.Audio;
-using EchoSharp.Abstractions.SpeechTranscription;
+using EchoSharp.Audio;
+using EchoSharp.SpeechTranscription;
 
 namespace EchoSharp.Onnx.Whisper;
 
@@ -132,6 +132,15 @@ internal class WhisperOnnxSpeechTranscriptor : ISpeechTranscriptor
         sessionOptions.RegisterOrtExtensions();
         sessionOptions.AppendExecutionProvider_CPU();
         inferenceSession = new InferenceSession(modelPath, sessionOptions);
+        this.options = options;
+    }
+
+    public WhisperOnnxSpeechTranscriptor(byte[] modelBytes,  SpeechTranscriptorOptions options)
+    {
+        var sessionOptions = new SessionOptions();
+        sessionOptions.RegisterOrtExtensions();
+        sessionOptions.AppendExecutionProvider_CPU();
+        inferenceSession = new InferenceSession(modelBytes, sessionOptions);
         this.options = options;
     }
 
