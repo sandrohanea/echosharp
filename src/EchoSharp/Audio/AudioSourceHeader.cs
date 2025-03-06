@@ -4,7 +4,7 @@ namespace EchoSharp.Audio;
 /// <summary>
 /// Details of the audio source header.
 /// </summary>
-public class AudioSourceHeader
+public struct AudioHeader
 {
     /// <summary>
     /// Gets the number of channels in the current wave file.

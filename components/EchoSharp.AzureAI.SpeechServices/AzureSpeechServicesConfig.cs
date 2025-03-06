@@ -2,10 +2,15 @@
 
 using Azure.Core;
 
-namespace EchoSharp.AzureAI.SpeechServices.FastTranscription;
+namespace EchoSharp.AzureAI.SpeechServices;
 
-public class AzureAIFastTranscriptorConfig
+public class AzureSpeechServicesConfig
 {
+    private const string azureAIRegionEnvVariable = "AZURE_AI_REGION";
+    private const string azureAISubscriptionKeyEnvVariable = "AZURE_AI_SUBSCRIPTION_KEY";
+    private string? azureRegion;
+    private string? subscriptionKey;
+
     /// <summary>
     /// The subscription key to be used for the Azure AI client.
     /// </summary>
@@ -13,7 +18,21 @@ public class AzureAIFastTranscriptorConfig
     /// This value will be used only if the <see cref="TokenCredential"/> is not set.
     /// If not set, the Subscription key will be read from the environment variable "AZURE_AI_SUBSCRIPTION_KEY".
     /// </remarks>
-    public string? SubscriptionKey { get; set; }
+    public string? SubscriptionKey
+    {
+        get
+        {
+            if (subscriptionKey is not null)
+            {
+                return subscriptionKey;
+            }
+
+            var envVariable = Environment.GetEnvironmentVariable(azureAISubscriptionKeyEnvVariable);
+            return envVariable;
+        }
+
+        set => subscriptionKey = value;
+    }
 
     /// <summary>
     /// The TokenCredential to be used for the Azure AI client.
@@ -30,7 +49,21 @@ public class AzureAIFastTranscriptorConfig
     /// This value will be used only if the <see cref="Endpoint"/> is not set.
     /// If not set, the Azure region will be read from the environment variable "AZURE_AI_REGION".
     /// </remarks>
-    public string? AzureRegion { get; set; }
+    public string? AzureRegion
+    {
+        get
+        {
+            if (azureRegion is not null)
+            {
+                return azureRegion;
+            }
+
+            var envVariable = Environment.GetEnvironmentVariable(azureAIRegionEnvVariable);
+            return envVariable;
+        }
+
+        set => azureRegion = value;
+    }
 
     /// <summary>
     /// The endpoint to be used for the Azure AI client.
@@ -47,4 +80,9 @@ public class AzureAIFastTranscriptorConfig
     /// By default, the connection is warmed up.
     /// </remarks>
     public bool WarmUp { get; set; } = true;
+
+    /// <summary>
+    /// Gets the Azure Resource Id to be used with TokenCredential for SpeechConfig based APIs.
+    /// </summary>
+    public string? ResourceId { get; set; }
 }

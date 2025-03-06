@@ -10,4 +10,9 @@ public class WebRtcVadSharpDetectorFactory(WebRtcVadSharpOptions webRtcVadSharpO
     {
         return new WebRtcVadSharpDetector(options, webRtcVadSharpOptions);
     }
+
+    public void Dispose()
+    {
+        // No resources to dispose
+    }
 }

@@ -17,7 +17,13 @@ public class EchoSharpRealtimeTranscriptorFactory(
 {
     public IRealtimeSpeechTranscriptor Create(RealtimeSpeechTranscriptorOptions options)
     {
+        // Will be disposed by the RealtimeSpeechTranscriptor
         var vadDetector = vadDetectorFactory.CreateVadDetector(vadDetectorOptions ?? new VadDetectorOptions());
         return new EchoSharpRealtimeTranscriptor(speechTranscriptorFactory, vadDetector, recognizingSpeechTranscriptorFactory, options, echoSharpOptions ?? new EchoSharpRealtimeOptions());
+    }
+
+    public void Dispose()
+    {
+        // Nothing to dispose
     }
 }

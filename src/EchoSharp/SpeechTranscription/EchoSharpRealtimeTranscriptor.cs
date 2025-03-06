@@ -224,4 +224,8 @@ internal class EchoSharpRealtimeTranscriptor(
         return new ConcatAudioSource([preSilence, new SliceAudioSource(source, paddedStart, paddedDuration), postSilence]);
     }
 
+    public void Dispose()
+    {
+        vadDetector.Dispose();
+    }
 }

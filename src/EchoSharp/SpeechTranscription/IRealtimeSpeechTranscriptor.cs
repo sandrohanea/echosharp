@@ -7,7 +7,7 @@ using EchoSharp.Audio;
 
 namespace EchoSharp.SpeechTranscription;
 
-public interface IRealtimeSpeechTranscriptor
+public interface IRealtimeSpeechTranscriptor : IDisposable
 {
     IAsyncEnumerable<IRealtimeRecognitionEvent> TranscribeAsync(IAwaitableAudioSource source, CancellationToken cancellationToken = default);
 }

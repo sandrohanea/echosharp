@@ -17,7 +17,7 @@ public class DiscardableMemoryAudioSourceTests
     {
         // Arrange
         var discardableSource = new DiscardableMemoryAudioSource(storeFloats, storeBytes);
-        discardableSource.Initialize(new AudioSourceHeader()
+        discardableSource.Initialize(new AudioHeader()
         {
             BitsPerSample = 16,
             Channels = 2,
@@ -49,7 +49,7 @@ public class DiscardableMemoryAudioSourceTests
     {
         // Arrange
         var discardableSource = new DiscardableMemoryAudioSource(storeFloats, storeBytes);
-        discardableSource.Initialize(new AudioSourceHeader()
+        discardableSource.Initialize(new AudioHeader()
         {
             BitsPerSample = 16,
             Channels = 2,
@@ -76,7 +76,7 @@ public class DiscardableMemoryAudioSourceTests
     {
         // Arrange
         var discardableSource = new DiscardableMemoryAudioSource(storeFloats, storeBytes);
-        discardableSource.Initialize(new AudioSourceHeader()
+        discardableSource.Initialize(new AudioHeader()
         {
             BitsPerSample = 16,
             Channels = 2,
@@ -96,7 +96,7 @@ public class DiscardableMemoryAudioSourceTests
     {
         // Arrange
         var discardableSource = new DiscardableMemoryAudioSource(storeFloats, storeBytes);
-        discardableSource.Initialize(new AudioSourceHeader()
+        discardableSource.Initialize(new AudioHeader()
         {
             BitsPerSample = 16,
             Channels = 2,
@@ -116,7 +116,7 @@ public class DiscardableMemoryAudioSourceTests
     {
         // Arrange
         var discardableSource = new DiscardableMemoryAudioSource(storeFloats, storeBytes);
-        discardableSource.Initialize(new AudioSourceHeader()
+        discardableSource.Initialize(new AudioHeader()
         {
             BitsPerSample = 16,
             Channels = 2,

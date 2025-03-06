@@ -29,7 +29,7 @@ public class MicrophoneInputSource : AwaitableWaveFileSource
             WaveFormat = new WaveFormat(sampleRate, bitsPerSample, channels)
         };
 
-        Initialize(new AudioSourceHeader()
+        Initialize(new AudioHeader()
         {
             BitsPerSample = (ushort)bitsPerSample,
             Channels = (ushort)channels,

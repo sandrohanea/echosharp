@@ -16,4 +16,9 @@ public class SileroVadDetectorFactory(SileroVadOptions sileroVadOptions) : IVadD
     {
         return new SileroVadDetector(options, sileroVadOptions);
     }
+
+    public void Dispose()
+    {
+        // No resources to dispose
+    }
 }

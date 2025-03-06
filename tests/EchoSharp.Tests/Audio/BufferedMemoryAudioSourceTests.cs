@@ -14,7 +14,7 @@ public class BufferedMemoryAudioSourceTests
     public void Initialize_SetsPropertiesCorrectly()
     {
         // Arrange
-        var header = new AudioSourceHeader
+        var header = new AudioHeader
         {
             Channels = 2,
             SampleRate = 44100,
@@ -39,7 +39,7 @@ public class BufferedMemoryAudioSourceTests
     public void AddFrame_WithFloats_IncreasesSampleCount(bool storeFloats, bool storeBytes)
     {
         // Arrange
-        var header = new AudioSourceHeader
+        var header = new AudioHeader
         {
             Channels = 2,
             SampleRate = 44100,
@@ -63,7 +63,7 @@ public class BufferedMemoryAudioSourceTests
     public void AddFrames_WithBytes_IncreasesSampleCount(bool storeFloats, bool storeBytes)
     {
         // Arrange
-        var header = new AudioSourceHeader
+        var header = new AudioHeader
         {
             Channels = 2,
             SampleRate = 44100,
@@ -91,7 +91,7 @@ public class BufferedMemoryAudioSourceTests
     public async Task GetSamplesAsync_ReturnsCorrectFloats(bool storeFloats, bool storeBytes, bool addFloats)
     {
         // Arrange
-        var header = new AudioSourceHeader
+        var header = new AudioHeader
         {
             Channels = 2,
             SampleRate = 44100,
@@ -119,7 +119,7 @@ public class BufferedMemoryAudioSourceTests
     public async Task GetFramesAsync_ReturnsCorrectBytes(bool storeFloats, bool storeBytes, bool addFloats)
     {
         // Arrange
-        var header = new AudioSourceHeader
+        var header = new AudioHeader
         {
             Channels = 2,
             SampleRate = 44100,
@@ -155,7 +155,7 @@ public class BufferedMemoryAudioSourceTests
     public async Task GetSamplesAsync_WithMaxFrames_ReturnsCorrectFloats(bool storeFloats, bool storeBytes, bool addFloats)
     {
         // Arrange
-        var header = new AudioSourceHeader
+        var header = new AudioHeader
         {
             Channels = 2,
             SampleRate = 44100,
@@ -183,7 +183,7 @@ public class BufferedMemoryAudioSourceTests
     public async Task GetSamplesAsync_WithStartFrame_ReturnsCorrectFloats(bool storeFloats, bool storeBytes, bool addFloats)
     {
         // Arrange
-        var header = new AudioSourceHeader
+        var header = new AudioHeader
         {
             Channels = 2,
             SampleRate = 44100,
@@ -211,7 +211,7 @@ public class BufferedMemoryAudioSourceTests
     public async Task GetFramesAsync_WithStartFrame_ReturnsCorrectBytes(bool storeFloats, bool storeBytes, bool addFloats)
     {
         // Arrange
-        var header = new AudioSourceHeader
+        var header = new AudioHeader
         {
             Channels = 2,
             SampleRate = 44100,
@@ -248,7 +248,7 @@ public class BufferedMemoryAudioSourceTests
     public async Task GetFramesAsync_WithMaxFrames_ReturnsCorrectBytes(bool storeFloats, bool storeBytes, bool addFloats)
     {
         // Arrange
-        var header = new AudioSourceHeader
+        var header = new AudioHeader
         {
             Channels = 2,
             SampleRate = 44100,
@@ -284,7 +284,7 @@ public class BufferedMemoryAudioSourceTests
     public async Task AddFrame_WithAverageAggregationStrategy_AggregatesSamples(bool storeFloats, bool storeBytes, bool addFloats)
     {
         // Arrange
-        var header = new AudioSourceHeader
+        var header = new AudioHeader
         {
             Channels = 2,
             SampleRate = 44100,
@@ -314,7 +314,7 @@ public class BufferedMemoryAudioSourceTests
     public async Task AddFrame_WithSumAggregationStrategy_AggregatesSamples(bool storeFloats, bool storeBytes, bool addFloats)
     {
         // Arrange
-        var header = new AudioSourceHeader
+        var header = new AudioHeader
         {
             Channels = 2,
             SampleRate = 44100,
@@ -342,7 +342,7 @@ public class BufferedMemoryAudioSourceTests
     public async Task AddFrame_WithChannelSelectionAggregationStrategy_AggregatesSamples(bool storeFloats, bool storeBytes, bool addFloats)
     {
         // Arrange
-        var header = new AudioSourceHeader
+        var header = new AudioHeader
         {
             Channels = 2,
             SampleRate = 44100,
@@ -367,7 +367,7 @@ public class BufferedMemoryAudioSourceTests
     public void Initialize_ThrowsInvalidOperationException_WhenAlreadyInitialized(bool storeFloats, bool storeBytes)
     {
         // Arrange
-        var header = new AudioSourceHeader
+        var header = new AudioHeader
         {
             Channels = 2,
             SampleRate = 44100,
@@ -406,7 +406,7 @@ public class BufferedMemoryAudioSourceTests
     public void AddFrame_ThrowsArgumentException_WhenFrameSizeMismatch(bool storeFloats, bool storeBytes)
     {
         // Arrange
-        var header = new AudioSourceHeader
+        var header = new AudioHeader
         {
             Channels = 2,
             SampleRate = 44100,

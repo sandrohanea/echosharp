@@ -33,12 +33,12 @@ using WebRtcVadSharp;
 //
 // Note: EchoSharp.Whisper.net, EchoSharp.Onnx.SileroVad and EchoSharp.WebRtc.WebRtcVadSharp can be run locally without any cloud dependencies.
 
-var vadDetectorFactory = GetVadDetector("silero"); // OR "webrtc"
-var speechTranscriptorFactory = GetSpeechTranscriptor("whisper.net"); // OR "azure fast api" OR "openai whisper"
+using var vadDetectorFactory = GetVadDetector("silero"); // OR "webrtc"
+using var speechTranscriptorFactory = GetSpeechTranscriptor("whisper.net"); // OR "azure fast api" OR "openai whisper"
 
 var micAudioSource = new MicrophoneInputSource(deviceNumber: 1);
 
-var realTimeFactory = GetRealTimeTranscriptorFactory("azure", speechTranscriptorFactory, vadDetectorFactory);
+using var realTimeFactory = GetRealTimeTranscriptorFactory("azure", speechTranscriptorFactory, vadDetectorFactory);
 
 var realTimeTranscriptor = realTimeFactory.Create(new RealtimeSpeechTranscriptorOptions()
 {

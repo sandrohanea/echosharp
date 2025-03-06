@@ -27,7 +27,6 @@ internal class AzureAIRealtimeTranscriptor(SpeechConfig speechConfig, RealtimeSp
         using var recognizer = await GetRecognizerTokenLoaderAsync(audioConfig, cancellationToken);
 
         var channel = Channel.CreateUnbounded<IRealtimeRecognitionEvent>();
-
         void RecognizingEventHandler(object? sender, SpeechRecognitionEventArgs e)
         {
             var language = options.Language;
@@ -203,5 +202,10 @@ internal class AzureAIRealtimeTranscriptor(SpeechConfig speechConfig, RealtimeSp
         }
 
         return new RecognizerTokenLoader(recognizer);
+    }
+
+    public void Dispose()
+    {
+        // No-op
     }
 }

@@ -25,7 +25,7 @@ internal class WaveFileUtils
                 return HeaderParseResult.WaitingForMoreData;
             }
 
-            AudioSourceHeader? header = null;
+            AudioHeader? header = null;
 
             var chunkID = headerChunks.ReadUInt32LittleEndian();
             // Skip the file size
@@ -105,7 +105,7 @@ internal class WaveFileUtils
                         return HeaderParseResult.WaitingForMoreData;
                     }
 
-                    header = new AudioSourceHeader
+                    header = new AudioHeader
                     {
                         Channels = channels,
                         SampleRate = sampleRate,
@@ -114,7 +114,7 @@ internal class WaveFileUtils
                 }
                 else if (chunkType == 0x61746164 /*'data'*/)
                 {
-                    if (header == null)
+                    if (!header.HasValue)
                     {
                         return HeaderParseResult.Corrupt("Data chunk found before format chunk.");
                     }
@@ -122,7 +122,7 @@ internal class WaveFileUtils
                     // Found 'data' chunk
                     // We can start processing samples after this point
                     var dataOffset = (int)(headerChunks.Position - headerChunks.AbsolutePositionOfCurrentChunk);
-                    return HeaderParseResult.Success(header, dataOffset, chunkSize);
+                    return HeaderParseResult.Success(header.Value, dataOffset, chunkSize);
                 }
                 else
                 {
@@ -151,7 +151,7 @@ internal class WaveFileUtils
             return HeaderParseResult.WaitingForMoreData;
         }
 
-        AudioSourceHeader? header = null;
+        AudioHeader? header = null;
 
         var chunkID = headerChunks.ReadUInt32LittleEndian();
         // Skip the file size
@@ -220,7 +220,7 @@ internal class WaveFileUtils
                 {
                     return HeaderParseResult.WaitingForMoreData;
                 }
-                header = new AudioSourceHeader
+                header = new AudioHeader
                 {
                     Channels = channels,
                     SampleRate = sampleRate,
@@ -229,7 +229,7 @@ internal class WaveFileUtils
             }
             else if (chunkType == 0x61746164 /*'data'*/)
             {
-                if (header == null)
+                if (!header.HasValue)
                 {
                     return HeaderParseResult.Corrupt("Data chunk found before format chunk.");
                 }
@@ -237,7 +237,7 @@ internal class WaveFileUtils
                 // Found 'data' chunk
                 // We can start processing samples after this point
                 var dataOffset = (int)(headerChunks.Position - headerChunks.AbsolutePositionOfCurrentChunk);
-                return HeaderParseResult.Success(header, dataOffset, chunkSize);
+                return HeaderParseResult.Success(header.Value, dataOffset, chunkSize);
             }
             else
             {
@@ -251,7 +251,7 @@ internal class WaveFileUtils
         return HeaderParseResult.WaitingForMoreData;
     }
 
-    internal class HeaderParseResult(bool isSuccess, bool isIncomplete, bool isCorrupt, bool isNotSupported, int dataOffset, long dataChunkSize, AudioSourceHeader? header, string? errorMessage)
+    internal class HeaderParseResult(bool isSuccess, bool isIncomplete, bool isCorrupt, bool isNotSupported, int dataOffset, long dataChunkSize, AudioHeader? header, string? errorMessage)
     {
         public static HeaderParseResult WaitingForMoreData { get; } = new(false, true, false, false, 0, 0, null, "Not enough data available.");
 
@@ -266,7 +266,7 @@ internal class WaveFileUtils
             return new HeaderParseResult(false, false, false, true, 0, 0, null, message);
         }
 
-        public static HeaderParseResult Success(AudioSourceHeader header, int dataOffset, long dataChunkSize)
+        public static HeaderParseResult Success(AudioHeader header, int dataOffset, long dataChunkSize)
         {
             return new HeaderParseResult(true, false, false, false, dataOffset, dataChunkSize, header, null);
         }
@@ -281,7 +281,7 @@ internal class WaveFileUtils
 
         public long DataChunkSize { get; } = dataChunkSize;
 
-        public AudioSourceHeader? Header { get; } = header;
+        public AudioHeader? Header { get; } = header;
         public string? ErrorMessage { get; } = errorMessage;
     }
 

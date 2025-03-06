@@ -93,7 +93,7 @@ ISpeechTranscriptorProvisioner GetAzureAIFastTranscriptorProvisioner()
     // Replace with your Azure Cognitive Services Speech Service endpoint and key (Get from here): https://azure.microsoft.com/en-us/products/ai-services/ai-speech
     var endpoint = new Uri("https://your-azure-cognitive-service.cognitiveservices.azure.com/");
     var key = "your-azure-speech-service-api-key";
-    return new AzureAIFastTranscriptorProvisioner(new AzureAIFastTranscriptorConfig()
+    return new AzureAIFastTranscriptorProvisioner(new AzureSpeechServicesConfig()
     {
         Endpoint = endpoint,
         SubscriptionKey = key,

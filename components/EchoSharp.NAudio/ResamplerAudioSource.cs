@@ -22,9 +22,6 @@ public sealed class ResamplerAudioSource : IAudioSource
     private long _currentFrameInResampledDomain;
     private long _currentFrameInSourceDomain;
 
-    private float[] resamplerInputBuffer = [];  // Storage for feeding the resampler
-    private float[] resamplerOutputBuffer = []; // Temporary buffer for resampler’s output
-
     // We store the ratio once, to avoid recomputing:
     private readonly double ratio; // ratio = source.SampleRate / targetSampleRate
 
@@ -243,8 +240,6 @@ public sealed class ResamplerAudioSource : IAudioSource
         _currentFrameInResampledDomain = 0;
         _currentFrameInSourceDomain = 0;
         _resampler.Reset();
-        resamplerInputBuffer = [];
-        resamplerOutputBuffer = [];
     }
 
     /// <summary>

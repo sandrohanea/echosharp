@@ -2,7 +2,7 @@
 
 namespace EchoSharp.VoiceActivityDetection;
 
-public interface IVadDetectorFactory
+public interface IVadDetectorFactory : IDisposable
 {
     /// <summary>
     /// Creates the vad detector using the specified options.

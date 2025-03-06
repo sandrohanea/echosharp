@@ -60,12 +60,12 @@ public class AwaitableWaveFileSource(bool storeSamples = true,
                 throw new InvalidOperationException(headerParseResult.ErrorMessage);
             }
 
-            if (!headerParseResult.IsSuccess || headerParseResult.Header == null)
+            if (!headerParseResult.IsSuccess || !headerParseResult.Header.HasValue)
             {
                 throw new NotSupportedException(headerParseResult.ErrorMessage);
             }
 
-            base.Initialize(headerParseResult.Header);
+            base.Initialize(headerParseResult.Header.Value);
             dataOffset = headerParseResult.DataOffset;
         }
 

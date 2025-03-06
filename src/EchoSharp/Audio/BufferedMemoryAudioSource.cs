@@ -61,7 +61,7 @@ public class BufferedMemoryAudioSource : IAudioSource, IMemoryBackedAudioSource
     /// <summary>
     /// Gets the header of the audio source.
     /// </summary>
-    protected AudioSourceHeader Header { get; private set; } = null!;
+    protected AudioHeader Header { get; private set; }
 
     /// <summary>
     /// Represents the actual number of channels in the source.
@@ -102,7 +102,7 @@ public class BufferedMemoryAudioSource : IAudioSource, IMemoryBackedAudioSource
     /// </summary>
     /// <param name="header">The audio source header.</param>
     /// <exception cref="InvalidOperationException">Thrown when the source is already initialized.</exception>
-    public virtual void Initialize(AudioSourceHeader header)
+    public virtual void Initialize(AudioHeader header)
     {
         if (IsInitialized)
         {

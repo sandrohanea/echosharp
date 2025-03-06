@@ -10,7 +10,7 @@ namespace EchoSharp.Audio;
 public class WaveFileAudioSource(Stream waveStream, bool leaveOpen = true, int bufferLength = PcmStreamSource.DefaultBufferLength, IChannelAggregationStrategy? aggregationStrategy = null)
     : PcmStreamSource(waveStream, leaveOpen, bufferLength, aggregationStrategy)
 {
-    private AudioSourceHeader? header;
+    private AudioHeader? header;
     private int dataChunkOffset;
     private long dataChunkSize;
     private bool haveDataSize;

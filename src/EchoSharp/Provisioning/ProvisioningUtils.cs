@@ -1,6 +1,7 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
 using EchoSharp.Audio;
+using EchoSharp.SpeechSynthesis;
 using EchoSharp.SpeechTranscription;
 using EchoSharp.VoiceActivityDetection;
 
@@ -18,7 +19,8 @@ public static class ProvisioningUtils
                 RetrieveTokenDetails = true,
             };
             using var warmUpTranscritor = factory.Create(options);
-            var transcribeEvents = warmUpTranscritor.TranscribeAsync(new SilenceAudioSource(TimeSpan.FromMilliseconds(1111), 16000), cancellationToken);
+            using var silenceAudio = new SilenceAudioSource(TimeSpan.FromMilliseconds(1111), 16000);
+            var transcribeEvents = warmUpTranscritor.TranscribeAsync(silenceAudio, cancellationToken);
             await foreach (var _ in transcribeEvents.WithCancellation(cancellationToken))
             {
                 // Do nothing
@@ -33,11 +35,47 @@ public static class ProvisioningUtils
         {
             var options = new VadDetectorOptions();
             using var warmUpDetector = factory.CreateVadDetector(options);
-            var vadEvents = warmUpDetector.DetectSegmentsAsync(new SilenceAudioSource(TimeSpan.FromSeconds(1), 16000), cancellationToken);
+            using var silenceAudio = new SilenceAudioSource(TimeSpan.FromMilliseconds(1111), 16000);
+            var vadEvents = warmUpDetector.DetectSegmentsAsync(silenceAudio, cancellationToken);
             await foreach (var _ in vadEvents.WithCancellation(cancellationToken))
             {
                 // Do nothing
             }
+        }
+        return factory;
+    }
+
+    public static async Task<IRealtimeSpeechTranscriptorFactory> WarmUpAsync(this IRealtimeSpeechTranscriptorFactory factory, bool warmUp, CancellationToken cancellationToken)
+    {
+        if (warmUp)
+        {
+            var options = new RealtimeSpeechTranscriptorOptions()
+            {
+                LanguageAutoDetect = false,
+            };
+            using var warmUpTranscritor = factory.Create(options);
+            using var completedSilence = new CompletedAudioSource(new SilenceAudioSource(TimeSpan.FromSeconds(1), 16000));
+            var transcribeEvents = warmUpTranscritor.TranscribeAsync(completedSilence, cancellationToken);
+            await foreach (var _ in transcribeEvents.WithCancellation(cancellationToken))
+            {
+                // Do nothing
+            }
+        }
+        return factory;
+    }
+
+    public static async Task<ISpeechSynthesizerFactory> WarmUpAsync(this ISpeechSynthesizerFactory factory, bool warmUp, CancellationToken cancellationToken)
+    {
+        if (warmUp)
+        {
+            var options = new SpeechSynthesizerOptions();
+            using var warmUpSynthesizer = factory.Create(options);
+            using var nullAudioSink = new NullAudioSink();
+
+            await warmUpSynthesizer.SynthesizeAsync(new SpeechSegment()
+            {
+                Text = "Hello, this is a warm-up test.",
+            }, nullAudioSink, cancellationToken);
         }
         return factory;
     }
