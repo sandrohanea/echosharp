@@ -13,18 +13,25 @@ using EchoSharp.Config;
 
 namespace EchoSharp.AzureAI.SpeechServices.RealTime;
 
-internal class AzureAIRealtimeTranscriptor(SpeechConfig speechConfig, RealtimeSpeechTranscriptorOptions options, AzureAIRealtimeTranscriptorOptions azureOptions, RecognizerAuthTokenHandler? recognizerAuthTokenHandler) : IRealtimeSpeechTranscriptor
+internal class AzureAIRealtimeTranscriptor(SpeechConfig speechConfig, RealtimeSpeechTranscriptorOptions options, AzureAIRealtimeTranscriptorOptions azureOptions, AuthTokenHandler? authTokenHandler) : IRealtimeSpeechTranscriptor
 {
     const int bytesPerSample = 4;
 
     public async IAsyncEnumerable<IRealtimeRecognitionEvent> TranscribeAsync(IAwaitableAudioSource source, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        await source.WaitForInitializationAsync(cancellationToken);
+        var sourceInitTask = source.WaitForInitializationAsync(cancellationToken);
+        var authTokenHandlerInitTask = authTokenHandler?.InitializeAsync(cancellationToken);
+
+        await Task.WhenAll(sourceInitTask, authTokenHandlerInitTask ?? Task.CompletedTask);
 
         using var pushStream = AudioInputStream.CreatePushStream(AudioStreamFormat.GetWaveFormat(source.SampleRate, bytesPerSample * 8, (byte)source.ChannelCount, AudioStreamWaveFormat.PCM));
         var audioConfig = AudioConfig.FromStreamInput(pushStream);
 
-        using var recognizer = await GetRecognizerTokenLoaderAsync(audioConfig, cancellationToken);
+        var recognizer = options.LanguageAutoDetect
+            ? new SpeechRecognizer(speechConfig, AutoDetectSourceLanguageConfig.FromLanguages([.. azureOptions.CandidateLanguages.Select(c => c.ToString())]), audioConfig)
+            : new SpeechRecognizer(speechConfig, language: options.Language.ToString(), audioConfig);
+
+        using var tokenLoader = new OptionalDisposable(authTokenHandler?.GetLoader(recognizer.Properties));
 
         var channel = Channel.CreateUnbounded<IRealtimeRecognitionEvent>();
         void RecognizingEventHandler(object? sender, SpeechRecognitionEventArgs e)
@@ -59,7 +66,7 @@ internal class AzureAIRealtimeTranscriptor(SpeechConfig speechConfig, RealtimeSp
 
         if (options.IncludeSpeechRecogizingEvents)
         {
-            recognizer.SpeechRecognizer.Recognizing += RecognizingEventHandler;
+            recognizer.Recognizing += RecognizingEventHandler;
         }
 
         void RecognizedEventHandler(object? sender, SpeechRecognitionEventArgs e)
@@ -109,13 +116,13 @@ internal class AzureAIRealtimeTranscriptor(SpeechConfig speechConfig, RealtimeSp
             channel.Writer.TryComplete();
         }
 
-        recognizer.SpeechRecognizer.SessionStarted += RecognitionSessionStarted;
-        recognizer.SpeechRecognizer.SessionStopped += RecognitionSessionStopped;
-        recognizer.SpeechRecognizer.Canceled += RecognitionCancelled;
+        recognizer.SessionStarted += RecognitionSessionStarted;
+        recognizer.SessionStopped += RecognitionSessionStopped;
+        recognizer.Canceled += RecognitionCancelled;
 
-        recognizer.SpeechRecognizer.Recognized += RecognizedEventHandler;
+        recognizer.Recognized += RecognizedEventHandler;
 
-        await recognizer.SpeechRecognizer.StartContinuousRecognitionAsync();
+        await recognizer.StartContinuousRecognitionAsync();
 
         var readEnumerable = channel.Reader.ReadAllAsync(cancellationToken);
 
@@ -142,7 +149,7 @@ internal class AzureAIRealtimeTranscriptor(SpeechConfig speechConfig, RealtimeSp
         } while (!source.IsFlushed && !cancellationToken.IsCancellationRequested);
 
         // After the source is flushed, we want to finish all the remaining recognition events
-        await recognizer.SpeechRecognizer.StopContinuousRecognitionAsync();
+        await recognizer.StopContinuousRecognitionAsync();
 
         while (!cancellationToken.IsCancellationRequested)
         {
@@ -188,20 +195,6 @@ internal class AzureAIRealtimeTranscriptor(SpeechConfig speechConfig, RealtimeSp
             discardableSource.DiscardFrames((int)currentFrames);
         }
         return startIndex + currentFrames;
-    }
-
-    private async Task<RecognizerTokenLoader> GetRecognizerTokenLoaderAsync(AudioConfig audioConfig, CancellationToken cancellationToken)
-    {
-        var recognizer = options.LanguageAutoDetect
-            ? new SpeechRecognizer(speechConfig, AutoDetectSourceLanguageConfig.FromLanguages([.. azureOptions.CandidateLanguages.Select(c => c.ToString())]), audioConfig)
-            : new SpeechRecognizer(speechConfig, language: options.Language.ToString(), audioConfig);
-
-        if (recognizerAuthTokenHandler != null)
-        {
-            return await recognizerAuthTokenHandler.GetLoaderAsync(recognizer, cancellationToken);
-        }
-
-        return new RecognizerTokenLoader(recognizer);
     }
 
     public void Dispose()

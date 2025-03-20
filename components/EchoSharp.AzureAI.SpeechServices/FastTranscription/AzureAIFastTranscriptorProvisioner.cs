@@ -1,5 +1,6 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
+using Azure.Core;
 using EchoSharp.Provisioning;
 using EchoSharp.SpeechTranscription;
 
@@ -20,9 +21,14 @@ public class AzureAIFastTranscriptorProvisioner(AzureSpeechServicesConfig config
             throw new InvalidOperationException("The required Azure Endpoint for Azure AI is missing. Ensure that either the 'config.AzureRegion' or 'config.Endpoint' is provided in the configuration.");
         }
 
+        if (config.TokenCredential is null && string.IsNullOrWhiteSpace(config.SubscriptionKey))
+        {
+            throw new InvalidOperationException("The required Azure Subscription Key or Token Credential for Azure AI is missing. Ensure that either the 'config.SubscriptionKey' or 'config.TokenCredential' is provided in the configuration.");
+        }
+
         var factory = config.TokenCredential is not null
             ? new AzureAIFastTranscriptorFactory(endpoint, config.TokenCredential)
-            : new AzureAIFastTranscriptorFactory(endpoint, AzureSpeechServicesConfig.GetAzureSubscriptionKeyFromEnvVariable());
+            : new AzureAIFastTranscriptorFactory(endpoint, config.SubscriptionKey!);
 
         return await factory.WarmUpAsync(config.WarmUp, cancellationToken);
     }

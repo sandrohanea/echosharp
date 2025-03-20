@@ -11,7 +11,7 @@ public sealed class AzureAIRealtimeTranscriptorFactory : IRealtimeSpeechTranscri
 {
     private readonly SpeechConfig speechConfig;
     private readonly AzureAIRealtimeTranscriptorOptions options;
-    private readonly RecognizerAuthTokenHandler? recognizerAuthTokenHandler;
+    private readonly AuthTokenHandler? authTokenHandler;
 
     public AzureAIRealtimeTranscriptorFactory(string region, string subscriptionKey, AzureAIRealtimeTranscriptorOptions options)
     {
@@ -27,7 +27,7 @@ public sealed class AzureAIRealtimeTranscriptorFactory : IRealtimeSpeechTranscri
 
     public AzureAIRealtimeTranscriptorFactory(TokenCredential tokenCredential, string resourceId, string region, AzureAIRealtimeTranscriptorOptions options)
     {
-        recognizerAuthTokenHandler = new RecognizerAuthTokenHandler(tokenCredential, resourceId);
+        authTokenHandler = new AuthTokenHandler(tokenCredential, resourceId);
         speechConfig = SpeechConfig.FromAuthorizationToken($"aad#resourceId#token", region);
         this.options = options;
     }
@@ -47,7 +47,7 @@ public sealed class AzureAIRealtimeTranscriptorFactory : IRealtimeSpeechTranscri
 
         speechConfig.SetProperty(PropertyId.SpeechServiceResponse_RequestWordLevelTimestamps, options.RetrieveTokenDetails.ToString());
 
-        return new AzureAIRealtimeTranscriptor(speechConfig, options, this.options, recognizerAuthTokenHandler);
+        return new AzureAIRealtimeTranscriptor(speechConfig, options, this.options, authTokenHandler);
     }
 
     public void Dispose()

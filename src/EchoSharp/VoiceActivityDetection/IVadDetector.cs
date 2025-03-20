@@ -4,7 +4,7 @@ using EchoSharp.Audio;
 namespace EchoSharp.VoiceActivityDetection;
 
 /// <summary>
-/// Represents a voice activity detection component that can detect voice activity segments in mono-channel audio samples at 16 kHz.
+/// Represents a voice activity detection component that can detect voice activity segments from the given audio source.
 /// </summary>
 public interface IVadDetector : IDisposable
 {

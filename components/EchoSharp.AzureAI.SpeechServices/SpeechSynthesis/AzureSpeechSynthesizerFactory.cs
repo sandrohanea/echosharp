@@ -11,7 +11,7 @@ public class AzureSpeechSynthesizerFactory : ISpeechSynthesizerFactory
 {
     private readonly SpeechConfig speechConfig;
     private readonly AzureSpeechSynthesizerOptions options;
-    private readonly RecognizerAuthTokenHandler? recognizerAuthTokenHandler;
+    private readonly AuthTokenHandler? authTokenHandler;
 
     public AzureSpeechSynthesizerFactory(string region, string subscriptionKey, AzureSpeechSynthesizerOptions options)
     {
@@ -27,7 +27,7 @@ public class AzureSpeechSynthesizerFactory : ISpeechSynthesizerFactory
 
     public AzureSpeechSynthesizerFactory(TokenCredential tokenCredential, string resourceId, string region, AzureSpeechSynthesizerOptions options)
     {
-        recognizerAuthTokenHandler = new RecognizerAuthTokenHandler(tokenCredential, resourceId);
+        authTokenHandler = new AuthTokenHandler(tokenCredential, resourceId);
         speechConfig = SpeechConfig.FromAuthorizationToken($"aad#resourceId#token", region);
         this.options = options;
     }
@@ -45,7 +45,7 @@ public class AzureSpeechSynthesizerFactory : ISpeechSynthesizerFactory
             speechConfig.SpeechSynthesisLanguage = options.DefaultLanguage.Name;
         }
 
-        return new AzureSpeechSynthesizer(speechConfig, options, this.options, recognizerAuthTokenHandler);
+        return new AzureSpeechSynthesizer(speechConfig, options, this.options, authTokenHandler);
     }
 
     public void Dispose()

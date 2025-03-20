@@ -7,7 +7,7 @@ using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 namespace EchoSharp.AzureAI.SpeechServices.SpeechSynthesis;
 
-internal sealed class AzureSpeechSynthesizer(SpeechConfig speechConfig, SpeechSynthesizerOptions options, AzureSpeechSynthesizerOptions azureOptions, RecognizerAuthTokenHandler? recognizerAuthTokenHandler) : ISpeechSynthesizer
+internal sealed class AzureSpeechSynthesizer(SpeechConfig speechConfig, SpeechSynthesizerOptions options, AzureSpeechSynthesizerOptions azureOptions, AuthTokenHandler? authTokenHandler) : ISpeechSynthesizer
 {
     public void Dispose()
     {
@@ -19,10 +19,8 @@ internal sealed class AzureSpeechSynthesizer(SpeechConfig speechConfig, SpeechSy
         using var pushAudioOutputStream = new PushAudioOutputStream(new AudioSinkPushAudioOutputStream(audioSink));
         using var audioConfig = AudioConfig.FromStreamOutput(pushAudioOutputStream);
         using var speechSynthesizer = new SpeechSynthesizer(speechConfig, audioConfig);
-        if (recognizerAuthTokenHandler != null)
-        {
-            speechSynthesizer.AuthorizationToken = await recognizerAuthTokenHandler.GetLoaderAsync(speechSynthesizer, cancellationToken);
-        }
+        await (authTokenHandler?.InitializeAsync(cancellationToken) ?? Task.CompletedTask);
+        using var tokenLoader = new OptionalDisposable(authTokenHandler?.GetLoader(speechSynthesizer.Properties));
 
         return speechSynthesizer.SpeakTextAsync(speechSegment.Text, cancellationToken);
     }
