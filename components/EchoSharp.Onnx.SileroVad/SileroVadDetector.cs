@@ -2,7 +2,7 @@
 
 using System.Buffers;
 using System.Runtime.CompilerServices;
-using EchoSharp.Audio;
+using EchoSharp.Audio.Source;
 using EchoSharp.Config;
 using EchoSharp.VoiceActivityDetection;
 

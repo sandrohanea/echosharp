@@ -11,6 +11,7 @@ using SherpaOnnx;
 using EchoSharp.Onnx.Sherpa.SpeechTranscription;
 using FluentAssertions;
 using EchoSharp.VoiceActivityDetection;
+using EchoSharp.Audio.Source.Awaitable;
 
 namespace EchoSharp.Tests.SpeechTranscription;
 

@@ -5,6 +5,7 @@ using FluentAssertions;
 using EchoSharp.Audio;
 using EchoSharp.Tests.Utils;
 using Xunit;
+using EchoSharp.Audio.Source;
 
 namespace EchoSharp.Tests.Audio;
 

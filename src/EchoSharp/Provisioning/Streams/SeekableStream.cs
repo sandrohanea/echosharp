@@ -1,6 +1,6 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
-namespace EchoSharp.ProvisioningModelUtility;
+namespace EchoSharp.Provisioning.Streams;
 
 /// <summary>
 /// Represents a stream that wraps a non-seekable stream and transform it into a seekable stream, using a cache stream.

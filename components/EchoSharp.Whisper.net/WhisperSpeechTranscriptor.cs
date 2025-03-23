@@ -2,7 +2,7 @@
 
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using EchoSharp.Audio;
+using EchoSharp.Audio.Source;
 using EchoSharp.SpeechTranscription;
 using Whisper.net;
 

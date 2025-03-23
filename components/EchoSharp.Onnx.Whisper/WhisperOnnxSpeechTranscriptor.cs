@@ -3,8 +3,8 @@
 using System.Runtime.CompilerServices;
 using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
-using EchoSharp.Audio;
 using EchoSharp.SpeechTranscription;
+using EchoSharp.Audio.Source;
 
 namespace EchoSharp.Onnx.Whisper;
 

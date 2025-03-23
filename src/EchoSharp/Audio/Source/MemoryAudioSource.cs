@@ -1,6 +1,6 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
-namespace EchoSharp.Audio;
+namespace EchoSharp.Audio.Source;
 
 /// <summary>
 /// Represents an audio source that is backed by samples loaded into memory either serialized as bytes or as floats.
@@ -22,7 +22,7 @@ public readonly struct MemoryAudioSource : IAudioSource, IMemoryBackedAudioSourc
             throw new ArgumentNullException(nameof(floatFrames), "At least one backing memory needs to be not null");
         }
 
-        if (floatFrames.HasValue && byteFrames.HasValue && floatFrames.Value.Length != (byteFrames.Value.Length * 8 / bitsPerSample))
+        if (floatFrames.HasValue && byteFrames.HasValue && floatFrames.Value.Length != byteFrames.Value.Length * 8 / bitsPerSample)
         {
             // We need to check that the number of frames is the same in both cases
             throw new ArgumentException("The number of frames in the float and byte arrays do not match");

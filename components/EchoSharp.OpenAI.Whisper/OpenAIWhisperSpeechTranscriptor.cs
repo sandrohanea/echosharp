@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using OpenAI.Audio;
 using EchoSharp.Audio;
 using EchoSharp.SpeechTranscription;
+using EchoSharp.Audio.Source;
 
 namespace EchoSharp.OpenAI.Whisper;
 

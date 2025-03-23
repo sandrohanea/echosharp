@@ -2,7 +2,7 @@
 
 using EchoSharp.Internals;
 
-namespace EchoSharp.Audio;
+namespace EchoSharp.Audio.Source;
 
 /// <summary>
 /// Represents an audio source that reads audio samples from a WAVE file (or stream representing a WAVE file).
@@ -24,7 +24,7 @@ public class WaveFileAudioSource(Stream waveStream, bool leaveOpen = true, int b
     public override TimeSpan TotalDuration => Duration;
 
     public override long FramesCount => header != null
-        ? (haveDataSize ? dataChunkSize : (PcmStream.Length - dataChunkOffset)) / SourceFrameSize
+        ? (haveDataSize ? dataChunkSize : PcmStream.Length - dataChunkOffset) / SourceFrameSize
         : throw NotInitializedException();
 
     public override uint SampleRate => header?.SampleRate ?? throw NotInitializedException();

@@ -2,7 +2,7 @@
 
 using System.Buffers.Binary;
 using System.Runtime.CompilerServices;
-using EchoSharp.Audio;
+using EchoSharp.Audio.Source;
 using EchoSharp.VoiceActivityDetection;
 using WebRtcVadSharp;
 

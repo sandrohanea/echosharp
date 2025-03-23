@@ -1,6 +1,7 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
 using EchoSharp.Audio;
+using EchoSharp.Audio.Source;
 using NAudio.Wave;
 
 namespace EchoSharp.NAudio;

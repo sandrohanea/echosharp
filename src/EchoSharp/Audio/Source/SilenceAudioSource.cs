@@ -2,7 +2,7 @@
 
 using System.Buffers;
 
-namespace EchoSharp.Audio;
+namespace EchoSharp.Audio.Source;
 
 /// <summary>
 /// Represents an audio source that stores a continuous memory with only silence and returns it when needed.

@@ -2,7 +2,7 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using EchoSharp.Audio;
+using EchoSharp.Audio.Source;
 using EchoSharp.Onnx.Sherpa.Internals;
 using EchoSharp.SpeechTranscription;
 using SherpaOnnx;

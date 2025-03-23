@@ -1,8 +1,9 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
+using EchoSharp.Audio.Source;
 using EchoSharp.Internals;
 
-namespace EchoSharp.Audio;
+namespace EchoSharp.Audio.Source.Awaitable;
 
 /// <summary>
 /// Represents an audio source that can be awaited for audio data.

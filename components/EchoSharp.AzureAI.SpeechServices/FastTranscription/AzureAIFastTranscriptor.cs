@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using EchoSharp.Audio;
+using EchoSharp.Audio.Source;
 using EchoSharp.AzureAI.SpeechServices.FastTranscription.Models;
 using EchoSharp.SpeechTranscription;
 

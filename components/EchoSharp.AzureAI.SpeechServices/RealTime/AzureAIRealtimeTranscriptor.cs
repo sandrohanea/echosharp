@@ -7,9 +7,10 @@ using System.Threading.Channels;
 using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 using EchoSharp.AzureAI.SpeechServices.Internals;
-using EchoSharp.Audio;
 using EchoSharp.SpeechTranscription;
 using EchoSharp.Config;
+using EchoSharp.Audio.Source.Awaitable;
+using EchoSharp.Audio.Source;
 
 namespace EchoSharp.AzureAI.SpeechServices.RealTime;
 

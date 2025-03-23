@@ -1,5 +1,5 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
-using EchoSharp.Audio;
+using EchoSharp.Audio.Source;
 
 namespace EchoSharp.VoiceActivityDetection;
 

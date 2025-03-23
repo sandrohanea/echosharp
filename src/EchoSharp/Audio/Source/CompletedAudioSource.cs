@@ -1,6 +1,8 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
-namespace EchoSharp.Audio;
+using EchoSharp.Audio.Source.Awaitable;
+
+namespace EchoSharp.Audio.Source;
 
 /// <summary>
 /// Represents an audio source that is already completed.

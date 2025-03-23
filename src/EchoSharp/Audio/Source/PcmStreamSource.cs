@@ -3,7 +3,7 @@
 using System.Buffers;
 using EchoSharp.Config;
 
-namespace EchoSharp.Audio;
+namespace EchoSharp.Audio.Source;
 
 public abstract class PcmStreamSource(Stream pcmStream, bool leaveOpen = true, int bufferLength = PcmStreamSource.DefaultBufferLength, IChannelAggregationStrategy? aggregationStrategy = null)
     : IAudioSource

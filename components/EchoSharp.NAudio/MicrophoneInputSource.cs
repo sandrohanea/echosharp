@@ -4,6 +4,7 @@ using NAudio.Wave;
 using EchoSharp.Audio;
 using NAudio.CoreAudioApi;
 using System.Runtime.InteropServices;
+using EchoSharp.Audio.Source.Awaitable;
 
 namespace EchoSharp.NAudio;
 

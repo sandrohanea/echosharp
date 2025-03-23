@@ -19,6 +19,7 @@
 
 using System.Globalization;
 using EchoSharp.Audio;
+using EchoSharp.Audio.Source;
 using EchoSharp.AzureAI.SpeechServices;
 using EchoSharp.AzureAI.SpeechServices.FastTranscription;
 using EchoSharp.NAudio;
