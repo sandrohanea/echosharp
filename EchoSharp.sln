@@ -53,6 +53,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EchoSharp.ProvisioningModel
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EchoSharp.SharpZipLib", "components\EchoSharp.SharpZipLib\EchoSharp.SharpZipLib.csproj", "{32076327-A0A7-451B-9358-2B6528F19630}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EchoSharp.Example.TextToSpeech", "examples\EchoSharp.Example.TextToSpeech\EchoSharp.Example.TextToSpeech.csproj", "{28842285-81FF-4DE6-AD18-1362B1C5DDBF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -115,6 +117,10 @@ Global
 		{32076327-A0A7-451B-9358-2B6528F19630}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32076327-A0A7-451B-9358-2B6528F19630}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32076327-A0A7-451B-9358-2B6528F19630}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28842285-81FF-4DE6-AD18-1362B1C5DDBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28842285-81FF-4DE6-AD18-1362B1C5DDBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28842285-81FF-4DE6-AD18-1362B1C5DDBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28842285-81FF-4DE6-AD18-1362B1C5DDBF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -132,6 +138,7 @@ Global
 		{DE9B8AA6-B8D1-D274-D8DC-36B7589D8928} = {FB050BB0-47F4-4CFF-84AC-BEE7776CA079}
 		{5677D962-117F-584D-4B93-4C0D8B35C922} = {21A38949-A5D0-42F5-911D-617FC98F69C0}
 		{32076327-A0A7-451B-9358-2B6528F19630} = {11A38949-A5D0-42F5-911D-617FC98F69C0}
+		{28842285-81FF-4DE6-AD18-1362B1C5DDBF} = {FB050BB0-47F4-4CFF-84AC-BEE7776CA079}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {986707AD-477F-41AA-A8C3-60B17B9BBF58}

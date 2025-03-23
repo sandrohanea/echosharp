@@ -1,7 +1,8 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
 using System.Globalization;
-using Azure.Identity;
+using System.Runtime.InteropServices;
+using EchoSharp.AzureAI.SpeechServices;
 using EchoSharp.AzureAI.SpeechServices.FastTranscription;
 using EchoSharp.AzureAI.SpeechServices.RealTime;
 using EchoSharp.NAudio;
@@ -9,11 +10,10 @@ using EchoSharp.Onnx.Sherpa.SpeechTranscription;
 using EchoSharp.Onnx.SileroVad;
 using EchoSharp.Onnx.Whisper;
 using EchoSharp.OpenAI.Whisper;
+using EchoSharp.Provisioning;
 using EchoSharp.SpeechTranscription;
-using EchoSharp.VoiceActivityDetection;
 using EchoSharp.WebRtc.WebRtcVadSharp;
 using EchoSharp.Whisper.net;
-using SherpaOnnx;
 using WebRtcVadSharp;
 
 // This is an example that showcases how to use the EchoSharp library to transcribe speech in real-time using a microphone as input.
@@ -33,14 +33,21 @@ using WebRtcVadSharp;
 //
 // Note: EchoSharp.Whisper.net, EchoSharp.Onnx.SileroVad and EchoSharp.WebRtc.WebRtcVadSharp can be run locally without any cloud dependencies.
 
-using var vadDetectorFactory = GetVadDetector("silero"); // OR "webrtc"
-using var speechTranscriptorFactory = GetSpeechTranscriptor("whisper.net"); // OR "azure fast api" OR "openai whisper"
+var vadDetectorProvisioner = GetVadDetectorProvisioner("silero"); // OR "webrtc"
+var speechTranscriptorProvisioner = GetSpeechTranscriptorProvisioner("whisper.net"); // OR "azure fast api" OR "openai whisper"
+
+// Throw if not on Windows (NAudio MicrophoneInputSource is not supported on other platforms)
+if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+{
+    throw new NotSupportedException("This example can only run on Windows, we are using NAudio to capture audio from the microphone.");
+}
 
 var micAudioSource = new MicrophoneInputSource(deviceNumber: 1);
 
-using var realTimeFactory = GetRealTimeTranscriptorFactory("azure", speechTranscriptorFactory, vadDetectorFactory);
+var realTimeProvisioner = GetRealTimeProvisioner("azure", speechTranscriptorProvisioner, vadDetectorProvisioner);
 
-var realTimeTranscriptor = realTimeFactory.Create(new RealtimeSpeechTranscriptorOptions()
+var realTimeTranscriptorFactory = await realTimeProvisioner.ProvisionAsync();
+var realTimeTranscriptor = realTimeTranscriptorFactory.Create(new RealtimeSpeechTranscriptorOptions()
 {
     AutodetectLanguageOnce = false, // Flag to detect the language only once or for each segment
     IncludeSpeechRecogizingEvents = true, // Flag to include speech recognizing events (RealtimeSegmentRecognizing)
@@ -59,7 +66,6 @@ var microphoneTask = Task.Run(() =>
 
 async Task ShowTranscriptAsync()
 {
-
     await foreach (var transcription in realTimeTranscriptor.TranscribeAsync(micAudioSource))
     {
         var eventType = transcription.GetType().Name;
@@ -86,123 +92,128 @@ await firstReady;
 
 await Task.WhenAll(microphoneTask, showTranscriptTask);
 
-IRealtimeSpeechTranscriptorFactory GetRealTimeTranscriptorFactory(string type, ISpeechTranscriptorFactory speechTranscriptorFactory, IVadDetectorFactory vadDetectorFactory)
+IRealtimeSpeechTranscriptorProvisioner GetRealTimeProvisioner(string type, ISpeechTranscriptorProvisioner speechTranscriptorProvisioner, IVadDetectorProvisioner vadDetectorProvisioner)
 {
     return type switch
     {
-        "echo sharp" => GetEchoSharpTranscriptorFactory(speechTranscriptorFactory, vadDetectorFactory),
-        "azure" => GetAzureAIRealtimeTranscriptorFactory(),
+        "echo sharp" => GetEchoSharpTranscriptorProvisioner(speechTranscriptorProvisioner, vadDetectorProvisioner),
+        "azure" => GetAzureAIRealtimeTranscriptorProvisioner(),
         _ => throw new NotSupportedException()
     };
 }
 
-IRealtimeSpeechTranscriptorFactory GetAzureAIRealtimeTranscriptorFactory()
+IRealtimeSpeechTranscriptorProvisioner GetAzureAIRealtimeTranscriptorProvisioner()
 {
-    var azureRegion = "eastus"; // Replace with your Azure region
-    var resourceId = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{SpeechServiceAccount}";
-    return new AzureAIRealtimeTranscriptorFactory(new DefaultAzureCredential(new DefaultAzureCredentialOptions()), resourceId, azureRegion, new AzureAIRealtimeTranscriptorOptions()
+    var speechConfig = new AzureSpeechServicesConfig()
+    {
+        SubscriptionKey = "your-azure-speech-service-api-key",
+        Endpoint = new Uri("https://your-azure-cognitive-service.cognitiveservices.azure.com/")
+    };
+    var options = new AzureAIRealtimeTranscriptorOptions()
     {
         CandidateLanguages = [new CultureInfo("en-US"), new CultureInfo("ro-RO")] // Candidate languages to use for automatic language detection
-    });
+    };
+    return new AzureAIRealtimeTranscriptorProvisioner(speechConfig, options);
 }
 
-IRealtimeSpeechTranscriptorFactory GetEchoSharpTranscriptorFactory(ISpeechTranscriptorFactory speechTranscriptorFactory, IVadDetectorFactory vadDetectorFactory)
+IRealtimeSpeechTranscriptorProvisioner GetEchoSharpTranscriptorProvisioner(ISpeechTranscriptorProvisioner speechTranscriptorProvisioner, IVadDetectorProvisioner vadDetectorProvisioner)
 {
-    return new EchoSharpRealtimeTranscriptorFactory(speechTranscriptorFactory, vadDetectorFactory, echoSharpOptions: new EchoSharpRealtimeOptions()
+    var config = new EchoSharpRealtimeTranscriptorConfig()
     {
-        ConcatenateSegmentsToPrompt = false // Flag to concatenate segments to prompt when new segment is recognized (for the whole session)
-    });
+        Options = new EchoSharpRealtimeOptions()
+        {
+            ConcatenateSegmentsToPrompt = false // Flag to concatenate segments to prompt when new segment is recognized (for the whole session)
+        }
+    };
+    return new EchoSharpRealtimeTranscriptorProvisioner(vadDetectorProvisioner, speechTranscriptorProvisioner, config);
 }
 
-ISpeechTranscriptorFactory GetSpeechTranscriptor(string type)
+ISpeechTranscriptorProvisioner GetSpeechTranscriptorProvisioner(string type)
 {
-    // Uncomment to use other speech transcriptor component
     return type switch
     {
-        "whisper.net" => GetWhisperTranscriptor(),
-        "azure fast api" => GetAzureAIFastTranscriptor(),
-        "openai whisper" => GetOpenAITranscriptor(),
-        "whisper onnx" => GetWhisperOnnxTranscriptor(),
-        "sherpa onnx" => GetSherpaOnnxTranscriptor(),
+        "whisper.net" => GetWhisperTranscriptorProvisioner(),
+        "azure fast api" => GetAzureAIFastTranscriptorProvisioner(),
+        "openai whisper" => GetOpenAITranscriptorProvisioner(),
+        "whisper onnx" => GetWhisperOnnxTranscriptorProvisioner(),
+        "sherpa onnx" => GetSherpaOnnxTranscriptorProvisioner(),
         _ => throw new NotSupportedException()
     };
 }
 
-ISpeechTranscriptorFactory GetWhisperTranscriptor()
+ISpeechTranscriptorProvisioner GetWhisperTranscriptorProvisioner()
 {
-    // Replace with the path to the Whisper.net GGML model (Download from here): https://huggingface.co/sandrohanea/whisper.net/tree/main
-    // Or execute `downloadModels.ps1` script in the root of this repository
-    var ggmlModelPath = "models/ggml-base.bin";
-    return new WhisperSpeechTranscriptorFactory(ggmlModelPath);
+    return new WhisperSpeechTranscriptorProvisioner(new WhisperSpeechTranscriptorConfig()
+    {
+        GgmlType = Whisper.net.Ggml.GgmlType.Tiny,
+        OpenVinoEncoderModelPath = Path.Combine("models", "whisper.net", "openvino"),
+        QuantizationType = Whisper.net.Ggml.QuantizationType.NoQuantization,
+        ModelPath = Path.Combine("models", "whisper.net")
+    });
 }
 
-ISpeechTranscriptorFactory GetAzureAIFastTranscriptor()
+ISpeechTranscriptorProvisioner GetAzureAIFastTranscriptorProvisioner()
 {
     // Replace with your Azure Cognitive Services Speech Service endpoint and key (Get from here): https://azure.microsoft.com/en-us/products/ai-services/ai-speech
     var endpoint = new Uri("https://your-azure-cognitive-service.cognitiveservices.azure.com/");
     var key = "your-azure-speech-service-api-key";
-    return new AzureAIFastTranscriptorFactory(endpoint, key);
-}
-
-ISpeechTranscriptorFactory GetOpenAITranscriptor()
-{
-    var openAiApiKey = "your-openai-api-key";
-    return new OpenAIWhisperSpeechTranscriptorFactory(openAiApiKey);
-}
-ISpeechTranscriptorFactory GetWhisperOnnxTranscriptor()
-{
-    // Replace with the path to the Whisper ONNX model (Download from here): https://huggingface.co/khmyznikov/whisper-int8-cpu-ort.onnx/tree/main
-    // Or execute `downloadModels.ps1` script in the root of this repository
-    var onnxPath = "models/whisper.onnx";
-    return new WhisperOnnxSpeechTranscriptorFactory(onnxPath);
-}
-
-ISpeechTranscriptorFactory GetSherpaOnnxTranscriptor()
-{
-    var modelConfig = new OnlineModelConfig();
-    var ctcFstDecoderConfig = new OnlineCtcFstDecoderConfig();
-
-    // Replace with your own model path (download from here: https://github.com/k2-fsa/sherpa-onnx/releases/tag/asr-models)
-    modelConfig.Zipformer2Ctc.Model = "models/sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18/ctc-epoch-30-avg-3-chunk-16-left-128.int8.onnx";
-
-    modelConfig.Tokens = "models/sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18/tokens.txt";
-    modelConfig.Provider = "cpu";
-    modelConfig.NumThreads = 1;
-    modelConfig.Debug = 0;
-    ctcFstDecoderConfig.Graph = "models/sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18/HLG.fst";
-
-    return new SherpaOnnxSpeechTranscriptorFactory(new SherpaOnnxOnlineTranscriptorOptions()
+    return new AzureAIFastTranscriptorProvisioner(new AzureSpeechServicesConfig()
     {
-        OnlineModelConfig = modelConfig,
-        OnlineCtcFstDecoderConfig = ctcFstDecoderConfig
+        Endpoint = endpoint,
+        SubscriptionKey = key,
     });
 }
 
-IVadDetectorFactory GetVadDetector(string vad)
+ISpeechTranscriptorProvisioner GetOpenAITranscriptorProvisioner()
+{
+    var openAiApiKey = "your-openai-api-key";
+    return new OpenAIWhisperSpeechTranscriporProvisioner(new OpenAiWhisperSpeechTranscriptorConfig()
+    {
+        ApiKey = openAiApiKey
+    });
+}
+
+ISpeechTranscriptorProvisioner GetWhisperOnnxTranscriptorProvisioner()
+{
+    return new WhisperOnnxSpeechTranscriptorProvisioner(new WhisperOnnxSpeechTranscriptorConfig()
+    {
+        ModelPath = Path.Combine("models", "whisper.onnx"),
+        ModelType = WhisperOnnxModelType.Tiny,
+    });
+}
+
+ISpeechTranscriptorProvisioner GetSherpaOnnxTranscriptorProvisioner()
+{
+    return new SherpaOnnxSpeechTranscriptorProvisioner(new SherpaOnnxSpeechTranscriptorConfig()
+    {
+        ModelPath = Path.Combine("models", "sherpa"),
+        Model = SherpaOnnxModels.ZipFormerGigaSpeechInt8
+    });
+}
+
+IVadDetectorProvisioner GetVadDetectorProvisioner(string vad)
 {
     return vad switch
     {
-        "silero" => GetSileroVadDetector(),
-        "webrtc" => GetWebRtcVadSharpDetector(),
+        "silero" => GetSileroVadDetectorProvisioner(),
+        "webrtc" => GetWebRtcVadSharpDetectorProvisioner(),
         _ => throw new NotSupportedException()
     };
 }
 
-IVadDetectorFactory GetWebRtcVadSharpDetector()
+IVadDetectorProvisioner GetWebRtcVadSharpDetectorProvisioner()
 {
-    return new WebRtcVadSharpDetectorFactory(new WebRtcVadSharpOptions()
+    return new WebRtcVadSharpDetectorProvisioner(new WebRtcVadSharpConfig()
     {
         OperatingMode = OperatingMode.HighQuality, // The operating mode of the VAD. The default is OperatingMode.HighQuality.
     });
 }
 
-IVadDetectorFactory GetSileroVadDetector()
+IVadDetectorProvisioner GetSileroVadDetectorProvisioner()
 {
-    // Replace with the path to the Silero VAD ONNX model (Download from here): https://github.com/snakers4/silero-vad/blob/master/src/silero_vad/data/silero_vad.onnx
-    // Or execute `downloadModels.ps1` script in the root of this repository
-    var sileroOnnxPath = "models/silero_vad.onnx";
-    return new SileroVadDetectorFactory(new SileroVadOptions(sileroOnnxPath)
+    return new SileroVadProvisioner(new SileroVadConfig()
     {
+        ModelPath = Path.Combine("models", "silero_vad.onnx"),
         Threshold = 0.5f, // The threshold for Silero VAD. The default is 0.5f.
         ThresholdGap = 0.15f, // The threshold gap for Silero VAD. The default is 0.15f.
     });

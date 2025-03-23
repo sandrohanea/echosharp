@@ -1,6 +1,7 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
 using EchoSharp.Audio;
+using EchoSharp.Audio.Sink;
 using EchoSharp.SpeechSynthesis;
 using EchoSharp.SpeechTranscription;
 using EchoSharp.VoiceActivityDetection;
@@ -70,7 +71,7 @@ public static class ProvisioningUtils
         {
             var options = new SpeechSynthesizerOptions();
             using var warmUpSynthesizer = factory.Create(options);
-            using var nullAudioSink = new NullAudioSink();
+            await using var nullAudioSink = new NullAudioSink();
 
             await warmUpSynthesizer.SynthesizeAsync(new SpeechSegment()
             {

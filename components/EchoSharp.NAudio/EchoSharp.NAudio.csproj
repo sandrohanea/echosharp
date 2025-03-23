@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="NAudio" />
+    <PackageReference Include="NAudio.Wasapi" />
   </ItemGroup>
 
 </Project>

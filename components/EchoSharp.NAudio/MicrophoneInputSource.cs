@@ -2,6 +2,8 @@
 
 using NAudio.Wave;
 using EchoSharp.Audio;
+using NAudio.CoreAudioApi;
+using System.Runtime.InteropServices;
 
 namespace EchoSharp.NAudio;
 
@@ -10,7 +12,7 @@ namespace EchoSharp.NAudio;
 /// </summary>
 public class MicrophoneInputSource : AwaitableWaveFileSource
 {
-    private readonly WaveInEvent microphoneIn;
+    private IWaveIn? waveIn;
 
     public MicrophoneInputSource(int deviceNumber = 0,
                                  int sampleRate = 16000,
@@ -23,10 +25,17 @@ public class MicrophoneInputSource : AwaitableWaveFileSource
                                  IChannelAggregationStrategy? aggregationStrategy = null)
         : base(storeSamples, storeBytes, initialSizeFloats, initialSizeBytes, aggregationStrategy)
     {
-        microphoneIn = new WaveInEvent
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            throw new PlatformNotSupportedException("EchoSharp.NAudio only supports Windows. For other platforms, please use a different audio component.");
+        }
+
+        var waveFormat = new WaveFormat(sampleRate, bitsPerSample, channels);
+
+        waveIn = new WaveInEvent
         {
             DeviceNumber = deviceNumber,
-            WaveFormat = new WaveFormat(sampleRate, bitsPerSample, channels)
+            WaveFormat = waveFormat
         };
 
         Initialize(new AudioHeader()
@@ -36,27 +45,31 @@ public class MicrophoneInputSource : AwaitableWaveFileSource
             SampleRate = (uint)sampleRate
         });
 
-        microphoneIn.DataAvailable += WaveIn_DataAvailable;
-        microphoneIn.RecordingStopped += MicrophoneIn_RecordingStopped;
+        waveIn.DataAvailable += WaveIn_DataAvailable;
+        waveIn.RecordingStopped += MicrophoneIn_RecordingStopped;
     }
 
     public void StartRecording()
     {
-        microphoneIn.StartRecording();
+        waveIn?.StartRecording();
     }
 
     public void StopRecording()
     {
-        microphoneIn.StopRecording();
+        waveIn?.StopRecording();
     }
 
     protected override void Dispose(bool disposing)
     {
         if (disposing)
         {
-            microphoneIn.DataAvailable -= WaveIn_DataAvailable;
-            microphoneIn.RecordingStopped -= MicrophoneIn_RecordingStopped;
-            microphoneIn.Dispose();
+            if (waveIn != null)
+            {
+                waveIn.DataAvailable -= WaveIn_DataAvailable;
+                waveIn.RecordingStopped -= MicrophoneIn_RecordingStopped;
+                waveIn.Dispose();
+                waveIn = null;
+            }
         }
         base.Dispose(disposing);
     }

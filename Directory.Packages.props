@@ -6,6 +6,7 @@
     <PackageVersion Include="Azure.Identity" Version="1.13.1" />
     <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.0" />
     <PackageVersion Include="NAudio" Version="2.2.1" />
+    <PackageVersion Include="NAudio.Wasapi" Version="2.2.1" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />
     <PackageVersion Include="System.Threading.Channels" Version="9.0.0" />
     <PackageVersion Include="System.Memory" Version="4.6.0" />

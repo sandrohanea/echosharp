@@ -2,35 +2,53 @@
 
 using System.Buffers;
 using EchoSharp.Audio;
+using EchoSharp.Audio.Sink;
 using EchoSharp.Config;
+using EchoSharp.Utils;
 using NAudio.Wave;
+using NAudio.CoreAudioApi;
+using System.Runtime.InteropServices;
 
 namespace EchoSharp.NAudio;
 
-public sealed class SpeakerOutSink(int deviceNumber = -1, float volume = 1) : IAudioSink
+public sealed class SpeakerOutSink(int deviceNumber = -1, float volume = 1) : WaveDecoderSink
 {
-    private WaveOutEvent? waveOut;
+    private IWavePlayer? waveOut;
     private PooledBufferedSampleProvider? bufferedSampleProvider;
 
-    public Task Initialize(AudioHeader audioHeader, double? duration)
+    protected override Task InitializeInternalAsync(AudioHeader audioHeader, double? duration)
     {
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            throw new PlatformNotSupportedException("EchoSharp.NAudio only supports Windows. For other platforms, please use a different audio component.");
+        }
+
         var waveFormat = WaveFormat.CreateIeeeFloatWaveFormat(
             (int)audioHeader.SampleRate,
             audioHeader.Channels);
 
         bufferedSampleProvider = new PooledBufferedSampleProvider(waveFormat);
-        waveOut = new WaveOutEvent
+        
+        try 
         {
-            DeviceNumber = deviceNumber,
-            Volume = volume
-        };
+            waveOut = new WasapiOut();
+        }
+        catch
+        {
+            waveOut = new WaveOutEvent
+            {
+                DeviceNumber = deviceNumber,
+                Volume = volume
+            };
+        }
+
         waveOut.Init(bufferedSampleProvider);
         waveOut.Play();
 
         return Task.CompletedTask;
     }
 
-    public Task WriteAsync(ReadOnlyMemory<float> samples, CancellationToken cancellationToken = default)
+    protected override Task WriteInternalAsync(ReadOnlyMemory<float> samples, CancellationToken cancellationToken = default)
     {
         if (bufferedSampleProvider == null)
         {
@@ -41,11 +59,12 @@ public sealed class SpeakerOutSink(int deviceNumber = -1, float volume = 1) : IA
         return Task.CompletedTask;
     }
 
-    public void Dispose()
+    protected override ValueTask DisposeInternalAsync()
     {
         waveOut?.Dispose();
         waveOut = null;
         bufferedSampleProvider = null;
+        return EchoValueTask.Completed;
     }
 
     /// <summary>
