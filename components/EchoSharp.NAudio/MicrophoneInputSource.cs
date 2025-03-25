@@ -1,10 +1,9 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
-using NAudio.Wave;
-using EchoSharp.Audio;
-using NAudio.CoreAudioApi;
 using System.Runtime.InteropServices;
+using EchoSharp.Audio;
 using EchoSharp.Audio.Source.Awaitable;
+using NAudio.Wave;
 
 namespace EchoSharp.NAudio;
 
@@ -13,7 +12,7 @@ namespace EchoSharp.NAudio;
 /// </summary>
 public class MicrophoneInputSource : AwaitableWaveFileSource
 {
-    private IWaveIn? waveIn;
+    private WaveInEvent? waveIn;
 
     public MicrophoneInputSource(int deviceNumber = 0,
                                  int sampleRate = 16000,

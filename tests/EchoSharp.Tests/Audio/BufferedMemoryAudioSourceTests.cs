@@ -1,11 +1,10 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
 using System.Buffers.Binary;
-using FluentAssertions;
 using EchoSharp.Audio;
+using EchoSharp.Audio.Source;
 using EchoSharp.Tests.Utils;
 using Xunit;
-using EchoSharp.Audio.Source;
 
 namespace EchoSharp.Tests.Audio;
 
@@ -27,10 +26,10 @@ public class BufferedMemoryAudioSourceTests
         source.Initialize(header);
 
         // Assert
-        source.IsInitialized.Should().BeTrue();
-        source.SampleRate.Should().Be(header.SampleRate);
-        source.ChannelCount.Should().Be(header.Channels);
-        source.FramesCount.Should().Be(0);
+        Assert.True(source.IsInitialized);
+        Assert.Equal(header.SampleRate, source.SampleRate);
+        Assert.Equal(header.Channels, source.ChannelCount);
+        Assert.Equal(0, source.FramesCount);
     }
 
     [Theory]
@@ -54,7 +53,7 @@ public class BufferedMemoryAudioSourceTests
         source.AddFrame(frame);
 
         // Assert
-        source.FramesCount.Should().Be(1);
+        Assert.Equal(1, source.FramesCount);
     }
 
     [Theory]
@@ -78,7 +77,7 @@ public class BufferedMemoryAudioSourceTests
         source.AddFrame(frame);
 
         // Assert
-        source.FramesCount.Should().Be(1);
+        Assert.Equal(1, source.FramesCount);
     }
 
     [Theory]
@@ -106,7 +105,7 @@ public class BufferedMemoryAudioSourceTests
         var samples = await source.GetSamplesAsync(0);
         // Assert
 
-        samples.ToArray().Should().BeApproxEqual([1, -1, 0, -0.5f, 0.75f, 0.75f]);
+        Assert.Equal([1, -1, 0, -0.5f, 0.75f, 0.75f], samples.ToArray(), new FloatComparer(FloatComparer.DefaultTolerance));
     }
 
     [Theory]
@@ -134,14 +133,13 @@ public class BufferedMemoryAudioSourceTests
         var samples = await source.GetFramesAsync(0);
 
         // Assert
-        samples.Length.Should().Be(12);
+        Assert.Equal(12, samples.Length);
         float[] expectedFloats = [1, -1, 0, -0.5f, 0.75f, 0.75f];
         for (var i = 0; i < samples.Length; i += 2)
         {
             var sampleShort = BinaryPrimitives.ReadInt16LittleEndian(samples.Span.Slice(i));
-
             var diff = Math.Abs(expectedFloats[i / 2] - sampleShort / (float)short.MaxValue);
-            diff.Should().BeLessThan(0.001f);
+            Assert.True(diff < 0.001f);
         }
     }
 
@@ -170,7 +168,7 @@ public class BufferedMemoryAudioSourceTests
         var samples = await source.GetSamplesAsync(0, maxFrames: 2);
         // Assert
 
-        samples.ToArray().Should().BeApproxEqual([1, -1, 0, -0.5f]);
+        Assert.Equal([1, -1, 0, -0.5f], samples.ToArray(), new FloatComparer(FloatComparer.DefaultTolerance));
     }
 
     [Theory]
@@ -198,7 +196,7 @@ public class BufferedMemoryAudioSourceTests
         var samples = await source.GetSamplesAsync(1);
         // Assert
 
-        samples.ToArray().Should().BeApproxEqual([0, -0.5f, 0.75f, 0.75f]);
+        Assert.Equal([0, -0.5f, 0.75f, 0.75f], samples.ToArray(), new FloatComparer(FloatComparer.DefaultTolerance));
     }
 
     [Theory]
@@ -226,15 +224,14 @@ public class BufferedMemoryAudioSourceTests
         var samples = await source.GetFramesAsync(1);
         // Assert
 
-        samples.Length.Should().Be(8);
+        Assert.Equal(8, samples.Length);
 
         float[] expectedFloats = [0, -0.5f, 0.75f, 0.75f];
         for (var i = 0; i < samples.Length; i += 2)
         {
             var sampleShort = BinaryPrimitives.ReadInt16LittleEndian(samples.Span.Slice(i));
-
             var diff = Math.Abs(expectedFloats[i / 2] - sampleShort / (float)short.MaxValue);
-            diff.Should().BeLessThan(0.001f);
+            Assert.True(diff < 0.001f);
         }
     }
 
@@ -263,14 +260,13 @@ public class BufferedMemoryAudioSourceTests
         var samples = await source.GetFramesAsync(0, maxFrames: 2);
 
         // Assert
-        samples.Length.Should().Be(8);
+        Assert.Equal(8, samples.Length);
         float[] expectedFloats = [1, -1, 0, -0.5f];
         for (var i = 0; i < samples.Length; i += 2)
         {
             var sampleShort = BinaryPrimitives.ReadInt16LittleEndian(samples.Span.Slice(i));
-
             var diff = Math.Abs(expectedFloats[i / 2] - sampleShort / (float)short.MaxValue);
-            diff.Should().BeLessThan(0.001f);
+            Assert.True(diff < 0.001f);
         }
     }
 
@@ -300,8 +296,8 @@ public class BufferedMemoryAudioSourceTests
         var samples = await source.GetSamplesAsync(0);
 
         // Assert
-        source.ChannelCount.Should().Be(1); // Since aggregation is used
-        samples.ToArray().Should().BeApproxEqual([0f, -0.25f, 0.75f]); // Average of 1 and -1, 0 and -2, 0.75 and 0.75
+        Assert.Equal(1, source.ChannelCount); // Since aggregation is used
+        Assert.Equal([0f, -0.25f, 0.75f], samples.ToArray(), new FloatComparer(FloatComparer.DefaultTolerance)); // Average of 1 and -1, 0 and -2, 0.75 and 0.75
     }
 
     [Theory]
@@ -328,8 +324,8 @@ public class BufferedMemoryAudioSourceTests
         // Act
         var samples = await source.GetSamplesAsync(0);
         // Assert
-        source.ChannelCount.Should().Be(1); // Since aggregation is used
-        samples.ToArray().Should().BeApproxEqual([0f, -0.5f, 1f]); // last element is 1 as we stay in (-1, 1) range
+        Assert.Equal(1, source.ChannelCount); // Since aggregation is used
+        Assert.Equal([0f, -0.5f, 1f], samples.ToArray(), new FloatComparer(FloatComparer.DefaultTolerance)); // last element is 1 as we stay in (-1, 1) range
     }
 
     [Theory]
@@ -357,8 +353,8 @@ public class BufferedMemoryAudioSourceTests
         var samples = await source.GetSamplesAsync(0);
 
         // Assert
-        source.ChannelCount.Should().Be(1); // Since aggregation is used
-        samples.ToArray().Should().BeApproxEqual([-1f, -0.5f, 0.75f]); // Only second channel
+        Assert.Equal(1, source.ChannelCount); // Since aggregation is used
+        Assert.Equal([-1f, -0.5f, 0.75f], samples.ToArray(), new FloatComparer(FloatComparer.DefaultTolerance)); // Only second channel
     }
 
     [Theory]
@@ -376,28 +372,27 @@ public class BufferedMemoryAudioSourceTests
         };
         var source = new BufferedMemoryAudioSource(storeFloats, storeBytes);
         source.Initialize(header);
-        // Act
-        Action act = () => source.Initialize(header);
-        // Assert
-        act.Should().Throw<InvalidOperationException>().WithMessage("The source is already initialized.");
+
+        // Act & Assert
+        var exception = Assert.Throws<InvalidOperationException>(() => source.Initialize(header));
+        Assert.Equal("The source is already initialized.", exception.Message);
     }
 
     [Theory]
     [InlineData(true, true)]
     [InlineData(false, true)]
     [InlineData(true, false)]
-    public void MethodsThrowException_WhenNotInitialized(bool storeFloats, bool storeBytes)
+    public async Task MethodsThrowException_WhenNotInitialized(bool storeFloats, bool storeBytes)
     {
         // Arrange
         var source = new BufferedMemoryAudioSource(storeFloats, storeBytes);
 
-        // Act
-        Func<Task> getSamplesAsync = async () => await source.GetSamplesAsync(0, 10);
-        Action addFrame = () => source.AddFrame(new float[] { 1000f, -1000f });
+        // Act & Assert
+        var getSamplesAsyncException = await Assert.ThrowsAsync<InvalidOperationException>(async () => await source.GetSamplesAsync(0, 10));
+        Assert.Equal("The source is not initialized.", getSamplesAsyncException.Message);
 
-        // Assert
-        getSamplesAsync.Should().ThrowAsync<InvalidOperationException>().WithMessage("The source is not initialized.");
-        addFrame.Should().Throw<InvalidOperationException>().WithMessage("The source is not initialized.");
+        var addFrameException = Assert.Throws<InvalidOperationException>(() => source.AddFrame(new float[] { 1000f, -1000f }));
+        Assert.Equal("The source is not initialized.", addFrameException.Message);
     }
 
     [Theory]
@@ -417,20 +412,17 @@ public class BufferedMemoryAudioSourceTests
         source.Initialize(header);
         var frame = new float[] { 1000 }.AsMemory(); // Only 1 sample, but channels = 2
 
-        // Act
-        Action act = () => source.AddFrame(frame);
-
-        // Assert
-        act.Should().Throw<ArgumentException>().WithMessage("The frame size does not match the channels.*");
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentException>(() => source.AddFrame(frame));
+        Assert.StartsWith("The frame size does not match the channels", exception.Message);
     }
 
     [Fact]
     public void Constructor_Throws_IfBothStoreFloatsAndStoreBytesAreFalse()
     {
-        // Act
-        Action act = static () => _ = new BufferedMemoryAudioSource(storeFloats: false, storeBytes: false);
-        // Assert
-        act.Should().Throw<ArgumentException>().WithMessage("At least one of storeFloats or storeBytes must be true.");
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentException>(() => new BufferedMemoryAudioSource(storeFloats: false, storeBytes: false));
+        Assert.Equal("At least one of storeFloats or storeBytes must be true.", exception.Message);
     }
 
     private static void AddData(BufferedMemoryAudioSource source, bool addFloats)

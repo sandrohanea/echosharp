@@ -4,13 +4,13 @@ using System.Buffers;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Threading.Channels;
+using EchoSharp.Audio.Source;
+using EchoSharp.Audio.Source.Awaitable;
+using EchoSharp.AzureAI.SpeechServices.Internals;
+using EchoSharp.Config;
+using EchoSharp.SpeechTranscription;
 using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
-using EchoSharp.AzureAI.SpeechServices.Internals;
-using EchoSharp.SpeechTranscription;
-using EchoSharp.Config;
-using EchoSharp.Audio.Source.Awaitable;
-using EchoSharp.Audio.Source;
 
 namespace EchoSharp.AzureAI.SpeechServices.RealTime;
 

@@ -1,15 +1,15 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
-using EchoSharp.Audio.Sink;
-using EchoSharp.AzureAI.SpeechServices.Internals;
-using EchoSharp.SpeechSynthesis;
-using EchoSharp.Internals;
-using EchoSharp.Config;
-using Microsoft.CognitiveServices.Speech;
-using Microsoft.CognitiveServices.Speech.Audio;
 using System.Buffers;
 using System.Globalization;
 using EchoSharp.Audio;
+using EchoSharp.Audio.Sink;
+using EchoSharp.AzureAI.SpeechServices.Internals;
+using EchoSharp.Config;
+using EchoSharp.Internals;
+using EchoSharp.SpeechSynthesis;
+using Microsoft.CognitiveServices.Speech;
+using Microsoft.CognitiveServices.Speech.Audio;
 
 namespace EchoSharp.AzureAI.SpeechServices.SpeechSynthesis;
 
@@ -58,7 +58,7 @@ internal sealed class AzureSpeechSynthesizer(
         await (authTokenHandler?.InitializeAsync(cancellationToken) ?? Task.CompletedTask);
         using var tokenLoader = new OptionalDisposable(authTokenHandler?.GetLoader(speechSynthesizer.Properties));
         var result = await speechSynthesizer.SpeakTextAsync(speechSegment.Text);
-        
+
         // Wait for all writes to complete
         await audioOutputStream.CompleteAsync();
     }
@@ -153,7 +153,7 @@ internal sealed class AzureSpeechSynthesizer(
                 {
                     // Initialize on first write
                     await InitializeSinkAsync();
-                    
+
                     // Write only the actual data length
                     await audioSink.WriteAsync(bufferToWrite.Value.Buffer.AsMemory(0, bufferToWrite.Value.Length));
                 }

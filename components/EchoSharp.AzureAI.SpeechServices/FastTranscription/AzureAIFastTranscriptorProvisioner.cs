@@ -1,6 +1,5 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
-using Azure.Core;
 using EchoSharp.Provisioning;
 using EchoSharp.SpeechTranscription;
 

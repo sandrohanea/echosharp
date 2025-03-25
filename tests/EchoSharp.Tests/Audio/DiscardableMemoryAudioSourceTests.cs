@@ -1,7 +1,7 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
-using FluentAssertions;
 using EchoSharp.Audio;
+using EchoSharp.Audio.Source;
 using EchoSharp.Tests.Utils;
 using Xunit;
 
@@ -38,7 +38,7 @@ public class DiscardableMemoryAudioSourceTests
         // Assert
         Assert.Equal(3, discardableSource.FramesCount);
         var samples = await discardableSource.GetSamplesAsync(3);
-        samples.Span.ToArray().Should().BeApproxEqual(TestData.GetTestSampleData(6, 0.07f));
+        Assert.Equal(TestData.GetTestSampleData(6, 0.07f), samples.Span.ToArray(), new FloatComparer(FloatComparer.DefaultTolerance));
     }
 
     [Theory]
@@ -63,9 +63,7 @@ public class DiscardableMemoryAudioSourceTests
         discardableSource.AddFrame(TestData.GetTestSampleData(2, 0.11f));
         // we have 6 frames
         // Act
-        Action act = () => discardableSource.DiscardFrames(7);
-        // Assert
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        Assert.Throws<ArgumentOutOfRangeException>(() => discardableSource.DiscardFrames(7));
     }
 
     [Theory]
@@ -83,9 +81,7 @@ public class DiscardableMemoryAudioSourceTests
             SampleRate = 44100
         });
         // Act
-        Action act = () => discardableSource.DiscardFrames(0);
-        // Assert
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        Assert.Throws<ArgumentOutOfRangeException>(() => discardableSource.DiscardFrames(0));
     }
 
     [Theory]
@@ -103,16 +99,14 @@ public class DiscardableMemoryAudioSourceTests
             SampleRate = 44100
         });
         // Act
-        Action act = () => discardableSource.DiscardFrames(-1);
-        // Assert
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        Assert.Throws<ArgumentOutOfRangeException>(() => discardableSource.DiscardFrames(-1));
     }
 
     [Theory]
     [InlineData(true, true)]
     [InlineData(false, true)]
     [InlineData(true, false)]
-    public void GetSamplesAsync_WhenStartFrameIsLessThanDiscardedFrames_Throws(bool storeFloats, bool storeBytes)
+    public async Task GetSamplesAsync_WhenStartFrameIsLessThanDiscardedFrames_Throws(bool storeFloats, bool storeBytes)
     {
         // Arrange
         var discardableSource = new DiscardableMemoryAudioSource(storeFloats, storeBytes);
@@ -130,8 +124,6 @@ public class DiscardableMemoryAudioSourceTests
         discardableSource.AddFrame(TestData.GetTestSampleData(2, 0.11f));
         discardableSource.DiscardFrames(3);
         // Act
-        Action act = () => discardableSource.GetSamplesAsync(2);
-        // Assert
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => discardableSource.GetSamplesAsync(2));
     }
 }

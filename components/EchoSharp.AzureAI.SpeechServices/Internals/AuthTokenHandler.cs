@@ -47,11 +47,11 @@ internal class AuthTokenHandler(TokenCredential tokenCredential, string resource
 
     public AuthTokenLoader GetLoader(PropertyCollection properties)
     {
-        if(currentAccessToken is null)
+        if (currentAccessToken is null)
         {
             throw new InvalidOperationException("The token handler has not been initialized.");
         }
-        
+
         lock (syncRoot)
         {
             var loader = new AuthTokenLoader(properties, this);

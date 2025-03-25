@@ -82,7 +82,7 @@ async Task ShowTranscriptAsync()
 
         Console.WriteLine(textToWrite);
     }
-};
+}
 
 var showTranscriptTask = ShowTranscriptAsync();
 var firstReady = await Task.WhenAny(microphoneTask, showTranscriptTask);

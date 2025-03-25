@@ -1,4 +1,4 @@
-﻿// Licensed under the MIT license: https://opensource.org/licenses/MIT
+// Licensed under the MIT license: https://opensource.org/licenses/MIT
 
 using System.Runtime.InteropServices;
 using EchoSharp.Audio.Sink;
@@ -29,7 +29,7 @@ while (text != "exit" && !string.IsNullOrEmpty(text))
             : new WaveFileSink($"output-{DateTime.Now.Ticks}.wav");
 
     using var speechSynthesizer = speechSynthesisFactory.Create(speechOptions);
-    await speechSynthesizer.SynthesizeAsync(new SpeechSegment() { Text = text }, speakerOutSink);
+    await speechSynthesizer.SynthesizeAsync(new SpeechSegment(text), speakerOutSink);
 
     text = Console.ReadLine();
 }

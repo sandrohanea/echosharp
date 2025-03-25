@@ -5,7 +5,7 @@ namespace EchoSharp.SpeechSynthesis;
 /// <summary>
 /// Represents a factory for creating instances of <see cref="ISpeechSynthesizer"/>.
 /// </summary>
-public interface ISpeechSynthesizerFactory
+public interface ISpeechSynthesizerFactory : IDisposable
 {
     /// <summary>
     /// Creates a new instance of <see cref="ISpeechSynthesizer"/> with the given options.

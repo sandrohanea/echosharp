@@ -1,10 +1,10 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
 using System.Runtime.CompilerServices;
+using EchoSharp.Audio.Source;
+using EchoSharp.SpeechTranscription;
 using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
-using EchoSharp.SpeechTranscription;
-using EchoSharp.Audio.Source;
 
 namespace EchoSharp.Onnx.Whisper;
 
@@ -135,7 +135,7 @@ internal class WhisperOnnxSpeechTranscriptor : ISpeechTranscriptor
         this.options = options;
     }
 
-    public WhisperOnnxSpeechTranscriptor(byte[] modelBytes,  SpeechTranscriptorOptions options)
+    public WhisperOnnxSpeechTranscriptor(byte[] modelBytes, SpeechTranscriptorOptions options)
     {
         var sessionOptions = new SessionOptions();
         sessionOptions.RegisterOrtExtensions();

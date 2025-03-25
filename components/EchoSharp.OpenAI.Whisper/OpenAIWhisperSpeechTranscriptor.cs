@@ -2,10 +2,10 @@
 
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using OpenAI.Audio;
 using EchoSharp.Audio;
-using EchoSharp.SpeechTranscription;
 using EchoSharp.Audio.Source;
+using EchoSharp.SpeechTranscription;
+using OpenAI.Audio;
 
 namespace EchoSharp.OpenAI.Whisper;
 

@@ -2,16 +2,15 @@
 
 using System.Globalization;
 using EchoSharp.Audio;
-using EchoSharp.SpeechTranscription;
-using Xunit;
-using EchoSharp.Whisper.net;
-using EchoSharp.WebRtc.WebRtcVadSharp;
-using EchoSharp.Onnx.SileroVad;
-using SherpaOnnx;
-using EchoSharp.Onnx.Sherpa.SpeechTranscription;
-using FluentAssertions;
-using EchoSharp.VoiceActivityDetection;
 using EchoSharp.Audio.Source.Awaitable;
+using EchoSharp.Onnx.Sherpa.SpeechTranscription;
+using EchoSharp.Onnx.SileroVad;
+using EchoSharp.SpeechTranscription;
+using EchoSharp.VoiceActivityDetection;
+using EchoSharp.WebRtc.WebRtcVadSharp;
+using EchoSharp.Whisper.net;
+using SherpaOnnx;
+using Xunit;
 
 namespace EchoSharp.Tests.SpeechTranscription;
 
@@ -93,10 +92,10 @@ public class EchoSharpRealtimeTranscriptorTests
         var recognizingEvents = events.OfType<RealtimeSegmentRecognizing>().ToList();
         var recognizedEvents = events.OfType<RealtimeSegmentRecognized>().ToList();
 
-        recognizingEvents.Should().HaveCountGreaterThanOrEqualTo(1);
-        recognizedEvents.Should().HaveCountGreaterThanOrEqualTo(1);
-        events.First().Should().BeOfType<RealtimeSessionStarted>();
-        events.Last().Should().BeOfType<RealtimeSessionStopped>();
+        Assert.True(recognizingEvents.Count >= 1);
+        Assert.True(recognizedEvents.Count >= 1);
+        Assert.IsType<RealtimeSessionStarted>(events.First());
+        Assert.IsType<RealtimeSessionStopped>(events.Last());
     }
 
     private static async Task<List<IRealtimeRecognitionEvent>> Process(IRealtimeSpeechTranscriptor transcriptor, IAwaitableAudioSource source)

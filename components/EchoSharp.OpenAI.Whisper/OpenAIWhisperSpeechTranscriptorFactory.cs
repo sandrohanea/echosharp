@@ -1,8 +1,8 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
+using EchoSharp.SpeechTranscription;
 using OpenAI;
 using OpenAI.Audio;
-using EchoSharp.SpeechTranscription;
 
 namespace EchoSharp.OpenAI.Whisper;
 

@@ -50,6 +50,5 @@ public class AzureSpeechSynthesizerFactory : ISpeechSynthesizerFactory
 
     public void Dispose()
     {
-
     }
 }

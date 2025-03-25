@@ -190,4 +190,4 @@ public abstract class WaveEncoderSink : IAudioSink
         // Update data chunk size
         BinaryPrimitives.WriteUInt32LittleEndian(headerBuffer.AsSpan(40), (uint)dataSize);
     }
-} 
+}

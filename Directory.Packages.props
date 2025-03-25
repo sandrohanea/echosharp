@@ -31,7 +31,6 @@
     <!-- Dependencies for AzureAI -->
     <PackageVersion Include="Microsoft.CognitiveServices.Speech" Version="1.42.0" />
     <!-- Tests -->
-    <PackageVersion Include="FluentAssertions" Version="7.0.0" />
     <PackageVersion Include="coverlet.collector" Version="6.0.3" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageVersion Include="Whisper.net.Runtime.Cuda.Windows" Version="1.7.2" />

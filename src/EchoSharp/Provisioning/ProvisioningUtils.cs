@@ -1,7 +1,7 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
-using EchoSharp.Audio;
 using EchoSharp.Audio.Sink;
+using EchoSharp.Audio.Source;
 using EchoSharp.SpeechSynthesis;
 using EchoSharp.SpeechTranscription;
 using EchoSharp.VoiceActivityDetection;
@@ -73,10 +73,10 @@ public static class ProvisioningUtils
             using var warmUpSynthesizer = factory.Create(options);
             await using var nullAudioSink = new NullAudioSink();
 
-            await warmUpSynthesizer.SynthesizeAsync(new SpeechSegment()
-            {
-                Text = "Hello, this is a warm-up test.",
-            }, nullAudioSink, cancellationToken);
+            await warmUpSynthesizer.SynthesizeAsync(
+                new SpeechSegment("Hello, this is a warm-up test."),
+                nullAudioSink,
+                cancellationToken);
         }
         return factory;
     }

@@ -1,9 +1,9 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
-using Microsoft.CognitiveServices.Speech;
 using Azure.Core;
 using EchoSharp.AzureAI.SpeechServices.Internals;
 using EchoSharp.SpeechTranscription;
+using Microsoft.CognitiveServices.Speech;
 
 namespace EchoSharp.AzureAI.SpeechServices.RealTime;
 

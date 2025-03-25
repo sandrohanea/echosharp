@@ -1,13 +1,12 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
 using System.Buffers;
+using System.Runtime.InteropServices;
 using EchoSharp.Audio;
 using EchoSharp.Audio.Sink;
 using EchoSharp.Config;
 using EchoSharp.Utils;
 using NAudio.Wave;
-using NAudio.CoreAudioApi;
-using System.Runtime.InteropServices;
 
 namespace EchoSharp.NAudio;
 
@@ -28,8 +27,8 @@ public sealed class SpeakerOutSink(int deviceNumber = -1, float volume = 1) : Wa
             audioHeader.Channels);
 
         bufferedSampleProvider = new PooledBufferedSampleProvider(waveFormat);
-        
-        try 
+
+        try
         {
             waveOut = new WasapiOut();
         }

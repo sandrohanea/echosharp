@@ -11,5 +11,5 @@ public sealed class OptionalDisposable(IDisposable? target) : IDisposable
         {
             target.Dispose();
         }
-    }   
+    }
 }

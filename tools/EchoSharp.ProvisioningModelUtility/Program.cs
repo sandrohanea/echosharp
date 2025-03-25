@@ -66,7 +66,7 @@ await Task.WhenAll(tasks);
 foreach (var task in tasks)
 {
     var model = await task;
-    
+
     Console.WriteLine("""
         new ProvisioningModel(
                 new("{0}"),

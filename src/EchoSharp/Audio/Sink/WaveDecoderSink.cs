@@ -103,8 +103,8 @@ public abstract class WaveDecoderSink : IAudioSink
                     double? duration = null;
                     if (parseResult.DataChunkSize > 0)
                     {
-                        var bytesPerSecond = parseResult.Header.Value.SampleRate * 
-                            parseResult.Header.Value.Channels * 
+                        var bytesPerSecond = parseResult.Header.Value.SampleRate *
+                            parseResult.Header.Value.Channels *
                             (parseResult.Header.Value.BitsPerSample / 8.0);
                         duration = parseResult.DataChunkSize / bytesPerSecond;
                     }
@@ -117,7 +117,7 @@ public abstract class WaveDecoderSink : IAudioSink
                     {
                         // Skip to the data offset
                         pendingData.TrySkip((uint)parseResult.DataOffset);
-                        
+
                         // Process the remaining data in chunks
                         while (pendingData.Position < pendingData.Length)
                         {

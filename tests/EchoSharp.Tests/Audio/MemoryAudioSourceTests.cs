@@ -1,8 +1,7 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
 using System.Buffers.Binary;
-using FluentAssertions;
-using EchoSharp.Audio;
+using EchoSharp.Audio.Source;
 using EchoSharp.Tests.Utils;
 using Xunit;
 
@@ -20,7 +19,7 @@ public class MemoryAudioSourceTests
         // Act
         var result = await audioSource.GetSamplesAsync(0);
         // Assert
-        result.Span.ToArray().Should().Equal(1, 2, 3, 4, 5, 6);
+        Assert.Equal([1, 2, 3, 4, 5, 6], result.Span.ToArray());
     }
 
     [Fact]
@@ -32,7 +31,7 @@ public class MemoryAudioSourceTests
         // Act
         var result = audioSource.FramesCount;
         // Assert
-        result.Should().Be(3); // 6 samples / 2 channels = 3 frames
+        Assert.Equal(3, result);
     }
 
     [Fact]
@@ -44,7 +43,7 @@ public class MemoryAudioSourceTests
         // Act
         var result = audioSource.ChannelCount;
         // Assert
-        result.Should().Be(2);
+        Assert.Equal(2, result);
     }
 
     [Theory]
@@ -78,7 +77,7 @@ public class MemoryAudioSourceTests
         var result = await audioSource.GetSamplesAsync(0);
 
         // Assert
-        result.Span.ToArray().Should().BeApproxEqual(floats);
+        Assert.Equal(floats, result.Span.ToArray(), new FloatComparer(FloatComparer.DefaultTolerance));
     }
 
     [Theory]
@@ -113,13 +112,12 @@ public class MemoryAudioSourceTests
         var result = await audioSource.GetFramesAsync(0);
 
         // Assert
-        result.Length.Should().Be(3 * 2 * 2); // 2 frames with 2 channels and 2 bytes each
-
+        Assert.Equal(3 * 2 * 2, result.Length);
         for (var i = 0; i < 6; i++)
         {
             var shortValue = BinaryPrimitives.ReadInt16LittleEndian(result.Span.Slice(i * 2));
             var floatValue = shortValue / (float)short.MaxValue;
-            floatValue.Should().BeApproximately(floats[i], 0.0001f);
+            Assert.True(Math.Abs(floatValue - floats[i]) <= 0.0001f);
         }
     }
 
@@ -154,7 +152,7 @@ public class MemoryAudioSourceTests
         var result = await audioSource.GetSamplesAsync(1, 2);
 
         // Assert
-        result.Span.ToArray().Should().BeApproxEqual([floats[2], floats[3], floats[4], floats[5]]);
+        Assert.Equal([floats[2], floats[3], floats[4], floats[5]], result.Span.ToArray(), new FloatComparer(FloatComparer.DefaultTolerance));
     }
 
     [Theory]
@@ -188,13 +186,12 @@ public class MemoryAudioSourceTests
         var result = await audioSource.GetFramesAsync(1, 2);
 
         // Assert
-        result.Length.Should().Be(2 * 2 * 2); // 2 frames with 2 channels and 2 bytes each
-
+        Assert.Equal(2 * 2 * 2, result.Length);
         for (var i = 0; i < 4; i++)
         {
             var shortValue = BinaryPrimitives.ReadInt16LittleEndian(result.Span.Slice(i * 2));
             var floatValue = shortValue / (float)short.MaxValue;
-            floatValue.Should().BeApproximately(floats[i + 2], 0.0001f);
+            Assert.True(Math.Abs(floatValue - floats[i + 2]) <= 0.0001f);
         }
     }
 }
