@@ -15,7 +15,7 @@ This component enables speech recognition using ONNX-formatted Whisper models. I
 
 ## Configuration
 
-The `WhisperOnnxSpeechTranscriptorConfig` class is used to configure the transcriptor. It supports the following properties:
+The `WhisperOnnxSpeechProcessorConfig` class is used to configure the processor. It supports the following properties:
 
 - `ModelPath`: The path where the model file will be downloaded and used for transcription. If not set, the model will be downloaded in memory and used without being persisted to disk.
 - `ModelType`: The type of Whisper ONNX model to download (e.g., Tiny, Small, Medium). Defaults to `WhisperOnnxModelType.Small`.
@@ -24,7 +24,7 @@ The `WhisperOnnxSpeechTranscriptorConfig` class is used to configure the transcr
 ### Example Configuration
 
 ```csharp
-var config = new WhisperOnnxSpeechTranscriptorConfig
+var config = new WhisperOnnxSpeechProcessorConfig
 {
     ModelPath = "path/to/store/model",
     ModelType = WhisperOnnxModelType.Tiny,
@@ -34,14 +34,14 @@ var config = new WhisperOnnxSpeechTranscriptorConfig
 
 ## Provisioning System
 
-The `WhisperOnnxSpeechTranscriptorProvisioner` class handles model downloading, integrity verification, and initialization. It supports both disk-based and memory-only provisioning.
+The `WhisperOnnxSpeechProcessorProvisioner` class handles model downloading, integrity verification, and initialization. It supports both disk-based and memory-only provisioning.
 
 ### Example Provisioning
 
 ```csharp
-var provisioner = new WhisperOnnxSpeechTranscriptorProvisioner(config);
+var provisioner = new WhisperOnnxSpeechProcessorProvisioner(config);
 var factory = await provisioner.ProvisionAsync();
-using var transcriptor = factory.Create(new SpeechTranscriptorOptions
+using var processor = factory.Create(new SpeechProcessorOptions
 {
     Language = new CultureInfo("en-US"),
     LanguageAutoDetect = false,

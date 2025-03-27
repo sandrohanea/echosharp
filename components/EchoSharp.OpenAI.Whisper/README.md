@@ -15,7 +15,7 @@ This component provides cloud-based speech recognition capabilities through the 
 
 ## Configuration
 
-The `OpenAiWhisperSpeechTranscriptorConfig` class is used to configure the transcriptor. It supports the following properties:
+The `OpenAiWhisperSpeechProcessorConfig` class is used to configure the transcriptor. It supports the following properties:
 
 - `ApiKey`: The API key for the OpenAI Whisper API. If not set, the key is read from the `OPENAI_API_KEY` environment variable.
 - `AudioClient`: An optional audio client for advanced configurations.
@@ -25,7 +25,7 @@ The `OpenAiWhisperSpeechTranscriptorConfig` class is used to configure the trans
 ### Example Configuration
 
 ```csharp
-var config = new OpenAiWhisperSpeechTranscriptorConfig
+var config = new OpenAiWhisperSpeechProcessorConfig
 {
     ApiKey = "your-api-key",
     Temperature = 0.5f,
@@ -33,14 +33,14 @@ var config = new OpenAiWhisperSpeechTranscriptorConfig
 };
 ```
 
-For Azure OpenAI, you can use the `OpenAiWhisperSpeechTranscriptorConfig` class with the custom AudioClient:
+For Azure OpenAI, you can use the `OpenAiWhisperSpeechProcessorConfig` class with the custom AudioClient:
 
 ```csharp
 var azureClient = new Azure.AI.OpenAI.AzureOpenAIClient(
     new Uri("https://your-resource.openai.azure.com"),
     new Azure.AzureKeyCredential("your-api-key"));
 
-var config = new OpenAiWhisperSpeechTranscriptorConfig
+var config = new OpenAiWhisperSpeechProcessorConfig
 {
     AudioClient = azureClient.GetAudioClient("deployment-name"),
     Temperature = 0.5f,
@@ -57,7 +57,7 @@ The `OpenAIWhisperSpeechTranscriporProvisioner` class handles the provisioning o
 ```csharp
 var provisioner = new OpenAIWhisperSpeechTranscriporProvisioner(config);
 using var factory = await provisioner.ProvisionAsync();
-using var transcriptor = factory.Create(new SpeechTranscriptorOptions
+using var transcriptor = factory.Create(new SpeechProcessorOptions
 {
     Language = new CultureInfo("en-US"),
     LanguageAutoDetect = false,
@@ -71,8 +71,8 @@ using var transcriptor = factory.Create(new SpeechTranscriptorOptions
 
 ```csharp
 var openaiClient = new OpenAI.OpenAIClient("your-api-key");
-using var factory = new OpenAIWhisperSpeechTranscriptorFactory(openaiClient.GetAudioClient("audio-model"));
-using var transcriptor = factory.Create(new SpeechTranscriptorOptions()
+using var factory = new OpenAIWhisperSpeechProcessorFactory(openaiClient.GetAudioClient("audio-model"));
+using var transcriptor = factory.Create(new SpeechProcessorOptions()
 {
     Language = CultureInfo.GetCultureInfo("en-US"),
     LanguageAutoDetect = false,
@@ -86,8 +86,8 @@ var azureClient = new Azure.AI.OpenAI.AzureOpenAIClient(
     new Uri("https://your-resource.openai.azure.com"),
     new Azure.AzureKeyCredential("your-api-key"));
 
-using var factory = new OpenAIWhisperSpeechTranscriptorFactory(azureClient.GetAudioClient("deployment-name"));
-using var transcriptor = factory.Create(new SpeechTranscriptorOptions()
+using var factory = new OpenAIWhisperSpeechProcessorFactory(azureClient.GetAudioClient("deployment-name"));
+using var transcriptor = factory.Create(new SpeechProcessorOptions()
 {
     Language = CultureInfo.GetCultureInfo("en-US"),
     LanguageAutoDetect = false,

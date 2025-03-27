@@ -2,12 +2,12 @@
 
 using Azure.Core;
 using EchoSharp.AzureAI.SpeechServices.Internals;
-using EchoSharp.SpeechTranscription;
+using EchoSharp.SpeechProcessing;
 using Microsoft.CognitiveServices.Speech;
 
 namespace EchoSharp.AzureAI.SpeechServices.RealTime;
 
-public sealed class AzureAIRealtimeTranscriptorFactory : IRealtimeSpeechTranscriptorFactory
+public sealed class AzureAIRealtimeTranscriptorFactory : IRealtimeSpeechProcessorFactory
 {
     private readonly SpeechConfig speechConfig;
     private readonly AzureAIRealtimeTranscriptorOptions options;
@@ -38,8 +38,13 @@ public sealed class AzureAIRealtimeTranscriptorFactory : IRealtimeSpeechTranscri
         this.options = options;
     }
 
-    public IRealtimeSpeechTranscriptor Create(RealtimeSpeechTranscriptorOptions options)
+    public IRealtimeSpeechProcessor Create(RealtimeSpeechProcessorOptions options)
     {
+        if (options.Type != SpeechProcessingType.Transcript)
+        {
+            throw new NotSupportedException("Only Transcript processing is supported by AzureAIRealtimeTranscriptor");
+        }
+
         if (options.LanguageAutoDetect)
         {
             speechConfig.SetProperty(PropertyId.SpeechServiceConnection_LanguageIdMode, options.AutodetectLanguageOnce ? "AtStart" : "Continuous");

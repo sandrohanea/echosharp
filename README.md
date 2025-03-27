@@ -40,7 +40,7 @@ Example of the provisioning process:
 
 ```csharp
 // Create a provisioner that will download and set up the Whisper model
-var provisioner = new WhisperSpeechTranscriptorProvisioner(new WhisperSpeechTranscriptorConfig
+var provisioner = new WhisperSpeechProcessorProvisioner(new WhisperSpeechProcessorConfig
 {
     ModelPath = "path/to/store/model",       // Optional: Store model on disk
     GgmlType = GgmlType.Base,         // Model size (Tiny, Base, Small, Medium, Large)
@@ -56,7 +56,7 @@ var provisioner = new WhisperSpeechTranscriptorProvisioner(new WhisperSpeechTran
 using var factory = await provisioner.ProvisionAsync();
 
 // Create a speech transcriptor
-using var transcriptor = factory.Create(new SpeechTranscriptorOptions()
+using var transcriptor = factory.Create(new SpeechProcessorOptions()
 {
     LanguageAutoDetect = false, // Flag to auto-detect the language
     Language = new CultureInfo("en-US") // Language to use for transcription

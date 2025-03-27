@@ -23,7 +23,7 @@ MicrophoneInputSource is a class that provides microphone input capabilities for
 
 ```csharp
 // Example code showing how to use EchoSharp.NAudio for microphone input
-using var realtimeTranscriptor = ...; // Create a speech transcriptor
+using var realtimeSpeechProcessor = ...; // Create a speech realtime processor (e.g. a Transcriptor)
 
 using var micAudioSource = new MicrophoneInputSource(deviceNumber: 1);
 
@@ -37,7 +37,7 @@ var microphoneTask = Task.Run(() =>
 
 async Task ShowTranscriptAsync()
 {
-    await foreach (var transcription in realTimeTranscriptor.TranscribeAsync(micAudioSource))
+    await foreach (var transcription in realtimeSpeechProcessor.TranscribeAsync(micAudioSource))
     {
         var eventType = transcription.GetType().Name;
         Console.WriteLine(eventType);

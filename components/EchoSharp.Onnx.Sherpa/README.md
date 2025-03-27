@@ -9,7 +9,7 @@ This component offers:
 - Offline Speech-to-Text transcription using Sherpa Onnx models.
 - Online Speech-to-Text transcription for real-time audio streams.
 
-Both configurations are implemented as `ISpeechTranscriptor` and can be used interchangeably in your applications.
+Both configurations are implemented as `ISpeechProcessor` and can be used interchangeably in your applications.
 
 ## Sherpa Onnx Models
 
@@ -22,7 +22,7 @@ You can add more models by creating new instances of the `SherpaOnnxOfflineModel
 
 ## Configuration
 
-The `SherpaOnnxSpeechTranscriptorConfig` class is used to configure the transcriptor. It supports the following properties:
+The `SherpaOnnxSpeechProcessorConfig` class is used to configure the transcriptor. It supports the following properties:
 
 - `Model`: The Sherpa Onnx model to use (e.g., `SherpaOnnxModels.ZipFormerGigaSpeech`).
 - `Features`: The number of features to use for the model (default is 80).
@@ -32,7 +32,7 @@ The `SherpaOnnxSpeechTranscriptorConfig` class is used to configure the transcri
 ### Example Configuration
 
 ```csharp
-var config = new SherpaOnnxSpeechTranscriptorConfig
+var config = new SherpaOnnxSpeechProcessorConfig
 {
     Model = SherpaOnnxModels.ZipFormerGigaSpeechInt8,
     Features = 80,
@@ -43,14 +43,14 @@ var config = new SherpaOnnxSpeechTranscriptorConfig
 
 ## Provisioning
 
-The `SherpaOnnxSpeechTranscriptorProvisioner` class is responsible for provisioning the transcriptor. It downloads the model, unpacks it, and initializes the transcriptor based on the configuration.
+The `SherpaOnnxSpeechProcessorProvisioner` class is responsible for provisioning the transcriptor. It downloads the model, unpacks it, and initializes the transcriptor based on the configuration.
 
 ### Example Provisioning
 
 ```csharp
-var provisioner = new SherpaOnnxSpeechTranscriptorProvisioner(config);
+var provisioner = new SherpaOnnxSpeechProcessorProvisioner(config);
 var factory = await provisioner.ProvisionAsync();
-using var transcriptor = factory.Create(new SpeechTranscriptorOptions()
+using var transcriptor = factory.Create(new SpeechProcessorOptions()
 {
     Language = new CultureInfo("en-US"),
     LanguageAutoDetect = false,

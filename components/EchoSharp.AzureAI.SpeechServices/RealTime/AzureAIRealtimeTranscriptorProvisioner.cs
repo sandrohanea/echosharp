@@ -4,14 +4,14 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
 using EchoSharp.Provisioning;
-using EchoSharp.SpeechTranscription;
+using EchoSharp.SpeechProcessing;
 using Microsoft.CognitiveServices.Speech;
 
 namespace EchoSharp.AzureAI.SpeechServices.RealTime;
 
-public class AzureAIRealtimeTranscriptorProvisioner(AzureSpeechServicesConfig config, AzureAIRealtimeTranscriptorOptions options, SpeechConfig? speechConfig = null) : IRealtimeSpeechTranscriptorProvisioner
+public class AzureAIRealtimeTranscriptorProvisioner(AzureSpeechServicesConfig config, AzureAIRealtimeTranscriptorOptions options, SpeechConfig? speechConfig = null) : IRealtimeSpeechProcessorProvisioner
 {
-    public async Task<IRealtimeSpeechTranscriptorFactory> ProvisionAsync(CancellationToken cancellationToken = default)
+    public async Task<IRealtimeSpeechProcessorFactory> ProvisionAsync(CancellationToken cancellationToken = default)
     {
         if (speechConfig is not null)
         {

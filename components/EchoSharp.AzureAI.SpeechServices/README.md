@@ -46,7 +46,7 @@ The configuration will automatically check for environment variables if values a
 
 ### 1. Fast Transcriptor
 
-The Fast Transcriptor is optimized for transcribing pre-recorded audio files (or integration with `EchoSharpRealtimeTranscriptor` and a custom voice activity detection component)
+The Fast Transcriptor is optimized for transcribing pre-recorded audio files (or integration with `EchoSharpRealtimeProcessor` and a custom voice activity detection component)
 
 ```csharp
 // Create configuration
@@ -61,7 +61,7 @@ var provisioner = new AzureAIFastTranscriptorProvisioner(config);
 
 // Get factory and create transcriptor
 using var factory = await provisioner.ProvisionAsync();
-using var transcriptor = factory.Create(new SpeechTranscriptorOptions
+using var transcriptor = factory.Create(new SpeechProcessorOptions
 {
     LanguageAutoDetect = false,
     RetrieveTokenDetails = true,
@@ -92,7 +92,7 @@ var provisioner = new AzureAIRealtimeTranscriptorProvisioner(config, realtimeOpt
 
 // Get factory and create transcriptor
 using var factory = await provisioner.ProvisionAsync();
-using var transcriptor = factory.Create(new RealtimeSpeechTranscriptorOptions());
+using var transcriptor = factory.Create(new RealtimeSpeechProcessorOptions());
 ```
 
 ## Text-to-Speech Component

@@ -27,10 +27,10 @@ using EchoSharp.Onnx.Sherpa.SpeechTranscription;
 using EchoSharp.Onnx.Whisper;
 using EchoSharp.OpenAI.Whisper;
 using EchoSharp.Provisioning;
-using EchoSharp.SpeechTranscription;
+using EchoSharp.SpeechProcessing;
 using EchoSharp.Whisper.net;
 
-var transcritorFactory = await GetSpeechTranscriptorAsync(args.Length > 1 ? args[1] : "sherpa onnx"); // OR "azure fast api" OR "openai whisper"
+var transcritorFactory = await GetSpeechProcessorAsync(args.Length > 1 ? args[1] : "whisper.net"); // OR "azure fast api" OR "openai whisper"
 
 // Replace with the path to the audio file (the other example is files/testFile.wav)
 
@@ -41,8 +41,9 @@ await pcmAudioSource.InitializeAsync();
 
 IAudioSource audioSource = pcmAudioSource.ChannelCount == 1 && pcmAudioSource.SampleRate == 16000 ? pcmAudioSource : new ResamplerAudioSource(pcmAudioSource, 16000);
 
-var transcriptor = transcritorFactory.Create(new SpeechTranscriptorOptions()
+var transcriptor = transcritorFactory.Create(new SpeechProcessorOptions()
 {
+    Type = SpeechProcessingType.Transcript,
     LanguageAutoDetect = false, // Flag to auto-detect the language
     Language = new CultureInfo("en-US"), // Language to use for transcription
     RetrieveTokenDetails = true, // Flag to retrieve token details
@@ -54,7 +55,7 @@ await foreach (var segment in transcriptor.TranscribeAsync(audioSource, Cancella
     Console.WriteLine($"{segment.StartTime}-{segment.StartTime + segment.Duration}:{segment.Text}");
 }
 
-Task<ISpeechTranscriptorFactory> GetSpeechTranscriptorAsync(string type)
+Task<ISpeechProcessorFactory> GetSpeechProcessorAsync(string type)
 {
     // Getting the provisioner (that is downloading the model)
     var provisioner = type switch
@@ -70,27 +71,27 @@ Task<ISpeechTranscriptorFactory> GetSpeechTranscriptorAsync(string type)
     return provisioner.ProvisionAsync();
 }
 
-ISpeechTranscriptorProvisioner GetWhisperTranscriptorProvisioner()
+ISpeechProcessorProvisioner GetWhisperTranscriptorProvisioner()
 {
-    return new WhisperSpeechTranscriptorProvisioner(new WhisperSpeechTranscriptorConfig()
+    return new WhisperSpeechProcessorProvisioner(new WhisperSpeechProcessorConfig()
     {
-        GgmlType = Whisper.net.Ggml.GgmlType.Tiny,
+        GgmlType = Whisper.net.Ggml.GgmlType.SmallEn,
         OpenVinoEncoderModelPath = Path.Combine("models", "whisper.net", "openvino"),
         QuantizationType = Whisper.net.Ggml.QuantizationType.NoQuantization,
         ModelPath = Path.Combine("models", "whisper.net")
     });
 }
 
-ISpeechTranscriptorProvisioner GetWhisperOnnxTranscriptorProvisioner()
+ISpeechProcessorProvisioner GetWhisperOnnxTranscriptorProvisioner()
 {
-    return new WhisperOnnxSpeechTranscriptorProvisioner(new WhisperOnnxSpeechTranscriptorConfig()
+    return new WhisperOnnxSpeechProcessorProvisioner(new WhisperOnnxSpeechProcessorConfig()
     {
         ModelPath = Path.Combine("models", "whisper.onnx"),
         ModelType = WhisperOnnxModelType.Tiny,
     });
 }
 
-ISpeechTranscriptorProvisioner GetAzureAIFastTranscriptorProvisioner()
+ISpeechProcessorProvisioner GetAzureAIFastTranscriptorProvisioner()
 {
     // Replace with your Azure Cognitive Services Speech Service endpoint and key (Get from here): https://azure.microsoft.com/en-us/products/ai-services/ai-speech
     var endpoint = new Uri("https://your-azure-cognitive-service.cognitiveservices.azure.com/");
@@ -102,18 +103,18 @@ ISpeechTranscriptorProvisioner GetAzureAIFastTranscriptorProvisioner()
     });
 }
 
-ISpeechTranscriptorProvisioner GetOpenAITranscriptorProvisioner()
+ISpeechProcessorProvisioner GetOpenAITranscriptorProvisioner()
 {
     var openAiApiKey = "your-openai-api-key";
-    return new OpenAIWhisperSpeechTranscriporProvisioner(new OpenAiWhisperSpeechTranscriptorConfig()
+    return new OpenAIWhisperSpeechTranscriporProvisioner(new OpenAiWhisperSpeechProcessorConfig()
     {
         ApiKey = openAiApiKey
     });
 }
 
-ISpeechTranscriptorProvisioner GetSherpaOnnxTranscriptorProvisioner()
+ISpeechProcessorProvisioner GetSherpaOnnxTranscriptorProvisioner()
 {
-    return new SherpaOnnxSpeechTranscriptorProvisioner(new SherpaOnnxSpeechTranscriptorConfig()
+    return new SherpaOnnxSpeechProcessorProvisioner(new SherpaOnnxSpeechProcessorConfig()
     {
         ModelPath = Path.Combine("models", "sherpa"),
         Model = SherpaOnnxModels.ZipFormerGigaSpeechInt8

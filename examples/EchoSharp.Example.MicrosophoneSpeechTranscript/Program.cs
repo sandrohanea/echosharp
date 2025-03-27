@@ -11,13 +11,13 @@ using EchoSharp.Onnx.SileroVad;
 using EchoSharp.Onnx.Whisper;
 using EchoSharp.OpenAI.Whisper;
 using EchoSharp.Provisioning;
-using EchoSharp.SpeechTranscription;
+using EchoSharp.SpeechProcessing;
 using EchoSharp.WebRtc.WebRtcVadSharp;
 using EchoSharp.Whisper.net;
 using WebRtcVadSharp;
 
 // This is an example that showcases how to use the EchoSharp library to transcribe speech in real-time using a microphone as input.
-// The example demonstrates how to use the EchoSharpRealtimeTranscriptorFactory to create a real-time speech transcriptor that uses a microphone as input.
+// The example demonstrates how to use the EchoSharpRealtimeProcessorFactory to create a real-time speech transcriptor that uses a microphone as input.
 //
 // It uses multiple EchoSharp Components:
 //    - VAD: voice activity detection is performed using one of these components:
@@ -34,7 +34,7 @@ using WebRtcVadSharp;
 // Note: EchoSharp.Whisper.net, EchoSharp.Onnx.SileroVad and EchoSharp.WebRtc.WebRtcVadSharp can be run locally without any cloud dependencies.
 
 var vadDetectorProvisioner = GetVadDetectorProvisioner("silero"); // OR "webrtc"
-var speechTranscriptorProvisioner = GetSpeechTranscriptorProvisioner("whisper.net"); // OR "azure fast api" OR "openai whisper"
+var speechTranscriptorProvisioner = GetSpeechProcessorProvisioner("whisper.net"); // OR "azure fast api" OR "openai whisper"
 
 // Throw if not on Windows (NAudio MicrophoneInputSource is not supported on other platforms)
 if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -47,8 +47,9 @@ var micAudioSource = new MicrophoneInputSource(deviceNumber: 1);
 var realTimeProvisioner = GetRealTimeProvisioner("azure", speechTranscriptorProvisioner, vadDetectorProvisioner);
 
 var realTimeTranscriptorFactory = await realTimeProvisioner.ProvisionAsync();
-var realTimeTranscriptor = realTimeTranscriptorFactory.Create(new RealtimeSpeechTranscriptorOptions()
+var realTimeTranscriptor = realTimeTranscriptorFactory.Create(new RealtimeSpeechProcessorOptions()
 {
+    Type = SpeechProcessingType.Transcript, // Creating the transcript
     AutodetectLanguageOnce = false, // Flag to detect the language only once or for each segment
     IncludeSpeechRecogizingEvents = true, // Flag to include speech recognizing events (RealtimeSegmentRecognizing)
     RetrieveTokenDetails = true, // Flag to retrieve token details
@@ -92,7 +93,7 @@ await firstReady;
 
 await Task.WhenAll(microphoneTask, showTranscriptTask);
 
-IRealtimeSpeechTranscriptorProvisioner GetRealTimeProvisioner(string type, ISpeechTranscriptorProvisioner speechTranscriptorProvisioner, IVadDetectorProvisioner vadDetectorProvisioner)
+IRealtimeSpeechProcessorProvisioner GetRealTimeProvisioner(string type, ISpeechProcessorProvisioner speechTranscriptorProvisioner, IVadDetectorProvisioner vadDetectorProvisioner)
 {
     return type switch
     {
@@ -102,7 +103,7 @@ IRealtimeSpeechTranscriptorProvisioner GetRealTimeProvisioner(string type, ISpee
     };
 }
 
-IRealtimeSpeechTranscriptorProvisioner GetAzureAIRealtimeTranscriptorProvisioner()
+IRealtimeSpeechProcessorProvisioner GetAzureAIRealtimeTranscriptorProvisioner()
 {
     var speechConfig = new AzureSpeechServicesConfig()
     {
@@ -116,19 +117,19 @@ IRealtimeSpeechTranscriptorProvisioner GetAzureAIRealtimeTranscriptorProvisioner
     return new AzureAIRealtimeTranscriptorProvisioner(speechConfig, options);
 }
 
-IRealtimeSpeechTranscriptorProvisioner GetEchoSharpTranscriptorProvisioner(ISpeechTranscriptorProvisioner speechTranscriptorProvisioner, IVadDetectorProvisioner vadDetectorProvisioner)
+IRealtimeSpeechProcessorProvisioner GetEchoSharpTranscriptorProvisioner(ISpeechProcessorProvisioner speechTranscriptorProvisioner, IVadDetectorProvisioner vadDetectorProvisioner)
 {
-    var config = new EchoSharpRealtimeTranscriptorConfig()
+    var config = new EchoSharpRealtimeProcessorConfig()
     {
         Options = new EchoSharpRealtimeOptions()
         {
             ConcatenateSegmentsToPrompt = false // Flag to concatenate segments to prompt when new segment is recognized (for the whole session)
         }
     };
-    return new EchoSharpRealtimeTranscriptorProvisioner(vadDetectorProvisioner, speechTranscriptorProvisioner, config);
+    return new EchoSharpRealtimeProcessorProvisioner(vadDetectorProvisioner, speechTranscriptorProvisioner, config);
 }
 
-ISpeechTranscriptorProvisioner GetSpeechTranscriptorProvisioner(string type)
+ISpeechProcessorProvisioner GetSpeechProcessorProvisioner(string type)
 {
     return type switch
     {
@@ -141,9 +142,9 @@ ISpeechTranscriptorProvisioner GetSpeechTranscriptorProvisioner(string type)
     };
 }
 
-ISpeechTranscriptorProvisioner GetWhisperTranscriptorProvisioner()
+ISpeechProcessorProvisioner GetWhisperTranscriptorProvisioner()
 {
-    return new WhisperSpeechTranscriptorProvisioner(new WhisperSpeechTranscriptorConfig()
+    return new WhisperSpeechProcessorProvisioner(new WhisperSpeechProcessorConfig()
     {
         GgmlType = Whisper.net.Ggml.GgmlType.Tiny,
         OpenVinoEncoderModelPath = Path.Combine("models", "whisper.net", "openvino"),
@@ -152,7 +153,7 @@ ISpeechTranscriptorProvisioner GetWhisperTranscriptorProvisioner()
     });
 }
 
-ISpeechTranscriptorProvisioner GetAzureAIFastTranscriptorProvisioner()
+ISpeechProcessorProvisioner GetAzureAIFastTranscriptorProvisioner()
 {
     // Replace with your Azure Cognitive Services Speech Service endpoint and key (Get from here): https://azure.microsoft.com/en-us/products/ai-services/ai-speech
     var endpoint = new Uri("https://your-azure-cognitive-service.cognitiveservices.azure.com/");
@@ -164,27 +165,27 @@ ISpeechTranscriptorProvisioner GetAzureAIFastTranscriptorProvisioner()
     });
 }
 
-ISpeechTranscriptorProvisioner GetOpenAITranscriptorProvisioner()
+ISpeechProcessorProvisioner GetOpenAITranscriptorProvisioner()
 {
     var openAiApiKey = "your-openai-api-key";
-    return new OpenAIWhisperSpeechTranscriporProvisioner(new OpenAiWhisperSpeechTranscriptorConfig()
+    return new OpenAIWhisperSpeechTranscriporProvisioner(new OpenAiWhisperSpeechProcessorConfig()
     {
         ApiKey = openAiApiKey
     });
 }
 
-ISpeechTranscriptorProvisioner GetWhisperOnnxTranscriptorProvisioner()
+ISpeechProcessorProvisioner GetWhisperOnnxTranscriptorProvisioner()
 {
-    return new WhisperOnnxSpeechTranscriptorProvisioner(new WhisperOnnxSpeechTranscriptorConfig()
+    return new WhisperOnnxSpeechProcessorProvisioner(new WhisperOnnxSpeechProcessorConfig()
     {
         ModelPath = Path.Combine("models", "whisper.onnx"),
         ModelType = WhisperOnnxModelType.Tiny,
     });
 }
 
-ISpeechTranscriptorProvisioner GetSherpaOnnxTranscriptorProvisioner()
+ISpeechProcessorProvisioner GetSherpaOnnxTranscriptorProvisioner()
 {
-    return new SherpaOnnxSpeechTranscriptorProvisioner(new SherpaOnnxSpeechTranscriptorConfig()
+    return new SherpaOnnxSpeechProcessorProvisioner(new SherpaOnnxSpeechProcessorConfig()
     {
         ModelPath = Path.Combine("models", "sherpa"),
         Model = SherpaOnnxModels.ZipFormerGigaSpeechInt8

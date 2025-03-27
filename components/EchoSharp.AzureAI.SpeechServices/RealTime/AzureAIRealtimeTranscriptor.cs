@@ -8,13 +8,13 @@ using EchoSharp.Audio.Source;
 using EchoSharp.Audio.Source.Awaitable;
 using EchoSharp.AzureAI.SpeechServices.Internals;
 using EchoSharp.Config;
-using EchoSharp.SpeechTranscription;
+using EchoSharp.SpeechProcessing;
 using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 
 namespace EchoSharp.AzureAI.SpeechServices.RealTime;
 
-internal class AzureAIRealtimeTranscriptor(SpeechConfig speechConfig, RealtimeSpeechTranscriptorOptions options, AzureAIRealtimeTranscriptorOptions azureOptions, AuthTokenHandler? authTokenHandler) : IRealtimeSpeechTranscriptor
+internal class AzureAIRealtimeTranscriptor(SpeechConfig speechConfig, RealtimeSpeechProcessorOptions options, AzureAIRealtimeTranscriptorOptions azureOptions, AuthTokenHandler? authTokenHandler) : IRealtimeSpeechProcessor
 {
     const int bytesPerSample = 4;
 
@@ -46,13 +46,13 @@ internal class AzureAIRealtimeTranscriptor(SpeechConfig speechConfig, RealtimeSp
 
             channel.Writer.TryWrite(
                    new RealtimeSegmentRecognizing(
-                       new TranscriptSegment()
+                       new ProcessedSpeechSegment()
                        {
                            StartTime = TimeSpan.FromTicks(e.Result.OffsetInTicks),
                            Duration = e.Result.Duration,
                            ConfidenceLevel = (float?)(e.Result.Best().FirstOrDefault()?.Confidence),
                            Text = e.Result.Text,
-                           Tokens = e.Result.Best().FirstOrDefault()?.DisplayWords.Select(w => new TranscriptToken()
+                           Tokens = e.Result.Best().FirstOrDefault()?.DisplayWords.Select(w => new ProcessedSpeechToken()
                            {
                                Id = w.Word,
                                Confidence = (float)w.Confidence,
@@ -81,13 +81,13 @@ internal class AzureAIRealtimeTranscriptor(SpeechConfig speechConfig, RealtimeSp
 
             channel.Writer.TryWrite(
                    new RealtimeSegmentRecognized(
-                       new TranscriptSegment()
+                       new ProcessedSpeechSegment()
                        {
                            StartTime = TimeSpan.FromTicks(e.Result.OffsetInTicks),
                            Duration = TimeSpan.FromTicks(e.Result.Duration.Ticks),
                            ConfidenceLevel = (float?)(e.Result.Best().FirstOrDefault()?.Confidence),
                            Text = e.Result.Text,
-                           Tokens = e.Result.Best().FirstOrDefault()?.DisplayWords?.Select(w => new TranscriptToken()
+                           Tokens = e.Result.Best().FirstOrDefault()?.DisplayWords?.Select(w => new ProcessedSpeechToken()
                            {
                                Id = w.Word,
                                Confidence = (float)w.Confidence,

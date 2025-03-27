@@ -2,11 +2,11 @@
 
 using Azure.Core;
 using EchoSharp.AzureAI.SpeechServices.Internals;
-using EchoSharp.SpeechTranscription;
+using EchoSharp.SpeechProcessing;
 
 namespace EchoSharp.AzureAI.SpeechServices.FastTranscription;
 
-public sealed class AzureAIFastTranscriptorFactory : ISpeechTranscriptorFactory
+public sealed class AzureAIFastTranscriptorFactory : ISpeechProcessorFactory
 {
     private readonly HttpClient httpClient;
 
@@ -41,8 +41,13 @@ public sealed class AzureAIFastTranscriptorFactory : ISpeechTranscriptorFactory
         this.httpClient = httpClient;
     }
 
-    public ISpeechTranscriptor Create(SpeechTranscriptorOptions options)
+    public ISpeechProcessor Create(SpeechProcessorOptions options)
     {
+        if (options.Type != SpeechProcessingType.Transcript)
+        {
+            throw new NotSupportedException("Only Transcript processing is supported by AzureAIFastTranscriptor");
+        }
+
         return new AzureAIFastTranscriptor(httpClient, options);
     }
 

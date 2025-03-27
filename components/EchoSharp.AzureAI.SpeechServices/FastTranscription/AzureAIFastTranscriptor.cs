@@ -6,18 +6,18 @@ using System.Text.Json;
 using EchoSharp.Audio;
 using EchoSharp.Audio.Source;
 using EchoSharp.AzureAI.SpeechServices.FastTranscription.Models;
-using EchoSharp.SpeechTranscription;
+using EchoSharp.SpeechProcessing;
 
 namespace EchoSharp.AzureAI.SpeechServices.FastTranscription;
 
-internal sealed class AzureAIFastTranscriptor(HttpClient httpClient, SpeechTranscriptorOptions options) : ISpeechTranscriptor
+internal sealed class AzureAIFastTranscriptor(HttpClient httpClient, SpeechProcessorOptions options) : ISpeechProcessor
 {
     public void Dispose()
     {
 
     }
 
-    public async IAsyncEnumerable<TranscriptSegment> TranscribeAsync(IAudioSource source, [EnumeratorCancellation] CancellationToken cancellationToken)
+    public async IAsyncEnumerable<ProcessedSpeechSegment> TranscribeAsync(IAudioSource source, [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         var httpRequest = new HttpRequestMessage(HttpMethod.Post, "/speechtotext/transcriptions:transcribe?api-version=2024-11-15");
 
@@ -61,7 +61,7 @@ internal sealed class AzureAIFastTranscriptor(HttpClient httpClient, SpeechTrans
 
         foreach (var phrase in response?.Phrases ?? [])
         {
-            yield return new TranscriptSegment()
+            yield return new ProcessedSpeechSegment()
             {
                 ConfidenceLevel = phrase.Confidence,
                 Language = phrase.Locale != null ? new CultureInfo(phrase.Locale) : null,
@@ -69,7 +69,7 @@ internal sealed class AzureAIFastTranscriptor(HttpClient httpClient, SpeechTrans
                 Duration = TimeSpan.FromMilliseconds(phrase.DurationMilliseconds),
                 Text = phrase.Text,
                 Tokens = phrase.Words?
-                    .Select(word => new TranscriptToken()
+                    .Select(word => new ProcessedSpeechToken()
                     {
                         Text = word.Text,
                         StartTime = TimeSpan.FromMilliseconds(word.OffsetMilliseconds),

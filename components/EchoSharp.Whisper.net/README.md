@@ -19,7 +19,7 @@ EchoSharp.Whisper.net includes a powerful provisioning system that handles model
 
 ```csharp
 // Create a provisioner that will download and set up the Whisper model
-var provisioner = new WhisperSpeechTranscriptorProvisioner(new WhisperSpeechTranscriptorConfig
+var provisioner = new WhisperSpeechProcessorProvisioner(new WhisperSpeechProcessorConfig
 {
     ModelPath = "path/to/store/model",       // Optional: Store model on disk
     GgmlType = GgmlType.Base,         // Model size (Tiny, Base, Small, Medium, Large)
@@ -34,7 +34,7 @@ var provisioner = new WhisperSpeechTranscriptorProvisioner(new WhisperSpeechTran
 using var factory = await provisioner.ProvisionAsync();
 
 // Create a speech transcriptor
-using var transcriptor = factory.Create(new SpeechTranscriptorOptions()
+using var transcriptor = factory.Create(new SpeechProcessorOptions()
 {
     LanguageAutoDetect = false, // Flag to auto-detect the language
     Language = new CultureInfo("en-US") // Language to use for transcription
@@ -46,7 +46,7 @@ using var transcriptor = factory.Create(new SpeechTranscriptorOptions()
 You can provision models to memory only, which is useful for scenarios where you don't want to store the model on disk:
 
 ```csharp
-var provisioner = new WhisperSpeechTranscriptorProvisioner(new WhisperSpeechTranscriptorConfig 
+var provisioner = new WhisperSpeechProcessorProvisioner(new WhisperSpeechProcessorConfig 
 {
     // No ModelPath specified - will load to memory only
     GgmlType = GgmlType.Base,         // Model size (Tiny, Base, Small, Medium, Large)
@@ -64,7 +64,7 @@ The component supports additional acceleration methods like Cuda, OpenVINO or Co
 For the accelation methods that require additional encoders, you can specify the path where the encoder model will be stored:
 
 ```csharp
-var provisioner = new WhisperSpeechTranscriptorProvisioner(new WhisperSpeechTranscriptorConfig 
+var provisioner = new WhisperSpeechProcessorProvisioner(new WhisperSpeechProcessorConfig 
 {
     ModelPath = "path/to/store/model",
     GgmlType = WhisperGgmlType.Small,
@@ -81,8 +81,8 @@ Ensure you have the necessary Whisper.net.Runtime for the target platform to use
 You can customize the Whisper processor by providing a builder configuration (with all the options available in Whisper.net library):
 
 ```csharp
-var provisioner = new WhisperSpeechTranscriptorProvisioner(
-    config: new WhisperSpeechTranscriptorConfig { /* ... */ },
+var provisioner = new WhisperSpeechProcessorProvisioner(
+    config: new WhisperSpeechProcessorConfig { /* ... */ },
     builderConfig: builder => builder
         .WithLanguage("en")        // Set language
         .WithTranslate()       // Enable translation

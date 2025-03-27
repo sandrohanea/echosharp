@@ -3,18 +3,18 @@
 using EchoSharp.Audio.Sink;
 using EchoSharp.Audio.Source;
 using EchoSharp.SpeechSynthesis;
-using EchoSharp.SpeechTranscription;
+using EchoSharp.SpeechProcessing;
 using EchoSharp.VoiceActivityDetection;
 
 namespace EchoSharp.Provisioning;
 
 public static class ProvisioningUtils
 {
-    public static async Task<ISpeechTranscriptorFactory> WarmUpAsync(this ISpeechTranscriptorFactory factory, bool warmUp, CancellationToken cancellationToken)
+    public static async Task<ISpeechProcessorFactory> WarmUpAsync(this ISpeechProcessorFactory factory, bool warmUp, CancellationToken cancellationToken)
     {
         if (warmUp)
         {
-            var options = new SpeechTranscriptorOptions()
+            var options = new SpeechProcessorOptions()
             {
                 LanguageAutoDetect = false,
                 RetrieveTokenDetails = true,
@@ -46,11 +46,11 @@ public static class ProvisioningUtils
         return factory;
     }
 
-    public static async Task<IRealtimeSpeechTranscriptorFactory> WarmUpAsync(this IRealtimeSpeechTranscriptorFactory factory, bool warmUp, CancellationToken cancellationToken)
+    public static async Task<IRealtimeSpeechProcessorFactory> WarmUpAsync(this IRealtimeSpeechProcessorFactory factory, bool warmUp, CancellationToken cancellationToken)
     {
         if (warmUp)
         {
-            var options = new RealtimeSpeechTranscriptorOptions()
+            var options = new RealtimeSpeechProcessorOptions()
             {
                 LanguageAutoDetect = false,
             };

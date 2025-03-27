@@ -1,13 +1,13 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
 using EchoSharp.Provisioning;
-using EchoSharp.SpeechTranscription;
+using EchoSharp.SpeechProcessing;
 
 namespace EchoSharp.AzureAI.SpeechServices.FastTranscription;
 
-public class AzureAIFastTranscriptorProvisioner(AzureSpeechServicesConfig config) : ISpeechTranscriptorProvisioner
+public class AzureAIFastTranscriptorProvisioner(AzureSpeechServicesConfig config) : ISpeechProcessorProvisioner
 {
-    public async Task<ISpeechTranscriptorFactory> ProvisionAsync(CancellationToken cancellationToken = default)
+    public async Task<ISpeechProcessorFactory> ProvisionAsync(CancellationToken cancellationToken = default)
     {
         var endpoint = config.Endpoint is not null
             ? config.Endpoint
