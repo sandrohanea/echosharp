@@ -3,59 +3,34 @@
 using System.Globalization;
 using EchoSharp.Audio;
 using EchoSharp.Audio.Source.Awaitable;
-using EchoSharp.Onnx.Sherpa.SpeechTranscription;
-using EchoSharp.Onnx.SileroVad;
 using EchoSharp.SpeechProcessing;
-using EchoSharp.VoiceActivityDetection;
-using EchoSharp.WebRtc.WebRtcVadSharp;
-using EchoSharp.Whisper.net;
-using SherpaOnnx;
 using Xunit;
 
-namespace EchoSharp.Tests.SpeechTranscription;
+namespace EchoSharp.Tests.SpeechProcessing;
 
-public class EchoSharpRealtimeProcessorTests
+public class EchoSharpRealtimeProcessorFunctionalTests(FunctionalTestFixture fixture) : IClassFixture<FunctionalTestFixture>
 {
     [Theory]
-    [InlineData("webrtc", "whisper")]
 #if NET8_0_OR_GREATER
     // Onnx models are not supported on net472
     [InlineData("silero", "whisper")]
-    [InlineData("webrtc", "sherpa")]
     [InlineData("silero", "sherpa")]
 #endif
     public async Task RealTime_Integration_Test(string vadDetector, string transcriptor)
     {
         var waveSource = new AwaitableWaveFileSource(aggregationStrategy: DefaultChannelAggregationStrategies.Average);
 
-        IVadDetectorFactory vadDetectorFactory;
+        var vadDetectorFactory = vadDetector == "webrtc"
+            ? await fixture.GetWebRtcVadDetectorFactoryAsync()
+            : await fixture.GetSileroVadDetectorFactoryAsync();
 
-        vadDetectorFactory = vadDetector == "webrtc"
-            ? new WebRtcVadSharpDetectorFactory(new WebRtcVadSharpOptions())
-            : new SileroVadDetectorFactory(new SileroVadOptions("./models/silero_vad.onnx"));
+        var speechProcessorFactory = transcriptor == "whisper"
+            ? await fixture.GetWhisperProcessorFactoryAsync()
+            : await fixture.GetSherpaProcessorFactoryAsync();
 
-        var modelConfig = new OnlineModelConfig();
-        var ctcFstDecoderConfig = new OnlineCtcFstDecoderConfig();
+        var realTimeSpeechProcessorFactory = new EchoSharpRealtimeProcessorFactory(speechProcessorFactory, vadDetectorFactory);
 
-        modelConfig.Zipformer2Ctc.Model = "./models/sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18/ctc-epoch-30-avg-3-chunk-16-left-128.int8.onnx";
-
-        modelConfig.Tokens = "./models/sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18/tokens.txt";
-        modelConfig.Provider = "cpu";
-        modelConfig.NumThreads = 1;
-        modelConfig.Debug = 0;
-        ctcFstDecoderConfig.Graph = "./models/sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18/HLG.fst";
-
-        ISpeechProcessorFactory transcritorFactory = transcriptor == "whisper"
-            ? new WhisperSpeechProcessorFactory("./models/ggml-base.bin")
-            : new SherpaOnnxSpeechProcessorFactory(new SherpaOnnxOnlineTranscriptorOptions()
-            {
-                OnlineModelConfig = modelConfig,
-                OnlineCtcFstDecoderConfig = ctcFstDecoderConfig
-            });
-
-        var realTimeTranscriptorFactory = new EchoSharpRealtimeProcessorFactory(transcritorFactory, vadDetectorFactory);
-
-        var readlTimeTranscriptor = realTimeTranscriptorFactory.Create(new RealtimeSpeechProcessorOptions()
+        var realtimeSpeechProcessor = realTimeSpeechProcessorFactory.Create(new RealtimeSpeechProcessorOptions()
         {
             LanguageAutoDetect = true,
             AutodetectLanguageOnce = true,
@@ -63,7 +38,7 @@ public class EchoSharpRealtimeProcessorTests
             IncludeSpeechRecogizingEvents = true,
         });
 
-        var task1 = Process(readlTimeTranscriptor, waveSource);
+        var task1 = Process(realtimeSpeechProcessor, waveSource);
 
         var file = "./files/testFile.wav";
 

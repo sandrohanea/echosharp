@@ -13,7 +13,7 @@
 //    - Audio Parsing:
 //            = Simple Wav with PCM streams parsed by EchoSharp (no extra component required)
 //            = EchoSharp.NAudio: mp3, ogg, wav, etc. parsed by NAudio:
-//         
+//
 //
 // Note: EchoSharp.Whisper.net, EchoSharp.Onnx.Whisper can be run locally without any cloud dependencies.
 
@@ -24,22 +24,39 @@ using EchoSharp.AzureAI.SpeechServices;
 using EchoSharp.AzureAI.SpeechServices.FastTranscription;
 using EchoSharp.NAudio;
 using EchoSharp.Onnx.Sherpa.SpeechTranscription;
+using EchoSharp.Onnx.SileroVad;
 using EchoSharp.Onnx.Whisper;
 using EchoSharp.OpenAI.Whisper;
 using EchoSharp.Provisioning;
 using EchoSharp.SpeechProcessing;
+using EchoSharp.VoiceActivityDetection;
 using EchoSharp.Whisper.net;
 
-var transcritorFactory = await GetSpeechProcessorAsync(args.Length > 1 ? args[1] : "whisper.net"); // OR "azure fast api" OR "openai whisper"
+var transcritorFactory =
+    await GetSpeechProcessorAsync(args.Length > 1 ? args[1] : "whisper.net"); // OR "azure fast api" OR "openai whisper"
+
+// Optional chunking (split the audio to multiple chunks based on som IVadDetector and process them in parallel)
+var vadProvisioner = new SileroVadProvisioner(new SileroVadConfig());
+using var vadFactory = await vadProvisioner.ProvisionAsync();
+using var vadDetector = vadFactory.CreateVadDetector(new VadDetectorOptions());
+transcritorFactory = transcritorFactory.WithChunking(
+    vadDetector,
+    new ChunkedSpeechProcessorOptions()
+    {
+        MaxParallelism = 4, SegmentPadding = TimeSpan.FromMilliseconds(50),
+    });
 
 // Replace with the path to the audio file (the other example is files/testFile.wav)
 
 PcmStreamSource pcmAudioSource = args.Length > 0 && args[0] == "mp3"
-    ? new Mp3AudioSource("files/testFile.mp3", aggregationStrategy: DefaultChannelAggregationStrategies.SelectChannel(0))
+    ? new Mp3AudioSource("files/testFile.mp3",
+        aggregationStrategy: DefaultChannelAggregationStrategies.SelectChannel(0))
     : new WaveFileAudioSource("files/testFile.wav");
 await pcmAudioSource.InitializeAsync();
 
-IAudioSource audioSource = pcmAudioSource.ChannelCount == 1 && pcmAudioSource.SampleRate == 16000 ? pcmAudioSource : new ResamplerAudioSource(pcmAudioSource, 16000);
+IAudioSource audioSource = pcmAudioSource.ChannelCount == 1 && pcmAudioSource.SampleRate == 16000
+    ? pcmAudioSource
+    : new ResamplerAudioSource(pcmAudioSource, 16000);
 
 var transcriptor = transcritorFactory.Create(new SpeechProcessorOptions()
 {
@@ -86,8 +103,7 @@ ISpeechProcessorProvisioner GetWhisperOnnxTranscriptorProvisioner()
 {
     return new WhisperOnnxSpeechProcessorProvisioner(new WhisperOnnxSpeechProcessorConfig()
     {
-        ModelPath = Path.Combine("models", "whisper.onnx"),
-        ModelType = WhisperOnnxModelType.Tiny,
+        ModelPath = Path.Combine("models", "whisper.onnx"), ModelType = WhisperOnnxModelType.Tiny,
     });
 }
 
@@ -98,8 +114,7 @@ ISpeechProcessorProvisioner GetAzureAIFastTranscriptorProvisioner()
     var key = "your-azure-speech-service-api-key";
     return new AzureAIFastTranscriptorProvisioner(new AzureSpeechServicesConfig()
     {
-        Endpoint = endpoint,
-        SubscriptionKey = key,
+        Endpoint = endpoint, SubscriptionKey = key,
     });
 }
 
@@ -116,7 +131,6 @@ ISpeechProcessorProvisioner GetSherpaOnnxTranscriptorProvisioner()
 {
     return new SherpaOnnxSpeechProcessorProvisioner(new SherpaOnnxSpeechProcessorConfig()
     {
-        ModelPath = Path.Combine("models", "sherpa"),
-        Model = SherpaOnnxModels.ZipFormerGigaSpeechInt8
+        ModelPath = Path.Combine("models", "sherpa"), Model = SherpaOnnxModels.ZipFormerGigaSpeechInt8
     });
 }

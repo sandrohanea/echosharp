@@ -8,13 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Whisper.net.Runtime" Version="1.7.4" />
+    <PackageReference Include="Whisper.net.Runtime" Version="1.8.0" />
   </ItemGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\..\components\EchoSharp.AzureAI.SpeechServices\EchoSharp.AzureAI.SpeechServices.csproj" />
     <ProjectReference Include="..\..\components\EchoSharp.NAudio\EchoSharp.NAudio.csproj" />
     <ProjectReference Include="..\..\components\EchoSharp.Onnx.Sherpa\EchoSharp.Onnx.Sherpa.csproj" />
+    <ProjectReference Include="..\..\components\EchoSharp.Onnx.SileroVad\EchoSharp.Onnx.SileroVad.csproj" />
     <ProjectReference Include="..\..\components\EchoSharp.Onnx.Whisper\EchoSharp.Onnx.Whisper.csproj" />
     <ProjectReference Include="..\..\components\EchoSharp.OpenAI.Whisper\EchoSharp.OpenAI.Whisper.csproj" />
     <ProjectReference Include="..\..\components\EchoSharp.Whisper.net\EchoSharp.Whisper.net.csproj" />

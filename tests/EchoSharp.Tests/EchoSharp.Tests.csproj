@@ -1,13 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  
-  <Import Project="..\..\CopyModels.targets" />
-  
+
   <PropertyGroup>
     <TargetFrameworks>
       net8.0;net9.0;
     </TargetFrameworks>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="NSubstitute" />
     <PackageReference Include="Whisper.net.Runtime" />
@@ -23,7 +21,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-  
+
   <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
     <TargetFrameworks>
       net8.0;net9.0;net472;
@@ -40,5 +38,5 @@
     <ProjectReference Include="..\..\components\EchoSharp.Whisper.net\EchoSharp.Whisper.net.csproj" />
     <ProjectReference Include="..\..\src\EchoSharp\EchoSharp.csproj" />
   </ItemGroup>
-  
+
 </Project>

@@ -39,10 +39,19 @@ public class MaxSizedStream(Stream source, long maxSize) : Stream
 
         if (requestedEndPos > maxSize)
         {
-            // If *any* part of this read would exceed maxSize, we throw.
-            // Alternatively, you could do a partial read up to maxSize - currentPos.
-            throw new InvalidOperationException(
-                $"Cannot read beyond offset {maxSize} (requested to read until {requestedEndPos}).");
+            var maxRead = maxSize - currentReadPosition;
+            if (maxRead == 0)
+            {
+                return 0;
+            }
+            if (maxRead < 0)
+            {
+                // If *any* part of this read would exceed maxSize, we throw.
+                // Alternatively, you could do a partial read up to maxSize - currentPos.
+                throw new InvalidOperationException(
+                    $"Cannot read beyond offset {maxSize} (requested to read until {requestedEndPos}).");
+            }
+            count = (int)maxRead;
         }
 
         var readBytes = source.Read(buffer, offset, count);
@@ -58,8 +67,17 @@ public class MaxSizedStream(Stream source, long maxSize) : Stream
 
         if (requestedEndPos > maxSize)
         {
-            throw new InvalidOperationException(
-                $"Cannot read beyond offset {maxSize} (requested to read until {requestedEndPos}).");
+            var maxRead = maxSize - currentReadPosition;
+            if (maxRead == 0)
+            {
+                return 0;
+            }
+            if (maxRead < 0)
+            {
+                throw new InvalidOperationException(
+                    $"Cannot read beyond offset {maxSize} (requested to read until {requestedEndPos}).");
+            }
+            buffer = buffer.Slice(0, (int)(maxSize - currentReadPosition));
         }
 
         var readBytes = await source.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);

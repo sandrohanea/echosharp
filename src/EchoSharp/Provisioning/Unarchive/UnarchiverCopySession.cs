@@ -56,7 +56,7 @@ internal class UnarchiverCopySession(IHasher hasher, Stream source, UnarchiverOp
         }
         else
         {
-            await options.MemoryModel!.CopyFromAsync(UnarchiverCopy.ModelName, maxSizedSource, cancellationToken);
+            await options.MemoryModel!.CopyFromAsync(UnarchiverCopy.ModelName, hasherStream, cancellationToken);
         }
 
         integrityFile.AddFile(UnarchiverCopy.ModelName, hasherStream.ComputedHash);

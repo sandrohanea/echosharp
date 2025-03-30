@@ -4,12 +4,12 @@
   <ItemGroup>
     <PackageVersion Include="Azure.Core" Version="1.44.1" />
     <PackageVersion Include="Azure.Identity" Version="1.13.1" />
-    <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.3" />
     <PackageVersion Include="NAudio" Version="2.2.1" />
     <PackageVersion Include="NAudio.Wasapi" Version="2.2.1" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />
     <PackageVersion Include="System.Threading.Channels" Version="9.0.0" />
-    <PackageVersion Include="System.Memory" Version="4.6.0" />
+    <PackageVersion Include="System.Memory" Version="4.6.2" />
     <PackageVersion Include="System.IO.Compression" Version="4.3.0" />
     <PackageVersion Include="System.Text.Json" Version="9.0.0" />
     <!-- Dependencies for OpenAI / AzureOpenAI -->
@@ -20,14 +20,14 @@
     <PackageVersion Include="Microsoft.ML.OnnxRuntime.Extensions" Version="0.13.0" />
     <PackageVersion Include="WebRtcVadSharp" Version="1.3.2" />
     <!-- Dependencies for Whisper.net -->
-    <PackageVersion Include="Whisper.net" Version="1.7.5-preview1" />
-    <PackageVersion Include="Whisper.net.Runtime" Version="1.7.5-preview1" />
+    <PackageVersion Include="Whisper.net" Version="1.8.0" />
+    <PackageVersion Include="Whisper.net.Runtime" Version="1.8.0" />
     <!-- Dependencies for Sherpa -->
     <PackageVersion Include="org.k2fsa.sherpa.onnx" Version="1.10.37" />
 
     <!-- Depdendencies for SharpZipLib -->
     <PackageVersion Include="SharpZipLib " Version="1.4.2" />
-    
+
     <!-- Dependencies for AzureAI -->
     <PackageVersion Include="Microsoft.CognitiveServices.Speech" Version="1.42.0" />
     <!-- Tests -->
