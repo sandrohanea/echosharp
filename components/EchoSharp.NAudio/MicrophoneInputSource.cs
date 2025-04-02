@@ -10,7 +10,7 @@ namespace EchoSharp.NAudio;
 /// <summary>
 /// Represents a source that captures audio from a microphone.
 /// </summary>
-public class MicrophoneInputSource : AwaitableWaveFileSource
+public sealed class MicrophoneInputSource : AwaitableWaveFileSource
 {
     private WaveInEvent? waveIn;
 

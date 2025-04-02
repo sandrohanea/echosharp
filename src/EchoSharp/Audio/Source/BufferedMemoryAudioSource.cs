@@ -258,7 +258,7 @@ public class BufferedMemoryAudioSource : IAudioSource, IMemoryBackedAudioSource
 
     private void AddFrameToFrames(ReadOnlyMemory<byte> frame)
     {
-        if (ByteFrames!.Length <= FramesCount * FrameSize)
+        while (ByteFrames!.Length <= FramesCount * FrameSize)
         {
             Array.Resize(ref ByteFrames, ByteFrames.Length * 2);
         }
@@ -276,7 +276,7 @@ public class BufferedMemoryAudioSource : IAudioSource, IMemoryBackedAudioSource
 
     private void AddFrameToSamples(ReadOnlyMemory<byte> frame)
     {
-        if (FloatFrames!.Length <= FramesCount * ChannelCount)
+        while (FloatFrames!.Length <= FramesCount * ChannelCount)
         {
             Array.Resize(ref FloatFrames, FloatFrames.Length * 2);
         }
@@ -294,7 +294,7 @@ public class BufferedMemoryAudioSource : IAudioSource, IMemoryBackedAudioSource
 
     private void AddFrameToFrames(ReadOnlyMemory<float> frame)
     {
-        if (ByteFrames!.Length <= FramesCount * FrameSize)
+        while (ByteFrames!.Length <= FramesCount * FrameSize)
         {
             Array.Resize(ref ByteFrames, ByteFrames.Length * 2);
         }
@@ -312,7 +312,7 @@ public class BufferedMemoryAudioSource : IAudioSource, IMemoryBackedAudioSource
 
     private void AddFrameToSamples(ReadOnlyMemory<float> frame)
     {
-        if (FloatFrames!.Length <= FramesCount * ChannelCount)
+        while (FloatFrames!.Length <= FramesCount * ChannelCount)
         {
             Array.Resize(ref FloatFrames, FloatFrames.Length * 2);
         }

@@ -121,7 +121,7 @@ public abstract class PcmStreamSource(Stream pcmStream, bool leaveOpen = true, i
                 }
 
                 var samplesNeeded = indexSamples + bytesRead / SourceFrameSize;
-                if (samplesNeeded > samples.Length)
+                while (samplesNeeded > samples.Length)
                 {
                     Array.Resize(ref samples, samplesNeeded * 2);
                 }
