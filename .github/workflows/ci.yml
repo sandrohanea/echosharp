@@ -9,7 +9,7 @@ on:
    pull_request:
       branches: ["main"]
    workflow_dispatch:
-  
+
 permissions:
   contents: read
   checks: write
@@ -27,7 +27,7 @@ jobs:
           dotnet-version: |
             8.0.x
             9.0.x
-            
+
       - name: Restore dependencies
         run: dotnet restore ./EchoSharp.sln
 
@@ -42,7 +42,7 @@ jobs:
       - name: Test
         run: |
           dotnet test ./EchoSharp.sln --no-build  --logger "trx"
-          
+
       - name: Test Reporter
         uses: dorny/test-reporter@31a54ee7ebcacc03a09ea97a7e5465a47b84aea5
         if: success() || failure()    # run this step even if previous step failed
@@ -50,10 +50,10 @@ jobs:
           name: Whisper.net MacOs Test Results
           path: ./**/*.trx
           reporter: dotnet-trx
-          
+
       - name: Upload trx files
         uses: actions/upload-artifact@v4
-        if: success() || failure()    # run this step even if previous step failed
+        if: success() || failure()    # run this step even if the previous step failed
         with:
           name: test-results-macos
           path: ./**/*.trx

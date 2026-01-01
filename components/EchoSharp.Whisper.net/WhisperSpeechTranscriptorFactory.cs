@@ -52,8 +52,7 @@ public sealed class WhisperSpeechTranscriptorFactory : ISpeechTranscriptorFactor
     public WhisperSpeechTranscriptorFactory(Memory<byte> bufferMemory, Func<WhisperProcessorBuilder, WhisperProcessorBuilder>? builderConfig = null)
     {
         this.builderConfig = builderConfig;
-        // TODO: Remove the array allocation once Whisper.net supports Memory<byte>
-        whisperFactory = WhisperFactory.FromBuffer(bufferMemory.ToArray());
+        whisperFactory = WhisperFactory.FromBuffer(bufferMemory);
         builder = whisperFactory.CreateBuilder();
     }
 

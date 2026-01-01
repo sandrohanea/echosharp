@@ -1,6 +1,7 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
 using System.Globalization;
+using System.Runtime.InteropServices;
 using EchoSharp.Audio;
 using EchoSharp.SpeechTranscription;
 using Xunit;
@@ -26,6 +27,12 @@ public class EchoSharpRealtimeTranscriptorTests
 #endif
     public async Task RealTime_Integration_Test(string vadDetector, string transcriptor)
     {
+        // webrtc component is not available on non-windows devices
+        if (vadDetector == "webrtc" && !RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            return;
+        }
+
         var waveSource = new AwaitableWaveFileSource(aggregationStrategy: DefaultChannelAggregationStrategies.Average);
 
         IVadDetectorFactory vadDetectorFactory;
