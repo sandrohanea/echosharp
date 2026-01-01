@@ -2,39 +2,37 @@
   <!-- Directory.Packages.props gets included automatically during the build. Read more here:
   https://learn.microsoft.com/en-us/nuget/consume-packages/Central-Package-Management-->
   <ItemGroup>
-    <PackageVersion Include="Azure.Core" Version="1.44.1" />
-    <PackageVersion Include="Azure.Identity" Version="1.13.1" />
-    <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.0" />
+    <PackageVersion Include="Azure.Core" Version="1.50.0" />
+    <PackageVersion Include="Azure.Identity" Version="1.17.1" />
+    <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.1" />
     <PackageVersion Include="NAudio" Version="2.2.1" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />
-    <PackageVersion Include="System.Threading.Channels" Version="9.0.0" />
-    <PackageVersion Include="System.Memory" Version="4.6.0" />
+    <PackageVersion Include="System.Memory" Version="4.6.3" />
+    <PackageVersion Include="System.Threading.Channels" Version="10.0.1" />
     <PackageVersion Include="System.IO.Compression" Version="4.3.0" />
-    <PackageVersion Include="System.Text.Json" Version="9.0.0" />
+    <PackageVersion Include="System.Text.Json" Version="10.0.0" />
     <!-- Dependencies for OpenAI / AzureOpenAI -->
-    <PackageVersion Include="Azure.AI.OpenAI" Version="2.0.0" />
-    <PackageVersion Include="OpenAI" Version="2.1.0" />
+    <PackageVersion Include="Azure.AI.OpenAI" Version="2.1.0" />
+    <PackageVersion Include="OpenAI" Version="2.8.0" />
     <!-- Dependencies for Onnx-->
-    <PackageVersion Include="Microsoft.ML.OnnxRuntime" Version="1.20.1" />
-    <PackageVersion Include="Microsoft.ML.OnnxRuntime.Extensions" Version="0.13.0" />
+    <PackageVersion Include="Microsoft.ML.OnnxRuntime" Version="1.23.2" />
+    <PackageVersion Include="Microsoft.ML.OnnxRuntime.Extensions" Version="0.14.0" />
     <PackageVersion Include="WebRtcVadSharp" Version="1.3.2" />
     <!-- Dependencies for Whisper.net -->
-    <PackageVersion Include="Whisper.net" Version="1.7.4" />
-    <PackageVersion Include="Whisper.net.Runtime" Version="1.7.4" />
+    <PackageVersion Include="Whisper.net" Version="1.9.0" />
+    <PackageVersion Include="Whisper.net.Runtime" Version="1.9.0" />
     <!-- Dependencies for Sherpa -->
-    <PackageVersion Include="org.k2fsa.sherpa.onnx" Version="1.10.37" />
-
+    <PackageVersion Include="org.k2fsa.sherpa.onnx" Version="1.12.20" />
     <!-- Depdendencies for SharpZipLib -->
     <PackageVersion Include="SharpZipLib " Version="1.4.2" />
-    
     <!-- Dependencies for AzureAI -->
-    <PackageVersion Include="Microsoft.CognitiveServices.Speech" Version="1.42.0" />
+    <PackageVersion Include="Microsoft.CognitiveServices.Speech" Version="1.47.0" />
     <!-- Tests -->
-    <PackageVersion Include="FluentAssertions" Version="7.0.0" />
-    <PackageVersion Include="coverlet.collector" Version="6.0.3" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-    <PackageVersion Include="Whisper.net.Runtime.Cuda.Windows" Version="1.7.2" />
-    <PackageVersion Include="xunit" Version="2.9.2" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.0" />
+    <PackageVersion Include="FluentAssertions" Version="7.2.0" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageVersion Include="Whisper.net.Runtime.Cuda.Windows" Version="1.9.0" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
   </ItemGroup>
 </Project>
