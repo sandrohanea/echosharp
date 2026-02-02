@@ -385,7 +385,7 @@ public class BufferedMemoryAudioSourceTests
     [InlineData(true, true)]
     [InlineData(false, true)]
     [InlineData(true, false)]
-    public void MethodsThrowException_WhenNotInitialized(bool storeFloats, bool storeBytes)
+    public async Task MethodsThrowException_WhenNotInitialized(bool storeFloats, bool storeBytes)
     {
         // Arrange
         var source = new BufferedMemoryAudioSource(storeFloats, storeBytes);
