@@ -8,8 +8,15 @@ public static class ArrayAssert
 {
     public static void EqualApprox(IEnumerable<float> expected, IEnumerable<float> actual, float tolerance = 0.001f)
     {
-        ArgumentNullException.ThrowIfNull(expected);
-        ArgumentNullException.ThrowIfNull(actual);
+        if (expected is null)
+        {
+            throw new ArgumentNullException(nameof(expected));
+        }
+
+        if (actual is null)
+        {
+            throw new ArgumentNullException(nameof(actual));
+        }
 
         var expectedList = expected.ToList();
         var actualList = actual.ToList();
