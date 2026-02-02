@@ -38,7 +38,11 @@ public class EchoSharpRealtimeTranscriptorTests
 
         vadDetectorFactory = vadDetector == "webrtc"
             ? new WebRtcVadSharpDetectorFactory(new WebRtcVadSharpOptions())
-            : new SileroVadDetectorFactory(new SileroVadOptions("./models/silero_vad.onnx"));
+            : new SileroVadDetectorFactory(new SileroVadOptions("./models/silero_vad.onnx")
+            {
+                Threshold = 0.2f,
+                ThresholdGap = 0.05f
+            });
 
         var modelConfig = new OnlineModelConfig();
         var ctcFstDecoderConfig = new OnlineCtcFstDecoderConfig();
@@ -59,7 +63,16 @@ public class EchoSharpRealtimeTranscriptorTests
                 OnlineCtcFstDecoderConfig = ctcFstDecoderConfig
             });
 
-        var realTimeTranscriptorFactory = new EchoSharpRealtimeTranscriptorFactory(transcritorFactory, vadDetectorFactory);
+        var vadDetectorOptions = new VadDetectorOptions
+        {
+            MinSpeechDuration = TimeSpan.FromMilliseconds(50),
+            MinSilenceDuration = TimeSpan.FromMilliseconds(50)
+        };
+
+        var realTimeTranscriptorFactory = new EchoSharpRealtimeTranscriptorFactory(
+            transcritorFactory,
+            vadDetectorFactory,
+            vadDetectorOptions: vadDetectorOptions);
 
         var readlTimeTranscriptor = realTimeTranscriptorFactory.Create(new RealtimeSpeechTranscriptorOptions()
         {
