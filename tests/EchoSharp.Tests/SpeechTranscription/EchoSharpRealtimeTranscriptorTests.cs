@@ -10,7 +10,6 @@ using EchoSharp.WebRtc.WebRtcVadSharp;
 using EchoSharp.Onnx.SileroVad;
 using SherpaOnnx;
 using EchoSharp.Onnx.Sherpa.SpeechTranscription;
-using FluentAssertions;
 using EchoSharp.VoiceActivityDetection;
 
 namespace EchoSharp.Tests.SpeechTranscription;
@@ -99,10 +98,10 @@ public class EchoSharpRealtimeTranscriptorTests
         var recognizingEvents = events.OfType<RealtimeSegmentRecognizing>().ToList();
         var recognizedEvents = events.OfType<RealtimeSegmentRecognized>().ToList();
 
-        recognizingEvents.Should().HaveCountGreaterThanOrEqualTo(1);
-        recognizedEvents.Should().HaveCountGreaterThanOrEqualTo(1);
-        events.First().Should().BeOfType<RealtimeSessionStarted>();
-        events.Last().Should().BeOfType<RealtimeSessionStopped>();
+        Assert.NotEmpty(recognizingEvents);
+        Assert.NotEmpty(recognizedEvents);
+        Assert.IsType<RealtimeSessionStarted>(events.First());
+        Assert.IsType<RealtimeSessionStopped>(events.Last());
     }
 
     private static async Task<List<IRealtimeRecognitionEvent>> Process(IRealtimeSpeechTranscriptor transcriptor, IAwaitableAudioSource source)
@@ -124,4 +123,3 @@ public class EchoSharpRealtimeTranscriptorTests
         return events;
     }
 }
-

@@ -1,6 +1,5 @@
 // Licensed under the MIT license: https://opensource.org/licenses/MIT
 
-using FluentAssertions;
 using EchoSharp.Audio;
 using EchoSharp.Tests.Utils;
 using Xunit;
@@ -38,7 +37,7 @@ public class DiscardableMemoryAudioSourceTests
         // Assert
         Assert.Equal(3, discardableSource.FramesCount);
         var samples = await discardableSource.GetSamplesAsync(3);
-        samples.Span.ToArray().Should().BeApproxEqual(TestData.GetTestSampleData(6, 0.07f));
+        ArrayAssert.EqualApprox(TestData.GetTestSampleData(6, 0.07f), samples.Span.ToArray());
     }
 
     [Theory]
@@ -65,7 +64,7 @@ public class DiscardableMemoryAudioSourceTests
         // Act
         Action act = () => discardableSource.DiscardFrames(7);
         // Assert
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        Assert.Throws<ArgumentOutOfRangeException>(act);
     }
 
     [Theory]
@@ -85,7 +84,7 @@ public class DiscardableMemoryAudioSourceTests
         // Act
         Action act = () => discardableSource.DiscardFrames(0);
         // Assert
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        Assert.Throws<ArgumentOutOfRangeException>(act);
     }
 
     [Theory]
@@ -105,7 +104,7 @@ public class DiscardableMemoryAudioSourceTests
         // Act
         Action act = () => discardableSource.DiscardFrames(-1);
         // Assert
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        Assert.Throws<ArgumentOutOfRangeException>(act);
     }
 
     [Theory]
@@ -132,6 +131,6 @@ public class DiscardableMemoryAudioSourceTests
         // Act
         Action act = () => discardableSource.GetSamplesAsync(2);
         // Assert
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        Assert.Throws<ArgumentOutOfRangeException>(act);
     }
 }
