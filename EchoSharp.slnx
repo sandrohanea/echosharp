@@ -20,9 +20,9 @@
   </Folder>
   <Folder Name="/.github/">
     <File Path=".github/copilot-instructions.md" />
-    <File Path=".github/instructions/dependency-maintenance.instructions.md" />
-    <File Path=".github/instructions/echosharp-architecture.instructions.md" />
-    <File Path=".github/instructions/model-provisioning.instructions.md" />
+    <File Path=".github/skills/dependency-maintenance/SKILL.md" />
+    <File Path=".github/skills/echosharp-architecture/SKILL.md" />
+    <File Path=".github/skills/model-provisioning/SKILL.md" />
     <File Path=".github/workflows/ci.yml" />
     <File Path=".github/dependabot.yml" />
   </Folder>

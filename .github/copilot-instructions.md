@@ -2,6 +2,8 @@
 
 EchoSharp is a near-real-time audio orchestration library. The core package in `src\EchoSharp` owns audio abstractions, speech transcription contracts, VAD contracts, realtime orchestration, and model provisioning. First-party integrations live under `components\` and must stay interchangeable through the core interfaces.
 
+Focused repo skills live in `.github\skills`.
+
 ## Architecture rules
 
 - Keep `src\EchoSharp` provider-neutral. It should not reference Whisper.net, ONNX Runtime, Azure, OpenAI, NAudio, WebRTC, Sherpa, or other component-specific packages.
