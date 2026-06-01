@@ -11,6 +11,7 @@ using EchoSharp.Onnx.SileroVad;
 using SherpaOnnx;
 using EchoSharp.Onnx.Sherpa.SpeechTranscription;
 using EchoSharp.VoiceActivityDetection;
+using EchoSharp.Whisper.net.SileroVad;
 
 namespace EchoSharp.Tests.SpeechTranscription;
 
@@ -18,12 +19,11 @@ public class EchoSharpRealtimeTranscriptorTests
 {
     [Theory]
     [InlineData("webrtc", "whisper")]
-#if NET8_0_OR_GREATER
-    // Onnx models are not supported on net472
     [InlineData("silero", "whisper")]
+    [InlineData("whisper-silero", "whisper")]
     [InlineData("webrtc", "sherpa")]
     [InlineData("silero", "sherpa")]
-#endif
+    [InlineData("whisper-silero", "sherpa")]
     public async Task RealTime_Integration_Test(string vadDetector, string transcriptor)
     {
         // webrtc component is not available on non-windows devices
@@ -38,10 +38,15 @@ public class EchoSharpRealtimeTranscriptorTests
 
         vadDetectorFactory = vadDetector == "webrtc"
             ? new WebRtcVadSharpDetectorFactory(new WebRtcVadSharpOptions())
-            : new SileroVadDetectorFactory(new SileroVadOptions("./models/silero_vad.onnx")
+            : vadDetector == "silero"
+            ? new SileroVadDetectorFactory(new SileroVadOptions("./models/silero_vad.onnx")
             {
                 Threshold = 0.2f,
                 ThresholdGap = 0.05f
+            })
+            : new WhisperSileroVadDetectorFactory(new WhisperSileroVadOptions("./models/ggml-silero-v6.2.0.bin")
+            {
+                Threshold = 0.2f
             });
 
         var modelConfig = new OnlineModelConfig();

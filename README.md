@@ -37,6 +37,17 @@ You can find the latest EchoSharp version on nuget at: [EchoSharp](https://www.n
 
 ---
 
+### EchoSharp.Whisper.net.SileroVad
+
+**EchoSharp.Whisper.net.SileroVad** is a Voice Activity Detection (VAD) component built on Whisper.net 1.9.1's native ggml Silero VAD support. It loads the ggml Silero model directly through Whisper.net and can provision the model from the same Hugging Face source used by Whisper.net's downloader.
+
+**Key Features**:
+- **Local ggml VAD**: Uses Whisper.net's ggml Silero VAD model without ONNX Runtime.
+- **EchoSharp Provisioning**: Downloads and verifies the model through EchoSharp's model provisioning pipeline.
+- **Interchangeable Detector**: Implements EchoSharp's `IVadDetectorFactory` and `IVadDetector` contracts.
+
+---
+
 ### EchoSharp.OpenAI.Whisper
 
 **EchoSharp.OpenAI.Whisper** is a Speech-to-Text (STT) component that leverages the [OpenAI Whisper API](https://platform.openai.com/docs/guides/speech-to-text).

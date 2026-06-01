@@ -4,7 +4,7 @@
   
   <PropertyGroup>
     <TargetFrameworks>
-      net8.0;net9.0;
+      net8.0;net10.0;
     </TargetFrameworks>
   </PropertyGroup>
   
@@ -24,12 +24,6 @@
     </PackageReference>
   </ItemGroup>
   
-  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
-    <TargetFrameworks>
-      net8.0;net9.0;net472;
-    </TargetFrameworks>
-  </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\components\EchoSharp.AzureAI.SpeechServices\EchoSharp.AzureAI.SpeechServices.csproj" />
     <ProjectReference Include="..\..\components\EchoSharp.Onnx.Sherpa\EchoSharp.Onnx.Sherpa.csproj" />
@@ -38,6 +32,7 @@
     <ProjectReference Include="..\..\components\EchoSharp.OpenAI.Whisper\EchoSharp.OpenAI.Whisper.csproj" />
     <ProjectReference Include="..\..\components\EchoSharp.WebRtc.WebRtcVadSharp\EchoSharp.WebRtc.WebRtcVadSharp.csproj" />
     <ProjectReference Include="..\..\components\EchoSharp.Whisper.net\EchoSharp.Whisper.net.csproj" />
+    <ProjectReference Include="..\..\components\EchoSharp.Whisper.net.SileroVad\EchoSharp.Whisper.net.SileroVad.csproj" />
     <ProjectReference Include="..\..\src\EchoSharp\EchoSharp.csproj" />
   </ItemGroup>
   

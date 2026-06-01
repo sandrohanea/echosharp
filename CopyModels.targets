@@ -27,6 +27,10 @@
         <Link>models\silero_vad.onnx</Link>
       </ConditionalFiles>
 
+      <ConditionalFiles Include="$(MSBuildThisFileDirectory)models\ggml-silero-v6.2.0.bin" Condition="Exists('$(MSBuildThisFileDirectory)models\ggml-silero-v6.2.0.bin')">
+        <Link>models\ggml-silero-v6.2.0.bin</Link>
+      </ConditionalFiles>
+
       
       <!-- Models for sherpa -->
       <ConditionalFiles Include="$(MSBuildThisFileDirectory)models\sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18\tokens.txt" Condition="Exists('$(MSBuildThisFileDirectory)models\sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18\tokens.txt')">
