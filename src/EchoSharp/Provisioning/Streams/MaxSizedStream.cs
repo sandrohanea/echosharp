@@ -7,10 +7,19 @@ namespace EchoSharp.Provisioning.Streams;
 /// </summary>
 /// <remarks>
 /// This stream wraps another stream and enforces a maximum size on reads and writes.
-/// It is usefull for protecting agains DoS attacks with Zip bombs or other large payloads.
+/// It is useful for protecting against DoS attacks with Zip bombs or other large payloads.
+/// Read attempts are allowed to ask for a small amount past <paramref name="maxSize"/> because APIs such as
+/// <see cref="Stream.CopyToAsync(Stream)"/> request a fixed-size buffer to discover the end of the stream.
+/// Actual bytes returned from the wrapped stream are still rejected if they exceed <paramref name="maxSize"/>.
 /// </remarks>
-public class MaxSizedStream(Stream source, long maxSize) : Stream
+public class MaxSizedStream(Stream source, long maxSize, long readAttemptTolerance = MaxSizedStream.DefaultReadAttemptTolerance) : Stream
 {
+    /// <summary>
+    /// The default read-attempt tolerance, matching the current <see cref="Stream.CopyToAsync(Stream)"/> read buffer size.
+    /// </summary>
+    public const long DefaultReadAttemptTolerance = 128 * 1024;
+
+    private readonly long maxReadAttemptSize = GetMaxReadAttemptSize(maxSize, readAttemptTolerance);
     private long currentReadPosition;
 
     public override bool CanRead => source.CanRead;
@@ -37,16 +46,14 @@ public class MaxSizedStream(Stream source, long maxSize) : Stream
         // Check if this read would cross our maxSize boundary.
         var requestedEndPos = currentReadPosition + count;
 
-        if (requestedEndPos > maxSize)
+        if (requestedEndPos > maxReadAttemptSize)
         {
-            // If *any* part of this read would exceed maxSize, we throw.
-            // Alternatively, you could do a partial read up to maxSize - currentPos.
             throw new InvalidOperationException(
-                $"Cannot read beyond offset {maxSize} (requested to read until {requestedEndPos}).");
+                $"Cannot read beyond offset {maxSize} plus read attempt tolerance {readAttemptTolerance} (requested to read until {requestedEndPos}).");
         }
 
         var readBytes = source.Read(buffer, offset, count);
-        currentReadPosition += readBytes;
+        AddReadBytes(readBytes);
         return readBytes;
     }
 
@@ -56,14 +63,14 @@ public class MaxSizedStream(Stream source, long maxSize) : Stream
     {
         var requestedEndPos = currentReadPosition + buffer.Length;
 
-        if (requestedEndPos > maxSize)
+        if (requestedEndPos > maxReadAttemptSize)
         {
             throw new InvalidOperationException(
-                $"Cannot read beyond offset {maxSize} (requested to read until {requestedEndPos}).");
+                $"Cannot read beyond offset {maxSize} plus read attempt tolerance {readAttemptTolerance} (requested to read until {requestedEndPos}).");
         }
 
         var readBytes = await source.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
-        currentReadPosition += readBytes;
+        AddReadBytes(readBytes);
         return readBytes;
     }
 #else
@@ -72,14 +79,14 @@ public class MaxSizedStream(Stream source, long maxSize) : Stream
     {
         var requestedEndPos = currentReadPosition + count;
 
-        if (requestedEndPos > maxSize)
+        if (requestedEndPos > maxReadAttemptSize)
         {
             throw new InvalidOperationException(
-                $"Cannot read beyond offset {maxSize} (requested to read until {requestedEndPos}).");
+                $"Cannot read beyond offset {maxSize} plus read attempt tolerance {readAttemptTolerance} (requested to read until {requestedEndPos}).");
         }
 
         var readBytes = await source.ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
-        currentReadPosition += readBytes;
+        AddReadBytes(readBytes);
         return readBytes;
     }
 #endif
@@ -103,8 +110,37 @@ public class MaxSizedStream(Stream source, long maxSize) : Stream
                 $"Cannot write beyond offset {maxSize} (requested to write until {source.Position + count}).");
         }
 
-        // If this is truly read-only, you could throw NotSupportedException here.
-        // Otherwise, pass through to underlying.
         source.Write(buffer, offset, count);
+    }
+
+    private static long GetMaxReadAttemptSize(long maxSize, long readAttemptTolerance)
+    {
+        if (maxSize < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(maxSize), "Max size must be non-negative.");
+        }
+
+        if (readAttemptTolerance < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(readAttemptTolerance), "Read attempt tolerance must be non-negative.");
+        }
+
+        if (maxSize > long.MaxValue - readAttemptTolerance)
+        {
+            return long.MaxValue;
+        }
+
+        return maxSize + readAttemptTolerance;
+    }
+
+    private void AddReadBytes(int readBytes)
+    {
+        currentReadPosition += readBytes;
+
+        if (currentReadPosition > maxSize)
+        {
+            throw new InvalidOperationException(
+                $"Cannot read beyond offset {maxSize} (actually read until {currentReadPosition}).");
+        }
     }
 }

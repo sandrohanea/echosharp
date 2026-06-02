@@ -13,8 +13,6 @@ public class WhisperSileroVadProvisioner(
     Func<WhisperVadProcessorBuilder, WhisperVadProcessorBuilder>? builderConfig = null,
     ModelDownloader? modelDownloader = null) : IVadDetectorProvisioner
 {
-    private const int maxModelSize = 885098;
-
     public async Task<IVadDetectorFactory> ProvisionAsync(CancellationToken cancellationToken = default)
     {
         var modelPath = config.ModelPath;
@@ -25,7 +23,7 @@ public class WhisperSileroVadProvisioner(
 
         var currentModelDownloader = modelDownloader ?? ModelDownloader.Default;
         var model = WhisperSileroVadModels.GetModel(config.ModelType);
-        var options = new UnarchiverOptions(modelPath, maxModelSize);
+        var options = new UnarchiverOptions(modelPath, model.MaxFileSize);
         await currentModelDownloader.DownloadModelAsync(model, options, Sha512Hasher.Instance, UnarchiverCopy.Instance, cancellationToken);
 
         var modelGgmlPath = Path.Combine(modelPath, UnarchiverCopy.ModelName);
