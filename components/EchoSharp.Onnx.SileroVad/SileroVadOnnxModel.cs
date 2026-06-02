@@ -53,10 +53,8 @@ internal class SileroVadOnnxModel : IDisposable
 
     public float Call(Memory<float> input, SileroInferenceState state)
     {
+        state.PendingState.AsSpan().CopyTo(state.State);
         state.Binding.BindInput("input", OrtValue.CreateTensorValueFromMemory(OrtMemoryInfo.DefaultInstance, input, runningInputShape));
-        // We need to swap the state and pending state to keep the state for the next inference
-        // Zero allocation swap
-        (state.State, state.PendingState) = (state.PendingState, state.State);
 
         session.RunWithBinding(runOptions, state.Binding);
 
