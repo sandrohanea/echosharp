@@ -29,19 +29,23 @@ jobs:
             10.0.x
 
       - name: Restore dependencies
-        run: dotnet restore ./EchoSharp.slnx
+        run: dotnet restore ./EchoSharp.slnx /tl:off /nr:false
+
+      - name: Restore example dependencies
+        run: dotnet restore ./EchoSharp.Examples.slnx /tl:off /nr:false
 
       - name: Download models
-        run: |
-          ./downloadModels.ps1
+        run: ./downloadModels.ps1
         shell: pwsh
 
       - name: Build
-        run: dotnet build ./EchoSharp.slnx --no-restore
+        run: dotnet build ./EchoSharp.slnx --no-restore /tl:off /nr:false
+
+      - name: Build examples
+        run: dotnet build ./EchoSharp.Examples.slnx --no-restore /tl:off /nr:false /p:CopyLocalLockFileAssemblies=false
 
       - name: Test
-        run: |
-          dotnet test ./EchoSharp.slnx --no-build  --logger "trx"
+        run: dotnet test ./EchoSharp.slnx --no-build /tl:off /nr:false --logger "trx"
 
       - name: Test Reporter
         uses: dorny/test-reporter@31a54ee7ebcacc03a09ea97a7e5465a47b84aea5
