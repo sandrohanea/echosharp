@@ -29,7 +29,7 @@ jobs:
             10.0.x
 
       - name: Restore dependencies
-        run: dotnet restore .\EchoSharp.slnx
+        run: dotnet restore .\EchoSharp.slnx --tl:off
 
       - name: Build and pack all
         run: |
@@ -48,7 +48,7 @@ jobs:
           ) + (Get-ChildItem .\components -Filter *.csproj -Recurse | Sort-Object FullName | ForEach-Object { $_.FullName })
 
           foreach ($project in $projects) {
-            dotnet build $project --no-restore -c Release
+            dotnet build $project --no-restore -c Release --tl:off
           }
 
           if (-not (Test-Path .\nupkgs)) {
@@ -56,7 +56,7 @@ jobs:
           }
 
           foreach ($project in $projects) {
-            dotnet pack $project --no-build -c Release -p:Version=$packageVersion -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -o .\nupkgs
+            dotnet pack $project --no-build -c Release --tl:off -p:Version=$packageVersion -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -o .\nupkgs
           }
         shell: pwsh
 
