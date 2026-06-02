@@ -35,6 +35,11 @@ silero_onnx_path="models/silero_vad.onnx"
 
 download_if_missing "$silero_onnx_url" "$silero_onnx_path"
 
+whisper_silero_ggml_url="https://huggingface.co/sandrohanea/whisper.net/resolve/v4/vad/ggml-silero-v6.2.0.bin"
+whisper_silero_ggml_path="models/ggml-silero-v6.2.0.bin"
+
+download_if_missing "$whisper_silero_ggml_url" "$whisper_silero_ggml_path"
+
 sherpa_package_url="https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18.tar.bz2"
 sherpa_folder="models/sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18"
 

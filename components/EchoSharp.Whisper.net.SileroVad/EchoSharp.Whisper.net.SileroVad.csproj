@@ -1,13 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\EchoSharp\EchoSharp.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
     <None Include="..\..\readme.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="EchoSharp.Tests" />
-    <InternalsVisibleTo Include="EchoSharp.AzureAI.SpeechServices" />
+    <PackageReference Include="Whisper.net" />
   </ItemGroup>
 
 </Project>

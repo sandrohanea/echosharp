@@ -35,6 +35,13 @@ if (!(Test-Path $sileroOnnxPath)) {
     Invoke-WebRequest -Uri $sileroOnnx -OutFile $sileroOnnxPath
 }
 
+$whisperSileroGgml = "https://huggingface.co/sandrohanea/whisper.net/resolve/v4/vad/ggml-silero-v6.2.0.bin"
+$whisperSileroGgmlPath = "models/ggml-silero-v6.2.0.bin"
+
+if (!(Test-Path $whisperSileroGgmlPath)) {
+    Invoke-WebRequest -Uri $whisperSileroGgml -OutFile $whisperSileroGgmlPath
+}
+
 $sherpaPackage = "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18.tar.bz2"
 $sherpaFolder = "models/sherpa-onnx-streaming-zipformer-ctc-small-2024-03-18"
 

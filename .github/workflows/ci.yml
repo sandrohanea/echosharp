@@ -26,10 +26,10 @@ jobs:
         with:
           dotnet-version: |
             8.0.x
-            9.0.x
+            10.0.x
 
       - name: Restore dependencies
-        run: dotnet restore ./EchoSharp.sln
+        run: dotnet restore ./EchoSharp.slnx
 
       - name: Download models
         run: |
@@ -37,11 +37,11 @@ jobs:
         shell: pwsh
 
       - name: Build
-        run: dotnet build ./EchoSharp.sln --no-restore
+        run: dotnet build ./EchoSharp.slnx --no-restore
 
       - name: Test
         run: |
-          dotnet test ./EchoSharp.sln --no-build  --logger "trx"
+          dotnet test ./EchoSharp.slnx --no-build  --logger "trx"
 
       - name: Test Reporter
         uses: dorny/test-reporter@31a54ee7ebcacc03a09ea97a7e5465a47b84aea5

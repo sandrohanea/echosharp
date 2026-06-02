@@ -9,14 +9,22 @@
     <Project Path="components/EchoSharp.SharpZipLib/EchoSharp.SharpZipLib.csproj" />
     <Project Path="components/EchoSharp.WebRtc.WebRtcVadSharp/EchoSharp.WebRtc.WebRtcVadSharp.csproj" Id="505428b5-18e4-41d1-95a3-bc63cab1fbe1" />
     <Project Path="components/EchoSharp.Whisper.net/EchoSharp.Whisper.net.csproj" />
+    <Project Path="components/EchoSharp.Whisper.net.SileroVad/EchoSharp.Whisper.net.SileroVad.csproj" Id="0817ab95-56ba-48d9-a865-2aba4d4de9b6" />
   </Folder>
   <Folder Name="/examples/" Id="fb050bb0-47f4-4cff-84ac-bee7776ca079">
     <Project Path="examples/EchoSharp.Example.FileSpeechTranscript/EchoSharp.Example.FileSpeechTranscript.csproj" Id="1cf393df-db1d-4f43-95d1-93ee402b20b5" />
     <Project Path="examples/EchoSharp.Example.MicrosophoneSpeechTranscript/EchoSharp.Example.MicrosophoneSpeechTranscript.csproj" />
   </Folder>
+  <Folder Name="/tools/" Id="21a38949-a5d0-42f5-911d-617fc98f69c0">
+    <Project Path="tools/EchoSharp.ProvisioningModelUtility/EchoSharp.ProvisioningModelUtility.csproj" Id="5677d962-117f-584d-4b93-4c0d8b35c922" />
+  </Folder>
   <Folder Name="/.github/">
+    <File Path=".github/copilot-instructions.md" />
+    <File Path=".github/skills/dependency-maintenance/SKILL.md" />
+    <File Path=".github/skills/echosharp-architecture/SKILL.md" />
+    <File Path=".github/skills/model-provisioning/SKILL.md" />
     <File Path=".github/workflows/ci.yml" />
-    <File Path=".github\dependabot.yml" />
+    <File Path=".github/dependabot.yml" />
   </Folder>
   <Folder Name="/_Solution Items/" Id="52a4157f-ab47-faa0-b5e9-7e5adbda8969">
     <File Path=".editorconfig" />
@@ -24,7 +32,9 @@
     <File Path="CopyModels.targets" />
     <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
+    <File Path="downloadModels.sh" />
     <File Path="downloadModels.ps1" />
+    <File Path="EchoSharp.slnx" />
     <File Path="nuget.config" />
     <File Path="README.md" />
   </Folder>
