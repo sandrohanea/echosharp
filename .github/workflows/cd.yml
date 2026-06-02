@@ -1,0 +1,44 @@
+# This workflow packs all EchoSharp NuGet packages and optionally pushes them to nuget.org.
+
+name: CD (dotnet)
+
+permissions:
+  contents: write
+  id-token: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      IsPreview:
+        description: 'Is Preview'
+        required: true
+        type: boolean
+        default: true
+      PreviewSuffix:
+        description: 'Preview Suffix'
+        required: false
+        type: string
+        default: 'preview'
+      PushToNuget:
+        description: 'Push to NuGet'
+        required: true
+        type: boolean
+        default: true
+
+env:
+  IS_PREVIEW: ${{ inputs.IsPreview }}
+  PREVIEW_SUFFIX: ${{ inputs.PreviewSuffix }}
+
+jobs:
+  pack-all:
+    uses: ./.github/workflows/pack-all.yml
+    with:
+      IsPreview: ${{ inputs.IsPreview }}
+      PreviewSuffix: ${{ inputs.PreviewSuffix }}
+
+  push-nuget:
+    if: ${{ inputs.PushToNuget }}
+    needs:
+      - pack-all
+    uses: ./.github/workflows/push-all.yml
+    secrets: inherit

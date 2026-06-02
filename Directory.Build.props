@@ -1,4 +1,6 @@
 <Project>
+	<Import Project="PackageVersion.props" />
+
 	<PropertyGroup>
 		<TargetFrameworks>
 			net8.0;net10.0
