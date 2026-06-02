@@ -1,0 +1,68 @@
+# This workflow builds and packs all EchoSharp NuGet packages.
+
+name: Pack All
+
+permissions:
+  contents: read
+
+on:
+  workflow_call:
+    inputs:
+      IsPreview:
+        required: true
+        type: boolean
+      PreviewSuffix:
+        required: false
+        type: string
+
+jobs:
+  pack-nupkgs:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore .\EchoSharp.slnx --tl:off
+
+      - name: Build and pack all
+        run: |
+          $xml = [Xml](Get-Content .\PackageVersion.props)
+          $configuredVersion = [string]$xml.Project.PropertyGroup.Version
+          if ([string]::IsNullOrWhiteSpace($configuredVersion)) {
+            throw "PackageVersion.props must define Project.PropertyGroup.Version."
+          }
+
+          $version = $configuredVersion.Split('-')[0].Trim()
+          $previewSuffix = if ('${{ inputs.IsPreview }}' -eq 'true') { '-${{ inputs.PreviewSuffix }}' } else { '' }
+          $packageVersion = "$version$previewSuffix"
+
+          $projects = @(
+            '.\src\EchoSharp\EchoSharp.csproj'
+          ) + (Get-ChildItem .\components -Filter *.csproj -Recurse | Sort-Object FullName | ForEach-Object { $_.FullName })
+
+          foreach ($project in $projects) {
+            dotnet build $project --no-restore -c Release --tl:off
+          }
+
+          if (-not (Test-Path .\nupkgs)) {
+            New-Item -ItemType Directory -Force -Path .\nupkgs
+          }
+
+          foreach ($project in $projects) {
+            dotnet pack $project --no-build -c Release --tl:off -p:Version=$packageVersion -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -o .\nupkgs
+          }
+        shell: pwsh
+
+      - name: Publish nupkgs
+        uses: actions/upload-artifact@v4
+        with:
+          name: nupkgs
+          path: |
+            nupkgs/*nupkg

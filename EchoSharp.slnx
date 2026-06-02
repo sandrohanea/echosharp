@@ -23,7 +23,10 @@
     <File Path=".github/skills/dependency-maintenance/SKILL.md" />
     <File Path=".github/skills/echosharp-architecture/SKILL.md" />
     <File Path=".github/skills/model-provisioning/SKILL.md" />
+    <File Path=".github/workflows/cd.yml" />
     <File Path=".github/workflows/ci.yml" />
+    <File Path=".github/workflows/pack-all.yml" />
+    <File Path=".github/workflows/push-all.yml" />
     <File Path=".github/dependabot.yml" />
   </Folder>
   <Folder Name="/_Solution Items/" Id="52a4157f-ab47-faa0-b5e9-7e5adbda8969">
@@ -36,6 +39,7 @@
     <File Path="downloadModels.ps1" />
     <File Path="EchoSharp.slnx" />
     <File Path="nuget.config" />
+    <File Path="PackageVersion.props" />
     <File Path="README.md" />
   </Folder>
   <Project Path="src/EchoSharp/EchoSharp.csproj" />
