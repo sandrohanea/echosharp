@@ -9,7 +9,7 @@
     <PackageVersion Include="System.Text.Json" Version="10.0.8" />
     <!-- Dependencies for OpenAI / AzureOpenAI -->
     <PackageVersion Include="Azure.AI.OpenAI" Version="2.1.0" />
-    <PackageVersion Include="OpenAI" Version="2.10.0" />
+    <PackageVersion Include="OpenAI" Version="2.11.0" />
     <!-- Dependencies for Onnx-->
     <PackageVersion Include="Microsoft.ML.OnnxRuntime" Version="1.26.0" />
     <PackageVersion Include="Microsoft.ML.OnnxRuntime.Extensions" Version="0.14.0" />
