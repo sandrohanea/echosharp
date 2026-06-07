@@ -2,7 +2,7 @@
   <!-- Directory.Packages.props gets included automatically during the build. Read more here:
   https://learn.microsoft.com/en-us/nuget/consume-packages/Central-Package-Management-->
   <ItemGroup>
-    <PackageVersion Include="Azure.Core" Version="1.57.0" />
+    <PackageVersion Include="Azure.Core" Version="1.58.0" />
     <PackageVersion Include="Azure.Identity" Version="1.21.0" />
     <PackageVersion Include="NAudio" Version="2.3.0" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />
