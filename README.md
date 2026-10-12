@@ -90,7 +90,7 @@ By accurately identifying speech segments, this component helps optimize audio p
 
 **Key Features**:
 - **Customizable Speech Recognition**: Utilize your own Whisper ONNX model for speech-to-text conversion.
-- **Local Inference**: Perform speech recognition locally, ensuring data privacy and reducing latency.
+- **Local Inference**: Perform speech recognition locally, reducing latency. See [ONNX Runtime telemetry](#onnx-runtime-telemetry) for privacy configuration.
 - **Flexible Integration**: Seamlessly integrate with EchoSharp's audio processing pipeline for efficient audio analysis.
 
 ### EchoSharp.Onnx.Sherpa
@@ -99,5 +99,24 @@ By accurately identifying speech segments, this component helps optimize audio p
 It integrates with this [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) project and supports both OnlineModels and OfflineModels.
 **Key Features**:
 - **Customizable Speech Recognition**: Utilize your own ONNX models for speech-to-text conversion.
-- **Local Inference**: Perform speech recognition locally, ensuring data privacy and reducing latency.
+- **Local Inference**: Perform speech recognition locally, reducing latency. See [ONNX Runtime telemetry](#onnx-runtime-telemetry) for privacy configuration.
 - **Flexible Integration**: Seamlessly integrate with EchoSharp's audio processing pipeline for efficient audio analysis.
+
+## ONNX Runtime telemetry
+
+The ONNX components perform inference locally, but ONNX Runtime 1.31 official native builds enable 1DS telemetry by default on supported platforms, including Linux and macOS. EchoSharp does not disable or change the runtime's telemetry settings automatically.
+
+To disable 1DS telemetry, set `ORT_DISABLE_TELEMETRY=1` in the application launcher, container, or service configuration **before starting the process**. ONNX Runtime reads this variable during native initialization; it prevents the telemetry uploader, events, and persistent device identifier from being created.
+
+```bash
+ORT_DISABLE_TELEMETRY=1 dotnet MyApplication.dll
+```
+
+```powershell
+$env:ORT_DISABLE_TELEMETRY = "1"
+dotnet MyApplication.dll
+```
+
+Adding `<ORT_DISABLE_TELEMETRY>true</ORT_DISABLE_TELEMETRY>` to a `.csproj` does not set a runtime environment variable; the ONNX NuGet package does not consume that MSBuild property. On Linux/macOS, a managed `Environment.SetEnvironmentVariable` call alone also does not update the native environment read by ONNX Runtime. Use the launcher configuration above, especially when another library might initialize ONNX first.
+
+The telemetry API can suppress non-essential events after initialization, but may be too late to prevent an initialization event. The environment variable disables 1DS telemetry; the legacy Windows ETW provider has separate controls. Model provisioning still downloads models when needed, and Azure/OpenAI components still use their configured cloud services. See [ONNX Runtime privacy documentation](https://github.com/microsoft/onnxruntime/blob/v1.31.0/docs/Privacy.md).
