@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/examples/">
+    <Project Path="examples/EchoSharp.Example.FileSpeechTranscript/EchoSharp.Example.FileSpeechTranscript.csproj" />
+    <Project Path="examples/EchoSharp.Example.MicrosophoneSpeechTranscript/EchoSharp.Example.MicrosophoneSpeechTranscript.csproj" />
+  </Folder>
+</Solution>

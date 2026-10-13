@@ -23,6 +23,7 @@ Focused repo skills live in `.github\skills`.
 
 ## Validation workflow
 
-- Run `dotnet restore .\EchoSharp.slnx`, `dotnet build .\EchoSharp.slnx --no-restore`, and `dotnet test .\EchoSharp.slnx --no-build` when changing code or packages.
+- Run `dotnet restore .\EchoSharp.slnx /tl:off /nr:false`, `dotnet build .\EchoSharp.slnx --no-restore /tl:off /nr:false`, and `dotnet test .\EchoSharp.slnx --no-build /tl:off /nr:false` when changing code or packages.
+- `EchoSharp.slnx` is the default development solution and intentionally excludes examples because the example executables copy large native runtime payloads. When changing examples, also run `dotnet restore .\EchoSharp.Examples.slnx /tl:off /nr:false` and `dotnet build .\EchoSharp.Examples.slnx --no-restore /tl:off /nr:false /p:CopyLocalLockFileAssemblies=false`.
 - If model-backed tests are involved, run `.\downloadModels.ps1` on Windows or `./downloadModels.sh` on Unix first.
 - Treat Whisper.net managed and runtime packages as an atomic version set. Mismatched `Whisper.net`, `Whisper.net.Runtime`, and Whisper.net runtime packages can fail at native load time.

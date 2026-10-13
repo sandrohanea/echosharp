@@ -11,10 +11,6 @@
     <Project Path="components/EchoSharp.Whisper.net/EchoSharp.Whisper.net.csproj" />
     <Project Path="components/EchoSharp.Whisper.net.SileroVad/EchoSharp.Whisper.net.SileroVad.csproj" Id="0817ab95-56ba-48d9-a865-2aba4d4de9b6" />
   </Folder>
-  <Folder Name="/examples/" Id="fb050bb0-47f4-4cff-84ac-bee7776ca079">
-    <Project Path="examples/EchoSharp.Example.FileSpeechTranscript/EchoSharp.Example.FileSpeechTranscript.csproj" Id="1cf393df-db1d-4f43-95d1-93ee402b20b5" />
-    <Project Path="examples/EchoSharp.Example.MicrosophoneSpeechTranscript/EchoSharp.Example.MicrosophoneSpeechTranscript.csproj" />
-  </Folder>
   <Folder Name="/tools/" Id="21a38949-a5d0-42f5-911d-617fc98f69c0">
     <Project Path="tools/EchoSharp.ProvisioningModelUtility/EchoSharp.ProvisioningModelUtility.csproj" Id="5677d962-117f-584d-4b93-4c0d8b35c922" />
   </Folder>
@@ -38,6 +34,7 @@
     <File Path="downloadModels.sh" />
     <File Path="downloadModels.ps1" />
     <File Path="EchoSharp.slnx" />
+    <File Path="EchoSharp.Examples.slnx" />
     <File Path="nuget.config" />
     <File Path="PackageVersion.props" />
     <File Path="README.md" />
