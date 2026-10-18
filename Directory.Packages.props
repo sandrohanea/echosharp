@@ -26,7 +26,7 @@
     <PackageVersion Include="Microsoft.CognitiveServices.Speech" Version="1.52.0" />
     <!-- Tests -->
     <PackageVersion Include="coverlet.collector" Version="10.1.0" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
     <PackageVersion Include="Whisper.net.Runtime.Cuda.Windows" Version="1.9.1" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1" />
