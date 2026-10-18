@@ -7,7 +7,7 @@
     <!-- NAudio 2.4+ removes Mp3FileReader from the non-Windows targets used here. -->
     <PackageVersion Include="NAudio" Version="2.3.0" />
     <PackageVersion Include="NSubstitute" Version="6.2.0" />
-    <PackageVersion Include="System.Text.Json" Version="10.0.12" />
+    <PackageVersion Include="System.Text.Json" Version="10.0.13" />
     <!-- Dependencies for OpenAI / AzureOpenAI -->
     <PackageVersion Include="Azure.AI.OpenAI" Version="2.1.0" />
     <PackageVersion Include="OpenAI" Version="2.14.0" />
